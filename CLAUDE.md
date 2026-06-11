@@ -78,7 +78,7 @@ npx hyperframes docs <topic>                     # inline docs: data-attributes,
 
 ```
 Hyperframes Editor/
-├── CLAUDE.md, AGENTS.md, DESIGN.ais-example.md         ← workspace docs
+├── CLAUDE.md, AGENTS.md, DESIGN.ais-example.md, DESIGN.linear.md   ← workspace docs
 ├── MOTION_PHILOSOPHY.md                    ← gold-standard motion-graphics aesthetic (READ before brainstorming)
 ├── package.json, node_modules/              ← workspace tooling
 ├── .claude/                                  ← skills + plugin config
@@ -124,6 +124,8 @@ The CLI reads `hyperframes.json`/`meta.json` from the current directory and reso
 
 - **Motion-graphics philosophy:** `MOTION_PHILOSOPHY.md` (gold-standard aesthetic, deconstructed Infinite Payments spot — read before brainstorming any composition)
 - Shared brand source-of-truth: `DESIGN.ais-example.md` (AIS brand spec — kept as a worked example; students should write their own `DESIGN.md` for their brand), root `assets/` (AIS Logo PNG, brand-tokens.css, AIS Background.png) — copy into a project's `assets/` when needed
+- **Linear motion register — V2 is the default:** when Andy says "turn this into a Linear design" (or "Linear V2"), use `DESIGN.linear-v2.md` — the register brand-swapped onto Tier 3 cobalt `#152848` + blossom `#F0A8C2`. It's a delta doc: read it ON TOP of `DESIGN.linear.md` (the Ten Laws, motion vocabulary, type, and pacing all live there). V2 reference build at `video-projects/2026-06-11-ai-thumbnails-intro-linear/`
+- **Linear V1 (canonical grayscale):** `DESIGN.linear.md` alone (matte monochrome beat-driven product cinema, deconstructed from Linear's Code Intelligence spot) — only when Andy explicitly asks for the original/canonical/grayscale Linear; reference build at `video-projects/linear-code-intelligence/`
 - Shared raw-recording stash: large source MP4s/MP3s that aren't yet assigned to a project (e.g. raw lesson recordings, license-free music) can sit at root until they're moved into a project's `assets/`
 - Tooling: `node_modules/`, `package.json`, `.claude/`, `.gitignore`, `skills-lock.json`
 

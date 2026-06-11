@@ -1,0 +1,176 @@
+<template id="comp-02-typewriter">
+  <div data-composition-id="02-typewriter" data-width="1920" data-height="1080">
+    <div class="s2-stage">
+      <div class="s2-zoom">
+        <div class="s2-persp">
+          <div class="s2-tilt">
+            <div class="s2-surface"></div>
+            <div class="s2-card">
+              <div class="s2-type-line">
+                <span class="s2-type-wrap"><span class="s2-text">What happens when an invite link expires?</span></span>
+                <span class="s2-ph">Ask Linear…</span>
+                <span class="s2-cursor"></span>
+              </div>
+              <div class="s2-icons">
+                <svg class="s2-ic" viewBox="0 0 20 20" fill="none" stroke="#8a8f98" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3h5v5"/><path d="M8 17H3v-5"/><path d="M17 3l-6 6"/><path d="M3 17l6-6"/></svg>
+                <svg class="s2-ic" viewBox="0 0 20 20" fill="none" stroke="#8a8f98" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 9.5l-6.2 6.2a4 4 0 0 1-5.6-5.6L10.6 3.7a2.7 2.7 0 0 1 3.8 3.8L8 13.9a1.4 1.4 0 0 1-2-2l5.8-5.8"/></svg>
+                <span class="s2-send"><svg viewBox="0 0 20 20" fill="none" stroke="#c9ccd1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 16V4"/><path d="M5 9l5-5 5 5"/></svg></span>
+              </div>
+            </div>
+            <div class="s2-asklinear">
+              <svg viewBox="0 0 20 20" fill="none" stroke="#c9ccd1" stroke-width="1.6" stroke-linejoin="round"><path d="M5 4l11 6-11 6z"/></svg>
+              <span>Ask Linear</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="s2-vignette"></div>
+    </div>
+
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      [data-composition-id="02-typewriter"] {
+        position: absolute; inset: 0;
+        background: #08090a;
+        overflow: hidden;
+        font-family: "Geist", sans-serif;
+      }
+      [data-composition-id="02-typewriter"] .s2-stage { position: absolute; inset: 0; }
+      [data-composition-id="02-typewriter"] .s2-zoom { position: absolute; inset: 0; }
+      [data-composition-id="02-typewriter"] .s2-persp {
+        position: absolute; inset: 0;
+        perspective: 1600px;
+      }
+      /* Mild static tilt — the close-up still lives in the panel's 3D world. */
+      [data-composition-id="02-typewriter"] .s2-tilt {
+        position: absolute; inset: 0;
+        transform: rotateY(-3deg) rotateX(1.5deg);
+      }
+      /* Hint of the panel surface above the input. */
+      [data-composition-id="02-typewriter"] .s2-surface {
+        position: absolute;
+        left: 130px; right: 130px; top: -140px; height: 560px;
+        background: linear-gradient(180deg, #121417 0%, #0c0d0f 100%);
+        border-radius: 28px;
+      }
+      [data-composition-id="02-typewriter"] .s2-card {
+        position: absolute;
+        left: 190px; right: 190px; top: 380px;
+        height: 230px;
+        background: linear-gradient(180deg, #17191c 0%, #121417 100%);
+        border: 1px solid #26282c;
+        border-radius: 18px;
+        box-shadow: 0 24px 64px rgba(0,0,0,0.55);
+        padding: 34px 40px 26px;
+        display: flex; flex-direction: column; justify-content: space-between;
+      }
+      [data-composition-id="02-typewriter"] .s2-type-line {
+        display: flex; align-items: center;
+        min-height: 40px;
+        position: relative;
+      }
+      /* Typewriter: max-width animates 0 → full with steps(); the beam caret rides the edge. */
+      [data-composition-id="02-typewriter"] .s2-type-wrap {
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: 0;
+        vertical-align: bottom;
+      }
+      [data-composition-id="02-typewriter"] .s2-text {
+        font-size: 30px; font-weight: 400;
+        color: #e8eaec;
+        white-space: nowrap;
+      }
+      /* Restored placeholder = the message was sent (reference 0:07.5). */
+      [data-composition-id="02-typewriter"] .s2-ph {
+        position: absolute; left: 0; top: 50%;
+        transform: translateY(-50%);
+        font-size: 30px; font-weight: 400;
+        color: #6b7076;
+        opacity: 0;
+        white-space: nowrap;
+      }
+      /* Thin beam caret — inputs use a caret, never a block. */
+      [data-composition-id="02-typewriter"] .s2-cursor {
+        width: 2px; height: 32px;
+        background: #e8eaec;
+        display: inline-block;
+        margin-left: 3px;
+        flex: none;
+      }
+      [data-composition-id="02-typewriter"] .s2-icons {
+        display: flex; align-items: center; justify-content: flex-end;
+        gap: 18px;
+      }
+      [data-composition-id="02-typewriter"] .s2-ic { width: 23px; height: 23px; }
+      /* Monochrome send — light arrow on a gray circle. */
+      [data-composition-id="02-typewriter"] .s2-send {
+        width: 46px; height: 46px;
+        border-radius: 50%;
+        background: #2c2f33;
+        display: flex; align-items: center; justify-content: center;
+      }
+      [data-composition-id="02-typewriter"] .s2-send svg { width: 22px; height: 22px; }
+      [data-composition-id="02-typewriter"] .s2-asklinear {
+        position: absolute;
+        right: 230px; top: 680px;
+        display: flex; align-items: center; gap: 12px;
+        background: #131517;
+        border: 1px solid #2a2d31;
+        border-radius: 12px;
+        padding: 14px 24px;
+        font-size: 24px; font-weight: 500;
+        color: #c9ccd1;
+      }
+      [data-composition-id="02-typewriter"] .s2-asklinear svg { width: 22px; height: 22px; }
+      [data-composition-id="02-typewriter"] .s2-vignette {
+        position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, rgba(8,9,10,0) 48%, rgba(0,0,0,0.65) 100%);
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 3;
+        const sel = (q) => `[data-composition-id="02-typewriter"] ${q}`;
+        const tl = gsap.timeline({ paused: true });
+
+        // ENTRY — lands 01's dive: emerge from blur, already close. No pop.
+        tl.from(sel(".s2-zoom"),
+          { filter: "blur(14px)", scale: 1.12, duration: 0.27, ease: "power2.out" }, 0);
+
+        // Slow settle drift through the typing — the camera never parks.
+        tl.to(sel(".s2-tilt"), { y: -10, duration: 2.3, ease: "none" }, 0.2);
+
+        // Beat of stillness: empty field, beam caret blinks once.
+        tl.to(sel(".s2-cursor"),
+          { opacity: 0, duration: 0.15, ease: "steps(1)", repeat: 1, yoyo: true }, 0.05);
+
+        // Typewriter — 42 chars over 2.1s (~20 chars/s), caret riding the clip edge.
+        tl.to(sel(".s2-type-wrap"),
+          { maxWidth: 620, duration: 2.1, ease: "steps(42)" }, 0.3);
+
+        // SEND BEAT: caret vanishes, send circle flashes, text clears back to placeholder.
+        tl.set(sel(".s2-cursor"), { opacity: 0 }, 2.45);
+        tl.set(sel(".s2-send"), { backgroundColor: "#caccce" }, 2.5);
+        tl.set(sel(".s2-send"), { backgroundColor: "#2c2f33" }, 2.6);
+        tl.set(sel(".s2-type-wrap"), { opacity: 0 }, 2.6);
+        tl.set(sel(".s2-ph"), { opacity: 1 }, 2.6);
+
+        // Small pull-back before the dive — the reference breathes out before it drops in.
+        tl.to(sel(".s2-persp"), { scale: 0.965, y: 12, duration: 0.2, ease: "power1.inOut" }, 2.5);
+
+        // EXIT (local 2.7) — motion-blur dive into the code world (03 emerges from blur).
+        tl.to(sel(".s2-zoom"),
+          { scale: 2.6, opacity: 0, filter: "blur(20px)", duration: 0.3, ease: "power3.in" }, 2.7);
+
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines["02-typewriter"] = tl;
+      })();
+    </script>
+  </div>
+</template>

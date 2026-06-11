@@ -1,0 +1,152 @@
+<template id="comp-05-five-steps">
+  <div data-composition-id="05-five-steps" data-width="3840" data-height="2160">
+    <!-- Authored at 1920×1080 logical, scaled ×2 to the 4K canvas. -->
+    <div class="s5-up">
+      <div class="s5-stage">
+        <div class="s5-zoom">
+          <span class="s5-crumb">THE MANUAL WORKFLOW</span>
+          <div class="s5-world">
+            <div class="s5-station s5-n1" style="top: 140px;">
+              <span class="s5-num">01</span><span class="s5-label">COLLECT REFERENCES</span>
+            </div>
+            <div class="s5-station s5-n2" style="top: 520px;">
+              <span class="s5-num">02</span><span class="s5-label">BUILD YOUR PHOTO SET</span>
+            </div>
+            <div class="s5-station s5-n3" style="top: 900px;">
+              <span class="s5-num">03</span><span class="s5-label">ANALYZE, THEN GENERATE</span>
+            </div>
+            <div class="s5-station s5-n4" style="top: 1280px;">
+              <span class="s5-num">04</span><span class="s5-label">CHANGE 20 PERCENT</span>
+            </div>
+            <div class="s5-station s5-n5" style="top: 1660px;">
+              <span class="s5-num">05</span><span class="s5-label">ITERATE UNTIL IT'S YOURS</span>
+            </div>
+          </div>
+          <div class="s5-vignette"></div>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 600; font-display: block; src: url(assets/fonts/Geist-600.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+      [data-composition-id="05-five-steps"] {
+        position: absolute; inset: 0;
+        background: #050811;
+        overflow: hidden;
+        font-family: "Geist", sans-serif;
+      }
+      [data-composition-id="05-five-steps"] .s5-up {
+        position: absolute; top: 0; left: 0;
+        width: 1920px; height: 1080px;
+        transform: scale(2); transform-origin: top left;
+      }
+      [data-composition-id="05-five-steps"] .s5-stage { position: absolute; inset: 0; }
+      [data-composition-id="05-five-steps"] .s5-zoom { position: absolute; inset: 0; }
+      [data-composition-id="05-five-steps"] .s5-crumb {
+        position: absolute; left: 80px; top: 64px;
+        font-family: "Geist Mono", monospace;
+        font-size: 15px; font-weight: 500;
+        letter-spacing: 0.18em;
+        color: #8995b0;
+        opacity: 0;
+      }
+      [data-composition-id="05-five-steps"] .s5-world {
+        position: absolute; left: 0; top: 0;
+        width: 1920px; height: 1840px;
+        transform: translateY(340px);
+        transform-origin: 50% 0;
+      }
+      /* Terminal-blueprint stations: sharp corners, glint, number cell + label. */
+      [data-composition-id="05-five-steps"] .s5-station {
+        position: absolute; left: 600px;
+        width: 720px; height: 120px;
+        background: linear-gradient(180deg, #131c30 0%, #0f1726 100%);
+        border: 1px solid #36486f;
+        box-shadow: inset 0 1px 0 rgba(210,226,255,0.18), 0 24px 60px rgba(0,0,0,0.5);
+        display: flex; align-items: stretch;
+      }
+      [data-composition-id="05-five-steps"] .s5-num {
+        width: 120px; flex: none;
+        display: flex; align-items: center; justify-content: center;
+        border-right: 1px solid #283755;
+        font-family: "Geist Mono", monospace;
+        font-size: 34px; font-weight: 500;
+        color: #e9edf6;
+      }
+      [data-composition-id="05-five-steps"] .s5-label {
+        flex: 1;
+        display: flex; align-items: center;
+        padding: 0 34px;
+        font-family: "Geist Mono", monospace;
+        font-size: 24px; font-weight: 500;
+        letter-spacing: 0.14em;
+        color: #e9edf6;
+      }
+      [data-composition-id="05-five-steps"] .s5-vignette {
+        position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, rgba(5,8,17,0) 46%, rgba(0,0,0,0.66) 100%);
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 9.3;
+        const sel = (q) => `[data-composition-id="05-five-steps"] ${q}`;
+        const tl = gsap.timeline({ paused: true });
+
+        // ENTRY — rise out of 04's collapse: emerge from blur onto STEP 01.
+        tl.from(sel(".s5-zoom"),
+          { filter: "blur(18px)", scale: 1.12, duration: 0.4, ease: "power2.out" }, 0);
+        tl.to(sel(".s5-crumb"), { opacity: 1, duration: 0.6, ease: "power1.inOut" }, 0.5);
+
+        // "…show you the manual workflow" — sprint down the circuit. Full-frame smear
+        // per hop; the passed station parks overhead as blurred foreground (Law #10).
+        const HOPS = [
+          [1.2, ".s5-n1"], [2.0, ".s5-n2"], [2.8, ".s5-n3"], [3.6, ".s5-n4"],
+        ];
+        HOPS.forEach(([t, park], i) => {
+          tl.to(sel(".s5-world"), { y: -40 - 380 * i, duration: 0.4, ease: "power3.inOut" }, t);
+          tl.to(sel(".s5-zoom"), { filter: "blur(11px)", duration: 0.18, ease: "power2.in" }, t);
+          tl.to(sel(".s5-zoom"), { filter: "blur(0px)", duration: 0.24, ease: "power3.out" }, t + 0.18);
+          tl.to(sel(".s5-zoom"), { scaleY: 1.04, duration: 0.18, ease: "power2.in" }, t);
+          tl.to(sel(".s5-zoom"), { scaleY: 1, duration: 0.24, ease: "power3.out" }, t + 0.18);
+          tl.to(sel(park),
+            { y: "+=160", scale: 1.35, opacity: 0.55, filter: "blur(13px)", duration: 0.45, ease: "power3.out" }, t);
+        });
+
+        // "Five steps." — rack wide: all five seat into the circuit, sharp.
+        tl.to(sel(".s5-world"), { y: 41, scale: 0.52, duration: 0.55, ease: "power3.inOut" }, 4.4);
+        tl.to(sel(".s5-zoom"), { filter: "blur(10px)", duration: 0.22, ease: "power2.in" }, 4.4);
+        tl.to(sel(".s5-zoom"), { filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, 4.62);
+        tl.to(sel(".s5-station"),
+          { y: 0, scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 4.45);
+
+        // "…the most important one isn't the generation" — the generate step recedes.
+        tl.to(sel(".s5-n3"), { opacity: 0.38, duration: 0.5, ease: "power2.inOut" }, 5.7);
+
+        // "…it's what you do before you touch the AI" — STEP 01 fills white on the beat.
+        tl.set(sel(".s5-n1 .s5-num"), { backgroundColor: "#f0a8c2", color: "#152848" }, 8.2);
+        tl.to(sel(".s5-n1"),
+          { boxShadow: "inset 0 1px 0 rgba(210,226,255,0.18), 0 0 24px rgba(240,168,194,0.32), 0 24px 60px rgba(0,0,0,0.5)",
+            duration: 0.35, ease: "power2.out" }, 8.2);
+        tl.to(sel(".s5-n1"), { scale: 0.985, duration: 0.09, ease: "power2.in", yoyo: true, repeat: 1 }, 8.2);
+
+        // Micro-drift through the wide hold.
+        tl.to(sel(".s5-world"), { y: "+=8", duration: 3.8, ease: "none" }, 5.0);
+
+        // EXIT — blurred dive into the input close-up (06 emerges from blur).
+        tl.to(sel(".s5-zoom"),
+          { scale: 2.4, opacity: 0, filter: "blur(20px)", duration: 0.3333, ease: "power3.in" }, 8.9667);
+
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines["05-five-steps"] = tl;
+      })();
+    </script>
+  </div>
+</template>

@@ -1,0 +1,202 @@
+<template id="comp-03-comparison">
+  <div data-composition-id="03-comparison" data-width="3840" data-height="2160">
+    <!-- Authored at 1920×1080 logical, scaled ×2 to the 4K canvas. -->
+    <div class="s3-up">
+      <div class="s3-stage">
+        <div class="s3-zoom">
+          <div class="s3-persp">
+            <div class="s3-tilt">
+              <!-- LEFT — the goal. Grayscale: these belong to the world. -->
+              <div class="s3-col s3-left">
+                <div class="s3-head s3-head-left"><span class="s3-headtext-a">REFERENCE SET A</span><span class="s3-headtext-b">MORE LIKE THESE</span></div>
+                <div class="s3-item s3-l1"><img class="s3-gray" src="assets/hero-thumb-final.png" alt=""></div>
+                <div class="s3-item s3-l2 s3-mock">
+                  <span class="s3-mock-big">I QUIT SHORTS</span>
+                  <span class="s3-mock-rule"></span>
+                  <span class="s3-mock-bars"><i style="height:14px"></i><i style="height:26px"></i><i style="height:40px"></i><i style="height:58px"></i></span>
+                </div>
+                <div class="s3-item s3-l3 s3-mock">
+                  <span class="s3-mock-big">$0 &rarr; $10K</span>
+                  <span class="s3-mock-sub">IN 90 DAYS</span>
+                </div>
+              </div>
+              <!-- RIGHT — the slop. The only color in the frame. -->
+              <div class="s3-col s3-right">
+                <div class="s3-head s3-head-right"><span class="s3-headtext-a">REFERENCE SET B</span><span class="s3-headtext-b">NOT THESE</span></div>
+                <div class="s3-dim">
+                  <div class="s3-item s3-r1"><img src="assets/thumb-1.png" alt=""></div>
+                  <div class="s3-item s3-r2"><img src="assets/thumb-3.png" alt=""></div>
+                  <div class="s3-item s3-r3"><img src="assets/thumb-6.png" alt=""></div>
+                </div>
+                <span class="s3-verdict">SUPER OBVIOUS</span>
+              </div>
+            </div>
+          </div>
+          <div class="s3-vignette"></div>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 600; font-display: block; src: url(assets/fonts/Geist-600.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+      [data-composition-id="03-comparison"] {
+        position: absolute; inset: 0;
+        background: #070b16;
+        overflow: hidden;
+        font-family: "Geist", sans-serif;
+      }
+      [data-composition-id="03-comparison"] .s3-up {
+        position: absolute; top: 0; left: 0;
+        width: 1920px; height: 1080px;
+        transform: scale(2); transform-origin: top left;
+      }
+      [data-composition-id="03-comparison"] .s3-stage { position: absolute; inset: 0; }
+      [data-composition-id="03-comparison"] .s3-zoom { position: absolute; inset: 0; }
+      [data-composition-id="03-comparison"] .s3-persp { position: absolute; inset: 0; perspective: 1600px; }
+      /* Mild static tilt — the comparison still lives in the 3D world. */
+      [data-composition-id="03-comparison"] .s3-tilt {
+        position: absolute; inset: 0;
+        transform: rotateY(-3deg) rotateX(1.5deg);
+      }
+      /* Flow-station genre columns: sharp corners, glint, hairline-split rows. */
+      [data-composition-id="03-comparison"] .s3-col {
+        position: absolute; top: 64px;
+        width: 552px;
+        background: linear-gradient(180deg, #131c30 0%, #0f1726 100%);
+        border: 1px solid #36486f;
+        box-shadow: inset 0 1px 0 rgba(210,226,255,0.18), 0 24px 60px rgba(0,0,0,0.5);
+        padding-bottom: 16px;
+      }
+      [data-composition-id="03-comparison"] .s3-left  { left: 268px; }
+      [data-composition-id="03-comparison"] .s3-right { left: 1100px; }
+      [data-composition-id="03-comparison"] .s3-head {
+        position: relative;
+        height: 44px;
+        border-bottom: 1px solid #283755;
+        font-family: "Geist Mono", monospace;
+        font-size: 14px; font-weight: 500;
+        letter-spacing: 0.14em;
+        color: #e9edf6;
+      }
+      [data-composition-id="03-comparison"] .s3-head span {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+      }
+      /* The verdict labels start hidden; white-fill set swaps them in on the beat. */
+      [data-composition-id="03-comparison"] .s3-headtext-b { opacity: 0; background: #f0a8c2; color: #152848; }
+      [data-composition-id="03-comparison"] .s3-item {
+        position: relative;
+        width: 520px; height: 292px;
+        margin: 14px auto 0;
+        background: #0c111e;
+        border: 1px solid #283755;
+        overflow: hidden;
+      }
+      [data-composition-id="03-comparison"] .s3-item img {
+        width: 100%; height: 100%; object-fit: cover; display: block;
+      }
+      /* Good examples are grayscale — they belong to the world. */
+      [data-composition-id="03-comparison"] .s3-gray { filter: grayscale(1); }
+      /* CSS-mocked "designed" thumbnails — quiet, typographic, grayscale. */
+      [data-composition-id="03-comparison"] .s3-mock {
+        display: flex; flex-direction: column; justify-content: center;
+        gap: 18px;
+        padding: 0 36px; box-sizing: border-box;
+        background: linear-gradient(180deg, #19243c 0%, #111a2d 100%);
+      }
+      [data-composition-id="03-comparison"] .s3-mock-big {
+        font-size: 52px; font-weight: 600; color: #e9edf6;
+        letter-spacing: -0.01em;
+      }
+      [data-composition-id="03-comparison"] .s3-mock-sub {
+        font-family: "Geist Mono", monospace;
+        font-size: 18px; font-weight: 500; letter-spacing: 0.16em;
+        color: #8995b0;
+      }
+      [data-composition-id="03-comparison"] .s3-mock-rule { width: 180px; height: 2px; background: #5b6580; }
+      [data-composition-id="03-comparison"] .s3-mock-bars { display: flex; gap: 10px; align-items: flex-end; height: 58px; }
+      [data-composition-id="03-comparison"] .s3-mock-bars i { width: 26px; background: #6d7894; display: block; }
+      [data-composition-id="03-comparison"] .s3-dim { position: relative; }
+      [data-composition-id="03-comparison"] .s3-verdict {
+        position: absolute; left: -30px; top: 430px;
+        width: 612px;
+        background: #f0a8c2; color: #152848;
+        font-family: "Geist Mono", monospace;
+        font-size: 26px; font-weight: 500;
+        letter-spacing: 0.16em;
+        text-align: center;
+        padding: 16px 0;
+        transform: rotate(-3deg);
+        box-shadow: 0 18px 50px rgba(0,0,0,0.45);
+        opacity: 0;
+      }
+      [data-composition-id="03-comparison"] .s3-vignette {
+        position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, rgba(7,11,22,0) 48%, rgba(0,0,0,0.62) 100%);
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 21;
+        const sel = (q) => `[data-composition-id="03-comparison"] ${q}`;
+        const tl = gsap.timeline({ paused: true });
+
+        // ENTRY — sharpen in from 02's focus-pull.
+        tl.from(sel(".s3-zoom"),
+          { filter: "blur(12px)", scale: 1.08, duration: 0.45, ease: "power3.out" }, 0);
+
+        // "Look at these…" — the six references fall on from different directions,
+        // overlapping motion-blurred flights (never a uniform stagger).
+        const FALLS = [
+          [".s3-l1", -260,  -90, 1.2,  12, 0.55, 0.6  ],
+          [".s3-r1",  300, -120, 1.3,  14, 0.6,  0.85 ],
+          [".s3-l2", -180,  140, 1.12,  6, 0.45, 1.1  ],
+          [".s3-r2",  220,   80, 1.22, 12, 0.55, 1.3  ],
+          [".s3-l3",  -90,  220, 1.25, 10, 0.5,  1.55 ],
+          [".s3-r3",  140,  240, 1.18, 13, 0.55, 1.75 ],
+        ];
+        FALLS.forEach(([s, x, y, sc, blur, d, t]) => {
+          tl.from(sel(s),
+            { x, y, scale: sc, opacity: 0, filter: `blur(${blur}px)`, duration: d, ease: "power3.out" }, t);
+        });
+        tl.from(sel(".s3-head"), { opacity: 0, duration: 0.5, ease: "power2.out" }, 0.55);
+
+        // "…look more like THESE" — the goal column gets named: white-fill header
+        // swap + the sanctioned white edge-glow.
+        tl.set(sel(".s3-head-left .s3-headtext-b"), { opacity: 1 }, 8.0667);
+        tl.to(sel(".s3-left"),
+          { boxShadow: "inset 0 1px 0 rgba(210,226,255,0.18), 0 0 26px rgba(240,168,194,0.3), 0 24px 60px rgba(0,0,0,0.5)",
+            duration: 0.35, ease: "power2.out" }, 8.0667);
+
+        // "…rather than like THESE" — the slop column gets named and dimmed.
+        tl.set(sel(".s3-head-right .s3-headtext-b"), { opacity: 1 }, 10.1);
+        tl.to(sel(".s3-dim"), { opacity: 0.42, duration: 0.5, ease: "power2.inOut" }, 10.1);
+
+        // "some of them look pretty decent" — the concession: slop half-recovers.
+        tl.to(sel(".s3-dim"), { opacity: 0.85, duration: 0.6, ease: "power2.inOut" }, 13.0667);
+
+        // "…but come on. SUPER OBVIOUS." — the verdict bar slams on, slop re-dims.
+        tl.set(sel(".s3-verdict"), { opacity: 1 }, 17.6);
+        tl.to(sel(".s3-verdict"), { scale: 0.985, duration: 0.09, ease: "power2.in", yoyo: true, repeat: 1 }, 17.6);
+        tl.to(sel(".s3-dim"), { opacity: 0.5, duration: 0.45, ease: "power2.inOut" }, 17.65);
+
+        // Slow camera creep through the whole beat — motion never fully stops.
+        tl.to(sel(".s3-tilt"), { scale: 1.045, y: -10, duration: 19.5, ease: "none" }, 0.5);
+
+        // EXIT — focus-pull out (04's black headline world sharpens in).
+        tl.to(sel(".s3-zoom"),
+          { filter: "blur(18px)", opacity: 0, y: "-=120", duration: 0.4, ease: "power3.in" }, 20.6);
+
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines["03-comparison"] = tl;
+      })();
+    </script>
+  </div>
+</template>

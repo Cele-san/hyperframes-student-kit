@@ -1,0 +1,182 @@
+<template id="comp-01-iso-open">
+  <div data-composition-id="01-iso-open" data-width="1920" data-height="1080">
+    <div class="s1-stage">
+      <div class="s1-dive">
+        <div class="s1-persp">
+          <div class="s1-iso">
+            <div class="s1-panel">
+              <!-- Inverted-triangle glyph field blooming out from the *_ seed (reference 0:01.4–0:02.8). -->
+              <div class="s1-glyphs">
+                <div class="s1-row s1-r0"><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span></div>
+                <div class="s1-row s1-r1"><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span></div>
+                <div class="s1-row s1-r2"><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span></div>
+                <div class="s1-row s1-r3"><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span></div>
+                <div class="s1-row s1-r4"><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span></div>
+                <div class="s1-row s1-r5"><span class="s1-glyph">*</span><span class="s1-glyph">*</span><span class="s1-glyph">*</span></div>
+                <div class="s1-seedrow"><span class="s1-seedstar">*</span><span class="s1-seedcur">_</span></div>
+              </div>
+              <!-- Headline lives ON the panel, in perspective with it (not screen-space). -->
+              <h1 class="s1-headline">Code Intelligence is now available</h1>
+              <div class="s1-input">
+                <span class="s1-placeholder">Ask Linear…</span>
+                <span class="s1-icons">
+                  <svg class="s1-ic" viewBox="0 0 20 20" fill="none" stroke="#8a8f98" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3h5v5"/><path d="M8 17H3v-5"/><path d="M17 3l-6 6"/><path d="M3 17l6-6"/></svg>
+                  <svg class="s1-ic" viewBox="0 0 20 20" fill="none" stroke="#8a8f98" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 9.5l-6.2 6.2a4 4 0 0 1-5.6-5.6L10.6 3.7a2.7 2.7 0 0 1 3.8 3.8L8 13.9a1.4 1.4 0 0 1-2-2l5.8-5.8"/></svg>
+                  <span class="s1-send"><svg viewBox="0 0 20 20" fill="none" stroke="#c9ccd1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 16V4"/><path d="M5 9l5-5 5 5"/></svg></span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="s1-vignette"></div>
+      <div class="s1-dark"></div>
+    </div>
+
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      [data-composition-id="01-iso-open"] {
+        position: absolute; inset: 0;
+        background: #08090a;
+        overflow: hidden;
+        font-family: "Geist", sans-serif;
+      }
+      [data-composition-id="01-iso-open"] .s1-stage { position: absolute; inset: 0; }
+      [data-composition-id="01-iso-open"] .s1-dive { position: absolute; inset: 0; }
+      [data-composition-id="01-iso-open"] .s1-persp {
+        position: absolute; inset: 0;
+        perspective: 1400px;
+        display: flex; align-items: center; justify-content: center;
+      }
+      /* CSS resting transform = camera END state; the timeline fromTo lands here. */
+      [data-composition-id="01-iso-open"] .s1-iso {
+        transform: rotateX(23deg) rotateY(-14deg) scale(1.18);
+        transform-style: preserve-3d;
+      }
+      [data-composition-id="01-iso-open"] .s1-panel {
+        width: 1560px; height: 980px;
+        background: #0e0f11;
+        border: 1px solid #1d1f23;
+        border-radius: 20px;
+        padding: 64px 80px 56px;
+        display: flex; flex-direction: column;
+        box-shadow: 0 32px 80px rgba(0,0,0,0.55);
+      }
+      [data-composition-id="01-iso-open"] .s1-glyphs {
+        display: flex; flex-direction: column; align-items: center;
+        gap: 44px;
+        font-family: "Geist Mono", monospace;
+        font-size: 30px;
+        padding-top: 16px;
+      }
+      [data-composition-id="01-iso-open"] .s1-row { display: flex; gap: 58px; }
+      /* Brightness falls off with distance from the seed. */
+      [data-composition-id="01-iso-open"] .s1-r0 .s1-glyph { color: #3f444b; }
+      [data-composition-id="01-iso-open"] .s1-r1 .s1-glyph { color: #464b53; }
+      [data-composition-id="01-iso-open"] .s1-r2 .s1-glyph { color: #4e535b; }
+      [data-composition-id="01-iso-open"] .s1-r3 .s1-glyph { color: #575d66; }
+      [data-composition-id="01-iso-open"] .s1-r4 .s1-glyph { color: #636972; }
+      [data-composition-id="01-iso-open"] .s1-r5 .s1-glyph { color: #7a8089; }
+      [data-composition-id="01-iso-open"] .s1-seedrow {
+        display: flex; align-items: baseline; gap: 4px;
+        font-size: 36px;
+        color: #c9ccd1;
+      }
+      [data-composition-id="01-iso-open"] .s1-seedcur { font-size: 32px; }
+      [data-composition-id="01-iso-open"] .s1-headline {
+        margin-top: 56px;
+        text-align: center;
+        font-size: 76px; font-weight: 500;
+        letter-spacing: -0.01em;
+        color: #d7d9db;
+        white-space: nowrap;
+      }
+      [data-composition-id="01-iso-open"] .s1-input {
+        margin-top: auto;
+        height: 76px;
+        background: #0b0c0e;
+        border: 1px solid #23252a;
+        border-radius: 14px;
+        display: flex; align-items: center;
+        padding: 0 22px;
+        gap: 10px;
+      }
+      [data-composition-id="01-iso-open"] .s1-placeholder {
+        font-size: 23px; font-weight: 400;
+        color: #8a8f98;
+        flex: 1;
+      }
+      [data-composition-id="01-iso-open"] .s1-icons {
+        display: flex; align-items: center; gap: 16px; flex: none;
+      }
+      [data-composition-id="01-iso-open"] .s1-ic { width: 21px; height: 21px; }
+      /* Reference is fully monochrome — the send button is a light-on-gray circle. */
+      [data-composition-id="01-iso-open"] .s1-send {
+        width: 40px; height: 40px;
+        border-radius: 50%;
+        background: #2c2f33;
+        display: flex; align-items: center; justify-content: center;
+      }
+      [data-composition-id="01-iso-open"] .s1-send svg { width: 20px; height: 20px; }
+      [data-composition-id="01-iso-open"] .s1-vignette {
+        position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, rgba(8,9,10,0) 48%, rgba(0,0,0,0.7) 100%);
+      }
+      [data-composition-id="01-iso-open"] .s1-dark {
+        position: absolute; inset: 0; pointer-events: none;
+        background: #000;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 4;
+        const sel = (q) => `[data-composition-id="01-iso-open"] ${q}`;
+        const tl = gsap.timeline({ paused: true });
+
+        // Lift out of near-darkness.
+        tl.to(sel(".s1-dark"), { opacity: 0, duration: 1.2, ease: "power2.out" }, 0);
+
+        // Camera: slow continuous pull-back at a steep tilt — drifts the whole beat.
+        tl.fromTo(sel(".s1-iso"),
+          { rotationX: 30, rotationY: -24, scale: 1.45, y: 40 },
+          { rotationX: 23, rotationY: -14, scale: 1.18, y: 0, duration: 3.8, ease: "power2.out" }, 0);
+
+        // Headline fades in on the panel with the darkness lift — plain fade, no tracking stunt.
+        tl.from(sel(".s1-headline"),
+          { opacity: 0, y: 10, duration: 0.9, ease: "power2.out" }, 0.3);
+
+        // Seed *_ is the first thing alive; its underscore blinks like a terminal cursor.
+        tl.from(sel(".s1-seedrow"), { opacity: 0, duration: 0.5, ease: "power2.out" }, 0.2);
+        tl.to(sel(".s1-seedcur"),
+          { opacity: 0, duration: 0.4, ease: "steps(1)", repeat: 7, yoyo: true }, 0.5);
+
+        // Triangle bloom — each glyph's delay is its distance from the seed (deterministic).
+        const ROWS = [13, 11, 9, 7, 5, 3];
+        ROWS.forEach((n, r) => {
+          const rowDist = ROWS.length - r; // rows above the seed
+          for (let c = 0; c < n; c++) {
+            const x = Math.abs(c - (n - 1) / 2) * 0.55;
+            const d = Math.sqrt(x * x + rowDist * rowDist);
+            tl.from(sel(`.s1-r${r} .s1-glyph:nth-child(${c + 1})`),
+              { opacity: 0, scale: 0.7, duration: 0.45, ease: "power2.out" }, 1.4 + d * 0.14);
+          }
+        });
+
+        // Input surfaces late, once the camera has revealed the panel bottom.
+        tl.from(sel(".s1-input"), { opacity: 0, duration: 0.7, ease: "power2.out" }, 2.4);
+
+        // EXIT — fast dive toward the input (one continuous world into 02-typewriter).
+        tl.to(sel(".s1-dive"),
+          { scale: 2.3, y: -430, filter: "blur(20px)", duration: 0.27, ease: "power3.in" }, 3.73);
+
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines["01-iso-open"] = tl;
+      })();
+    </script>
+  </div>
+</template>
