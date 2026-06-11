@@ -1,0 +1,374 @@
+<template id="comp-03-flow-cascade">
+  <div data-composition-id="03-flow-cascade" data-width="1920" data-height="1080">
+    <div class="s3-stage">
+      <div class="s3-zoom">
+        <div class="s3-world">
+
+          <!-- STATION 1 — INVITE LINK EXPIRED -->
+          <div class="s3-sec s3-sec1">
+            <div class="s3-codecol s3-col1A">
+              <div class="s3-cl"><span><b>export function</b> ExpiredInviteNotice({</span></div>
+              <div class="s3-cl"><span>  onRequestNewLink,</span></div>
+              <div class="s3-cl"><span>}: {</span></div>
+              <div class="s3-cl"><span>  onRequestNewLink: () =&gt; <b>void</b>;</span></div>
+              <div class="s3-cl"><span>}) {</span></div>
+              <div class="s3-cl"><span>  <b>return</b> (</span></div>
+              <div class="s3-cl"><span>    &lt;div&gt;_</span></div>
+            </div>
+            <div class="s3-codecol s3-col1B">
+              <div class="s3-cl"><span><b>const</b> [requested, setRequested] =</span></div>
+              <div class="s3-cl"><span> </span></div>
+              <div class="s3-cl"><span><b>async function</b> handleRequest() {</span></div>
+              <div class="s3-cl"><span>  <b>await</b> requestNewInviteLink();</span></div>
+              <div class="s3-cl"><span>  setRequested(true);_</span></div>
+            </div>
+            <div class="s3-far s3-far1">&lt;h2&gt;Invite link expired&lt;/h2&gt;
+&lt;p&gt;This link is no longer valid.&lt;/p&gt;
+&lt;button onClick={onRequestNewLink}&gt;</div>
+            <div class="s3-st s3-st1">
+              <div class="s3-warn">
+                <svg viewBox="0 0 48 48" fill="none"><path d="M24 7 L44 41 H4 Z" fill="#d9dbdd"/><rect x="22.6" y="20" width="2.8" height="11" fill="#17191c"/><rect x="22.6" y="34" width="2.8" height="3" fill="#17191c"/></svg>
+              </div>
+              <div class="s3-strows">
+                <div class="s3-strow">INVITE LINK EXPIRED</div>
+                <div class="s3-strow s3-act"><span>REQUEST NEW LINK</span><span>-&gt;</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STATION 2 — VALIDATE TOKEN -->
+          <div class="s3-sec s3-sec2">
+            <div class="s3-codecol s3-col2A">
+              <div class="s3-cl"><span><b>export async function</b> validateInviteToken(</span></div>
+              <div class="s3-cl"><span>  <b>const</b> invite = <b>await</b> db.invites.findUnique(</span></div>
+              <div class="s3-cl"><span> </span></div>
+              <div class="s3-cl"><span>  <b>if</b> (!invite) {</span></div>
+              <div class="s3-cl"><span>    <b>throw new</b> InvalidInviteLinkError();</span></div>
+              <div class="s3-cl"><span>  }</span></div>
+              <div class="s3-cl"><span> </span></div>
+              <div class="s3-cl"><span>  <b>if</b> (invite.revokedAt) {</span></div>
+              <div class="s3-cl"><span>    <b>throw new</b> RevokedInviteLinkE_</span></div>
+            </div>
+            <div class="s3-far s3-far2">const claims = decodeInviteToken(token);
+if (!claims) throw new MalformedTokenError;
+const { exp, scope, driverId } = claims;</div>
+            <div class="s3-st s3-glow s3-st2">
+              <div class="s3-strow s3-center">VALIDATE TOKEN</div>
+            </div>
+            <div class="s3-tag s3-tag2">InviteTokenValidator</div>
+          </div>
+
+          <!-- STATION 3 — TOKEN EXPIRED? -->
+          <div class="s3-sec s3-sec3">
+            <div class="s3-codecol s3-col3A">
+              <div class="s3-cl"><span><b>if</b> (isExpired) {</span></div>
+              <div class="s3-cl"><span>  <b>throw new</b> ExpiredInviteLinkError();</span></div>
+              <div class="s3-cl"><span>}</span></div>
+              <div class="s3-cl"><span> </span></div>
+              <div class="s3-cl"><span><b>return</b> {</span></div>
+              <div class="s3-cl"><span>  status: <b>"valid"</b>,_</span></div>
+            </div>
+            <div class="s3-codecol s3-col3B">
+              <div class="s3-cl"><span><b>const</b> now = <b>new</b> Date();</span></div>
+              <div class="s3-cl"><span><b>const</b> expiresAt = <b>new</b> Date(invite</span></div>
+              <div class="s3-cl"><span><b>const</b> isExpired = expiresAt &lt;= n_</span></div>
+            </div>
+            <div class="s3-st s3-st3">
+              <div class="s3-strow s3-center">TOKEN EXPIRED?</div>
+              <div class="s3-split"><span class="s3-yes">YES</span><span class="s3-no">NO</span></div>
+            </div>
+            <div class="s3-tag s3-tag3">ExpiredInviteLinkError</div>
+          </div>
+
+          <!-- STATION 4 — ISSUE NEW TOKEN -->
+          <div class="s3-sec s3-sec4">
+            <div class="s3-codecol s3-col4A">
+              <div class="s3-cl"><span><b>return</b> {</span></div>
+              <div class="s3-cl"><span>  status: <b>"rejected"</b>,</span></div>
+              <div class="s3-cl"><span>  reason: <b>"expired_invite</b>_</span></div>
+            </div>
+            <div class="s3-far s3-far4">const token = signInviteToken({
+  driverId: invite.driverId,
+  ttlHours: REDEEM_WINDOW_HOURS,</div>
+            <div class="s3-st s3-glow s3-st4">
+              <div class="s3-strow s3-center">ISSUE NEW TOKEN</div>
+            </div>
+            <div class="s3-tag s3-tag4">redeemDriverInvite</div>
+          </div>
+
+          <!-- STATION 5 — NEW INVITE LINK · SENDING → SENT -->
+          <div class="s3-sec s3-sec5">
+            <div class="s3-codecol s3-col5A">
+              <div class="s3-cl"><span><b>const</b> inviteLink = `${APP_URL}/invite/${inv</span></div>
+              <div class="s3-cl"><span> </span></div>
+              <div class="s3-cl"><span><b>await</b> mailer.send({</span></div>
+              <div class="s3-cl"><span>  to: invite.email,</span></div>
+              <div class="s3-cl"><span>  template: <b>"driver-invite"</b>,</span></div>
+              <div class="s3-cl"><span>  body: { inviteLink },_</span></div>
+            </div>
+            <div class="s3-codecol s3-col5B">
+              <div class="s3-cl"><span><b>await</b> jobs.enqueue(<b>"send-driv</b></span></div>
+              <div class="s3-cl"><span>  inviteId: invite.id,</span></div>
+              <div class="s3-cl"><span>  email: invite.email,</span></div>
+              <div class="s3-cl"><span>  token: invit_</span></div>
+            </div>
+            <div class="s3-st s3-st5">
+              <div class="s3-strow s3-center">NEW INVITE LINK</div>
+              <div class="s3-strow s3-progress">
+                <div class="s3-fill"></div>
+                <span class="s3-sending">SENDING</span>
+                <span class="s3-sent">SENT</span>
+              </div>
+            </div>
+            <div class="s3-tag s3-tag5">DriverOnboarding</div>
+          </div>
+
+        </div>
+      </div>
+      <div class="s3-vignette"></div>
+    </div>
+
+    <style>
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+      [data-composition-id="03-flow-cascade"] {
+        position: absolute; inset: 0;
+        background: #060708; /* the code world sits nearly on black */
+        overflow: hidden;
+        font-family: "Geist Mono", monospace;
+      }
+      [data-composition-id="03-flow-cascade"] .s3-stage { position: absolute; inset: 0; }
+      [data-composition-id="03-flow-cascade"] .s3-zoom { position: absolute; inset: 0; }
+      /* The dolly: a tall vertical world; the timeline translates it up past each station. */
+      [data-composition-id="03-flow-cascade"] .s3-world {
+        position: absolute;
+        left: 0; top: 230px;
+        width: 100%; height: 3100px;
+      }
+      [data-composition-id="03-flow-cascade"] .s3-sec {
+        position: absolute;
+        left: 0; width: 100%; height: 620px;
+        display: flex; align-items: center; justify-content: center;
+      }
+      [data-composition-id="03-flow-cascade"] .s3-sec1 { top: 0; }
+      [data-composition-id="03-flow-cascade"] .s3-sec2 { top: 620px; }
+      [data-composition-id="03-flow-cascade"] .s3-sec3 { top: 1240px; }
+      [data-composition-id="03-flow-cascade"] .s3-sec4 { top: 1860px; }
+      [data-composition-id="03-flow-cascade"] .s3-sec5 { top: 2480px; }
+
+      /* Stations: sharp-cornered terminal blueprints. */
+      [data-composition-id="03-flow-cascade"] .s3-st {
+        position: relative; z-index: 2;
+        width: 740px;
+        background: linear-gradient(180deg, #191b1e 0%, #101214 100%);
+        border: 1px solid #3a3e44;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 30px 70px rgba(0,0,0,0.6);
+      }
+      [data-composition-id="03-flow-cascade"] .s3-st1 { display: flex; }
+      [data-composition-id="03-flow-cascade"] .s3-warn {
+        flex: none; width: 168px;
+        border-right: 1px solid #2c2f34;
+        background:
+          repeating-linear-gradient(135deg, rgba(255,255,255,0.05) 0 10px, rgba(0,0,0,0) 10px 22px),
+          #1b1e21;
+        display: flex; align-items: center; justify-content: center;
+      }
+      [data-composition-id="03-flow-cascade"] .s3-warn svg { width: 74px; height: 74px; }
+      [data-composition-id="03-flow-cascade"] .s3-strows { flex: 1; display: flex; flex-direction: column; }
+      [data-composition-id="03-flow-cascade"] .s3-strow {
+        padding: 27px 36px;
+        font-size: 26px; font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: #e8eaec;
+        white-space: nowrap;
+      }
+      [data-composition-id="03-flow-cascade"] .s3-center { text-align: center; }
+      /* Action row arrives "pressed" (light fill), settles dark — see timeline. */
+      [data-composition-id="03-flow-cascade"] .s3-act {
+        border-top: 1px solid #2c2f34;
+        background: #c9cbcd;
+        color: #17191c;
+        display: flex; align-items: center; justify-content: space-between;
+        font-size: 24px;
+      }
+      [data-composition-id="03-flow-cascade"] .s3-split {
+        display: flex;
+        border-top: 1px solid #2c2f34;
+      }
+      [data-composition-id="03-flow-cascade"] .s3-yes,
+      [data-composition-id="03-flow-cascade"] .s3-no {
+        flex: 1;
+        text-align: center;
+        padding: 21px 0;
+        font-size: 24px; font-weight: 500;
+        letter-spacing: 0.14em;
+        color: #bfc3c8;
+      }
+      [data-composition-id="03-flow-cascade"] .s3-yes { border-right: 1px solid #2c2f34; }
+      /* White edge-glow — sanctioned luminance, still monochrome. */
+      [data-composition-id="03-flow-cascade"] .s3-glow {
+        border-color: #787d84;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 0 18px rgba(255,255,255,0.16), 0 30px 70px rgba(0,0,0,0.6);
+      }
+      [data-composition-id="03-flow-cascade"] .s3-progress {
+        position: relative;
+        border-top: 1px solid #2c2f34;
+        text-align: center;
+        font-size: 24px;
+      }
+      [data-composition-id="03-flow-cascade"] .s3-fill {
+        position: absolute; inset: 0;
+        background: #d9dbdd;
+        transform: scaleX(0);
+        transform-origin: left center;
+      }
+      [data-composition-id="03-flow-cascade"] .s3-sending {
+        position: relative;
+        mix-blend-mode: difference;
+        color: #e8eaec;
+      }
+      [data-composition-id="03-flow-cascade"] .s3-sent {
+        position: absolute; left: 0; right: 0; top: 50%;
+        transform: translateY(-50%);
+        color: #17191c;
+        opacity: 0;
+      }
+
+      /* Live-typing code columns near the focal plane. */
+      [data-composition-id="03-flow-cascade"] .s3-codecol {
+        position: absolute; z-index: 1;
+        font-size: 18px;
+        line-height: 2.0;
+        color: #6e747c;
+      }
+      [data-composition-id="03-flow-cascade"] .s3-codecol b { font-weight: 400; color: #9aa0a7; }
+      [data-composition-id="03-flow-cascade"] .s3-cl {
+        max-width: 0;
+        overflow: hidden;
+        white-space: pre;
+        min-height: 36px;
+      }
+      /* Out-of-focus depth columns. */
+      [data-composition-id="03-flow-cascade"] .s3-far {
+        position: absolute; z-index: 0;
+        font-size: 18px; line-height: 2.0;
+        color: #5a6068;
+        white-space: pre;
+        filter: blur(5px);
+        opacity: 0.5;
+      }
+      [data-composition-id="03-flow-cascade"] .s3-col1A { right: 110px; top: 30px; }
+      [data-composition-id="03-flow-cascade"] .s3-col1B { left: 90px; top: 330px; }
+      [data-composition-id="03-flow-cascade"] .s3-far1 { left: 140px; top: 90px; }
+      [data-composition-id="03-flow-cascade"] .s3-col2A { left: 110px; top: 40px; }
+      [data-composition-id="03-flow-cascade"] .s3-far2 { right: 90px; top: 380px; }
+      [data-composition-id="03-flow-cascade"] .s3-col3A { right: 150px; top: 70px; }
+      [data-composition-id="03-flow-cascade"] .s3-col3B { left: 120px; top: 400px; }
+      [data-composition-id="03-flow-cascade"] .s3-col4A { right: 130px; top: 350px; }
+      [data-composition-id="03-flow-cascade"] .s3-far4 { left: 100px; top: 80px; }
+      [data-composition-id="03-flow-cascade"] .s3-col5A { right: 100px; top: 110px; }
+      [data-composition-id="03-flow-cascade"] .s3-col5B { left: 110px; top: 120px; }
+
+      [data-composition-id="03-flow-cascade"] .s3-tag {
+        position: absolute; z-index: 1;
+        font-size: 19px;
+        color: #b6bcc6;
+        background: #16181a;
+        border: 1px solid #2e3136;
+        border-radius: 4px;
+        padding: 8px 14px;
+      }
+      [data-composition-id="03-flow-cascade"] .s3-tag2 { right: 330px; bottom: 90px; }
+      [data-composition-id="03-flow-cascade"] .s3-tag3 { left: 170px; top: 110px; }
+      [data-composition-id="03-flow-cascade"] .s3-tag4 { left: 290px; bottom: 110px; }
+      [data-composition-id="03-flow-cascade"] .s3-tag5 { left: 240px; bottom: 130px; }
+
+      [data-composition-id="03-flow-cascade"] .s3-vignette {
+        position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, rgba(6,7,8,0) 42%, rgba(0,0,0,0.72) 100%);
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 9;
+        const sel = (q) => `[data-composition-id="03-flow-cascade"] ${q}`;
+        const tl = gsap.timeline({ paused: true });
+
+        // ENTRY — emerge FROM blur (lands 02's motion-blur dive).
+        tl.from(sel(".s3-zoom"),
+          { filter: "blur(20px)", scale: 1.15, duration: 0.4, ease: "power3.out" }, 0);
+
+        // Continuous slow drift on the outer wrapper — the camera never parks.
+        tl.to(sel(".s3-zoom"), { y: -40, duration: 8.5, ease: "none" }, 0);
+
+        // DOLLY HOPS — beat grid: 2.0 / 3.5 / 5.0 / 6.5. Per hop: the whole frame
+        // smears (full-frame motion blur + vertical stretch), the outgoing station
+        // PARKS overhead as a blurred foreground layer (it lags the world and stays
+        // peeking into the top of frame until the next hop carries it off), and the
+        // incoming station sharpens up from below.
+        const hops = [2.0, 3.5, 5.0, 6.5];
+        hops.forEach((t, i) => {
+          tl.to(sel(".s3-world"),
+            { y: -620 * (i + 1), duration: 0.5, ease: "power3.inOut" }, t);
+
+          // Full-frame motion blur, peaking mid-hop, resolving on arrival.
+          tl.to(sel(".s3-zoom"), { filter: "blur(11px)", duration: 0.22, ease: "power2.in" }, t);
+          tl.to(sel(".s3-zoom"), { filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, t + 0.22);
+          tl.to(sel(".s3-zoom"), { scaleY: 1.045, duration: 0.22, ease: "power2.in" }, t);
+          tl.to(sel(".s3-zoom"), { scaleY: 1, duration: 0.3, ease: "power3.out" }, t + 0.22);
+
+          // Outgoing station parks overhead: lags the world (+160 counter-drift),
+          // grows toward the lens, defocuses — but stays visible.
+          tl.to(sel(`.s3-sec${i + 1} .s3-st`),
+            { y: 160, scale: 1.4, opacity: 0.55, filter: "blur(13px)", duration: 0.55, ease: "power3.out" }, t);
+
+          tl.from(sel(`.s3-sec${i + 2} .s3-st`),
+            { scale: 0.92, filter: "blur(8px)", duration: 0.6, ease: "power3.out" }, t + 0.05);
+        });
+
+        // Station micro-states.
+        tl.set(sel(".s3-act"), { backgroundColor: "#1d2023", color: "#d4d7da" }, 1.4);  // pressed → settled
+        tl.set(sel(".s3-yes"), { backgroundColor: "#d9dbdd", color: "#17191c" }, 4.3);  // YES fills white
+        tl.fromTo(sel(".s3-fill"),
+          { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "power1.inOut" }, 7.0);      // SENDING sweep
+        tl.set(sel(".s3-sending"), { opacity: 0 }, 7.9);
+        tl.set(sel(".s3-sent"), { opacity: 1 }, 7.9);                                    // → SENT
+
+        // Floating code tags surface shortly after each arrival.
+        [[".s3-tag2", 2.4], [".s3-tag3", 3.9], [".s3-tag4", 5.4], [".s3-tag5", 6.9]].forEach(([q, t]) => {
+          tl.from(sel(q), { opacity: 0, y: 8, duration: 0.4, ease: "power2.out" }, t);
+        });
+
+        // Live code types on near the active station (~25 chars/s, trailing _ baked into the text).
+        const TYPE = [
+          { col: "1A", start: 0.5, lens: [38, 20, 4, 31, 4, 10, 10] },
+          { col: "1B", start: 0.9, lens: [33, 0, 32, 31, 21] },
+          { col: "2A", start: 2.3, lens: [42, 44, 0, 16, 40, 3, 0, 25, 34] },
+          { col: "3A", start: 3.8, lens: [16, 37, 1, 0, 8, 19] },
+          { col: "3B", start: 4.1, lens: [23, 33, 33] },
+          { col: "4A", start: 5.3, lens: [8, 21, 26] },
+          { col: "5A", start: 6.8, lens: [44, 0, 19, 19, 28, 24] },
+          { col: "5B", start: 7.1, lens: [29, 22, 22, 15] },
+        ];
+        TYPE.forEach(({ col, start, lens }) => {
+          lens.forEach((n, i) => {
+            if (!n) return;
+            tl.to(sel(`.s3-col${col} .s3-cl:nth-child(${i + 1})`),
+              { maxWidth: 680, duration: n / 25, ease: `steps(${n})` }, start + i * 0.16);
+          });
+        });
+
+        // EXIT (local 8.5) — focus-pull out: the world defocuses and drifts up into 04's flat list.
+        tl.to(sel(".s3-zoom"),
+          { filter: "blur(18px)", opacity: 0, y: -160, duration: 0.5, ease: "power3.in" }, 8.5);
+
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines["03-flow-cascade"] = tl;
+      })();
+    </script>
+  </div>
+</template>

@@ -1,0 +1,298 @@
+<template id="comp-06-beginner-way">
+  <div data-composition-id="06-beginner-way" data-width="3840" data-height="2160">
+    <!-- Authored at 1920×1080 logical, scaled ×2 to the 4K canvas. -->
+    <div class="s6-up">
+      <div class="s6-stage">
+        <div class="s6-zoom">
+          <div class="s6-persp">
+            <div class="s6-tilt">
+              <!-- The results plane — empty until the send beat. -->
+              <div class="s6-results">
+                <div class="s6-genstation">
+                  <div class="s6-genhead">CHATGPT · IMAGE 2.0</div>
+                  <div class="s6-genrow">
+                    <span class="s6-genlabel s6-genlabel-a">GENERATING</span>
+                    <span class="s6-genlabel s6-genlabel-b">DONE</span>
+                    <span class="s6-fill">
+                      <span class="s6-genlabel s6-fill-label s6-genlabel-a">GENERATING</span>
+                      <span class="s6-genlabel s6-fill-label s6-genlabel-b">DONE</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="s6-slopwrap">
+                  <img class="s6-slop" src="assets/thumb-2.png" alt="">
+                  <span class="s6-tag s6-tag-something">SOMETHING</span>
+                </div>
+                <div class="s6-canva">
+                  <span class="s6-canva-dots"><i></i><i></i><i></i></span>
+                  <span class="s6-canva-label">Untitled file</span>
+                  <span class="s6-tag s6-tag-nothing">NOTHING</span>
+                </div>
+              </div>
+
+              <!-- The ask surface — close-up input, low in frame. -->
+              <div class="s6-surface"></div>
+              <div class="s6-card">
+                <div class="s6-type-line">
+                  <span class="s6-wrap s6-wrap1"><span class="s6-text">Stop your YouTube thumbnails from looking like ChatGPT made them</span></span><span class="s6-wrap s6-wrap2"><span class="s6-text">, make me a YouTube thumbnail</span></span>
+                  <span class="s6-ph">Describe your thumbnail…</span>
+                  <span class="s6-cursor"></span>
+                </div>
+                <div class="s6-icons">
+                  <svg class="s6-ic" viewBox="0 0 20 20" fill="none" stroke="#8995b0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 9.5l-6.2 6.2a4 4 0 0 1-5.6-5.6L10.6 3.7a2.7 2.7 0 0 1 3.8 3.8L8 13.9a1.4 1.4 0 0 1-2-2l5.8-5.8"/></svg>
+                  <span class="s6-send"><svg viewBox="0 0 20 20" fill="none" stroke="#c8d1e3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 16V4"/><path d="M5 9l5-5 5 5"/></svg></span>
+                </div>
+              </div>
+              <div class="s6-modelpill">ChatGPT · Image 2.0</div>
+            </div>
+          </div>
+          <div class="s6-vignette"></div>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 600; font-display: block; src: url(assets/fonts/Geist-600.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+      [data-composition-id="06-beginner-way"] {
+        position: absolute; inset: 0;
+        background: #070b16;
+        overflow: hidden;
+        font-family: "Geist", sans-serif;
+      }
+      [data-composition-id="06-beginner-way"] .s6-up {
+        position: absolute; top: 0; left: 0;
+        width: 1920px; height: 1080px;
+        transform: scale(2); transform-origin: top left;
+      }
+      [data-composition-id="06-beginner-way"] .s6-stage { position: absolute; inset: 0; }
+      [data-composition-id="06-beginner-way"] .s6-zoom { position: absolute; inset: 0; }
+      [data-composition-id="06-beginner-way"] .s6-persp { position: absolute; inset: 0; perspective: 1600px; }
+      [data-composition-id="06-beginner-way"] .s6-tilt {
+        position: absolute; inset: 0;
+        transform: rotateY(-3deg) rotateX(1.5deg);
+      }
+      [data-composition-id="06-beginner-way"] .s6-surface {
+        position: absolute;
+        left: 130px; right: 130px; top: -140px; height: 560px;
+        background: linear-gradient(180deg, #111a2d 0%, #0b101c 100%);
+        border-radius: 28px;
+      }
+      [data-composition-id="06-beginner-way"] .s6-card {
+        position: absolute;
+        left: 190px; right: 190px; top: 460px;
+        height: 230px;
+        background: linear-gradient(180deg, #16213a 0%, #111a2d 100%);
+        border: 1px solid #25334f;
+        border-radius: 18px;
+        box-shadow: 0 24px 64px rgba(0,0,0,0.55);
+        padding: 34px 40px 26px;
+        display: flex; flex-direction: column; justify-content: space-between;
+      }
+      [data-composition-id="06-beginner-way"] .s6-type-line {
+        display: flex; align-items: center;
+        min-height: 38px;
+        position: relative;
+      }
+      [data-composition-id="06-beginner-way"] .s6-wrap {
+        display: inline-block; overflow: hidden; white-space: nowrap;
+        max-width: 0; vertical-align: bottom;
+      }
+      [data-composition-id="06-beginner-way"] .s6-text {
+        font-size: 26px; font-weight: 400; color: #e9edf6;
+        white-space: nowrap;
+      }
+      [data-composition-id="06-beginner-way"] .s6-ph {
+        position: absolute; left: 0; top: 50%;
+        transform: translateY(-50%);
+        font-size: 26px; font-weight: 400; color: #6a748e;
+        white-space: nowrap;
+      }
+      /* Thin beam caret — inputs take a caret, never a block. */
+      [data-composition-id="06-beginner-way"] .s6-cursor {
+        width: 2px; height: 30px; background: #f0a8c2;
+        display: inline-block; margin-left: 3px; flex: none;
+      }
+      [data-composition-id="06-beginner-way"] .s6-icons {
+        display: flex; align-items: center; justify-content: flex-end; gap: 18px;
+      }
+      [data-composition-id="06-beginner-way"] .s6-ic { width: 23px; height: 23px; }
+      [data-composition-id="06-beginner-way"] .s6-send {
+        width: 46px; height: 46px; border-radius: 50%;
+        background: #2a3a5e;
+        display: flex; align-items: center; justify-content: center;
+      }
+      [data-composition-id="06-beginner-way"] .s6-send svg { width: 22px; height: 22px; }
+      [data-composition-id="06-beginner-way"] .s6-modelpill {
+        position: absolute; right: 230px; top: 740px;
+        background: #131c30;
+        border: 1px solid #283755;
+        border-radius: 12px;
+        padding: 13px 22px;
+        font-size: 22px; font-weight: 500;
+        color: #c8d1e3;
+      }
+      /* Results plane — born from the send. */
+      [data-composition-id="06-beginner-way"] .s6-results { position: absolute; inset: 0; }
+      [data-composition-id="06-beginner-way"] .s6-genstation {
+        position: absolute; left: 250px; top: 170px;
+        width: 480px;
+        background: linear-gradient(180deg, #131c30 0%, #0f1726 100%);
+        border: 1px solid #36486f;
+        box-shadow: inset 0 1px 0 rgba(210,226,255,0.18), 0 24px 60px rgba(0,0,0,0.5);
+        opacity: 0;
+      }
+      [data-composition-id="06-beginner-way"] .s6-genhead {
+        padding: 11px 16px;
+        border-bottom: 1px solid #283755;
+        font-family: "Geist Mono", monospace;
+        font-size: 14px; font-weight: 500;
+        letter-spacing: 0.14em;
+        color: #8995b0;
+      }
+      [data-composition-id="06-beginner-way"] .s6-genrow {
+        position: relative; height: 62px; overflow: hidden;
+      }
+      [data-composition-id="06-beginner-way"] .s6-fill {
+        position: absolute; left: 0; top: 0; bottom: 0;
+        width: 0; overflow: hidden;
+        background: #f0a8c2;
+      }
+      /* Width-clipped twin labels survive the blossom sweep (difference blend
+         only works against white — over blossom it goes muddy green). */
+      [data-composition-id="06-beginner-way"] .s6-genlabel {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        font-family: "Geist Mono", monospace;
+        font-size: 19px; font-weight: 500;
+        letter-spacing: 0.18em;
+        color: #e9edf6;
+      }
+      [data-composition-id="06-beginner-way"] .s6-fill-label {
+        width: 478px;
+        color: #152848;
+      }
+      [data-composition-id="06-beginner-way"] .s6-genlabel-b { opacity: 0; }
+      [data-composition-id="06-beginner-way"] .s6-slopwrap {
+        position: absolute; left: 790px; top: 90px;
+        width: 560px; height: 315px;
+        border: 1px solid #36486f;
+        box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+      }
+      /* The villain is born — the only color in the frame. */
+      [data-composition-id="06-beginner-way"] .s6-slop {
+        width: 100%; height: 100%; object-fit: cover; display: block;
+      }
+      [data-composition-id="06-beginner-way"] .s6-canva {
+        position: absolute; left: 1420px; top: 110px;
+        width: 360px; height: 275px;
+        background: #0f1626;
+        border: 1px solid #222f4c;
+        opacity: 0;
+      }
+      [data-composition-id="06-beginner-way"] .s6-canva-dots {
+        position: absolute; left: 14px; top: 12px;
+        display: flex; gap: 7px;
+      }
+      [data-composition-id="06-beginner-way"] .s6-canva-dots i {
+        width: 9px; height: 9px; border-radius: 50%;
+        background: #2a3a5e; display: block;
+      }
+      [data-composition-id="06-beginner-way"] .s6-canva-label {
+        position: absolute; left: 0; right: 0; top: 50%;
+        transform: translateY(-50%);
+        text-align: center;
+        font-size: 19px; color: #5b6580;
+      }
+      [data-composition-id="06-beginner-way"] .s6-tag {
+        position: absolute;
+        background: #f0a8c2; color: #152848;
+        font-family: "Geist Mono", monospace;
+        font-size: 16px; font-weight: 500;
+        letter-spacing: 0.14em;
+        padding: 8px 13px;
+        opacity: 0;
+      }
+      [data-composition-id="06-beginner-way"] .s6-tag-something { left: 14px; bottom: 14px; }
+      [data-composition-id="06-beginner-way"] .s6-tag-nothing {
+        left: 50%; transform: translateX(-50%); bottom: 18px;
+        background: #283755; color: #8995b0;
+      }
+      [data-composition-id="06-beginner-way"] .s6-vignette {
+        position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, rgba(7,11,22,0) 48%, rgba(0,0,0,0.65) 100%);
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 26.1;
+        const sel = (q) => `[data-composition-id="06-beginner-way"] ${q}`;
+        const tl = gsap.timeline({ paused: true });
+
+        // ENTRY — lands 05's dive: emerge from blur on the empty input.
+        tl.from(sel(".s6-zoom"),
+          { filter: "blur(20px)", scale: 1.12, duration: 0.4, ease: "power2.out" }, 0);
+
+        // Idle caret blinks while the VO sets up "the beginner way…" (finite repeats).
+        tl.to(sel(".s6-cursor"),
+          { opacity: 0, duration: 0.45, ease: "steps(1)", repeat: 7, yoyo: true }, 0.5);
+
+        // Slow settle drift — the camera never parks.
+        tl.to(sel(".s6-tilt"), { y: -10, duration: 3.9, ease: "none" }, 0.2);
+
+        // "You take your video title…" — PASTE: the whole title lands at once.
+        tl.set(sel(".s6-ph"), { opacity: 0 }, 4.6333);
+        tl.set(sel(".s6-wrap1"), { maxWidth: 880 }, 4.6333);
+
+        // "…and you say" — the beginner types the ask, caret riding the clip edge.
+        tl.to(sel(".s6-wrap2"), { maxWidth: 380, duration: 1.9, ease: "steps(29)" }, 10.4);
+
+        // SEND BEAT — caret vanishes, gray circle flashes, field clears to placeholder.
+        tl.set(sel(".s6-cursor"), { opacity: 0 }, 12.6);
+        tl.set(sel(".s6-send"), { backgroundColor: "#f0a8c2" }, 12.6);
+        tl.set(sel(".s6-send"), { backgroundColor: "#2a3a5e" }, 12.7);
+        tl.set(sel(".s6-wrap1"), { maxWidth: 0 }, 12.7);
+        tl.set(sel(".s6-wrap2"), { maxWidth: 0 }, 12.7);
+        tl.set(sel(".s6-ph"), { opacity: 1 }, 12.7);
+
+        // Pull back — the camera opens room above the input for the result plane.
+        tl.to(sel(".s6-persp"), { scale: 0.88, y: 60, duration: 0.5, ease: "power2.inOut" }, 13.1);
+
+        // The generation station rises through motion blur; the white sweep runs.
+        tl.to(sel(".s6-genstation"), { opacity: 1, duration: 0.01 }, 13.4);
+        tl.from(sel(".s6-genstation"),
+          { y: 140, filter: "blur(12px)", duration: 0.55, ease: "power3.out" }, 13.4);
+        tl.fromTo(sel(".s6-fill"), { width: 0 },
+          { width: "100%", duration: 2.4, ease: "power1.inOut" }, 13.7);
+
+        // DONE — and the slop materializes: blur resolves into the only color in frame.
+        tl.set(sel(".s6-genlabel-a"), { opacity: 0 }, 16.1);
+        tl.set(sel(".s6-genlabel-b"), { opacity: 1 }, 16.1);
+        tl.from(sel(".s6-slopwrap"),
+          { opacity: 0, scale: 1.06, filter: "blur(20px)", duration: 0.5, ease: "power3.out" }, 16.2);
+
+        // "…better than staring at a blank Canva file" — the empty alternative,
+        // luminance-faded in, kept dim. (Rests fade; this one stays a ghost.)
+        tl.to(sel(".s6-canva"), { opacity: 0.55, duration: 0.8, ease: "power1.inOut" }, 16.5);
+
+        // "…make SOMETHING than make NOTHING" — the verdict tags land on their words.
+        tl.set(sel(".s6-tag-something"), { opacity: 1 }, 25.5333);
+        tl.to(sel(".s6-tag-something"), { scale: 0.985, duration: 0.09, ease: "power2.in", yoyo: true, repeat: 1 }, 25.5333);
+        tl.set(sel(".s6-tag-nothing"), { opacity: 1 }, 25.8667);
+
+        // Long hold: slow creep — motion never fully stops. No exit; the master
+        // cuts to the talking head at exactly 120.0.
+        tl.to(sel(".s6-persp"), { scale: 0.866, y: 72, duration: 12.4, ease: "none" }, 13.7);
+
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines["06-beginner-way"] = tl;
+      })();
+    </script>
+  </div>
+</template>

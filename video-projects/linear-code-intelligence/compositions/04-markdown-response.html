@@ -1,0 +1,218 @@
+<template id="comp-04-markdown-response">
+  <div data-composition-id="04-markdown-response" data-width="1920" data-height="1080">
+    <div class="s4-stage">
+
+      <!-- BEAT A (0–2.0): flat typed headline + the four code-path pills. -->
+      <div class="s4-flat">
+        <div class="s4-hline">
+          <span class="s4-hwrap"><span class="s4-htext">Relevant code paths:</span></span>
+          <span class="s4-hcur">_</span>
+        </div>
+        <div class="s4-list">
+          <span class="s4-pill">ExpiredInviteLinkError</span>
+          <span class="s4-pill">InviteTokenValidator</span>
+          <span class="s4-pill">DriverOnboarding</span>
+          <span class="s4-pill">redeemDriverInvite</span>
+        </div>
+      </div>
+
+      <!-- BEAT B (2.0–4.0): the full Ask Linear answer panel in heavy perspective. -->
+      <div class="s4-persp">
+        <div class="s4-tilt">
+          <div class="s4-drift">
+            <div class="s4-pane">
+              <div class="s4-panelabel">Ask Linear</div>
+              <div class="s4-bubble">What happens when an invite link expires?</div>
+              <p class="s4-answer">The system confirms the invite is expired, automatically creates a replacement invite with a fresh token, and sends the driver a new link to continue.</p>
+              <div class="s4-subhead">Relevant code paths:</div>
+              <div class="s4-pills">
+                <span class="s4-pill">ExpiredInviteLinkError</span>
+                <span class="s4-pill">InviteTokenValidator</span>
+                <span class="s4-pill">DriverOnboarding</span>
+                <span class="s4-pill">redeemDriverInvite</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="s4-vignette"></div>
+    </div>
+
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      [data-composition-id="04-markdown-response"] {
+        position: absolute; inset: 0;
+        background: #050607; /* the rest after the journey is nearly black */
+        overflow: hidden;
+        font-family: "Geist", sans-serif;
+      }
+      [data-composition-id="04-markdown-response"] .s4-stage { position: absolute; inset: 0; }
+
+      /* — Beat A — */
+      [data-composition-id="04-markdown-response"] .s4-flat {
+        position: absolute;
+        left: 590px; top: 240px;
+      }
+      [data-composition-id="04-markdown-response"] .s4-hline {
+        display: flex; align-items: baseline;
+        min-height: 70px;
+      }
+      [data-composition-id="04-markdown-response"] .s4-hwrap {
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: 0;
+        vertical-align: bottom;
+      }
+      [data-composition-id="04-markdown-response"] .s4-htext {
+        font-size: 56px; font-weight: 400;
+        color: #b9bdc2;
+        white-space: nowrap;
+      }
+      /* Underscore cursor — mono surfaces use _, inputs use the beam. */
+      [data-composition-id="04-markdown-response"] .s4-hcur {
+        font-family: "Geist Mono", monospace;
+        font-size: 50px;
+        color: #b9bdc2;
+        margin-left: 6px;
+      }
+      [data-composition-id="04-markdown-response"] .s4-list {
+        margin-top: 52px;
+        display: flex; flex-direction: column; align-items: flex-start;
+        gap: 26px;
+        margin-left: 26px;
+      }
+      [data-composition-id="04-markdown-response"] .s4-pill {
+        font-family: "Geist Mono", monospace;
+        font-size: 30px;
+        color: #d4d7da;
+        background: #16181a;
+        border: 1px solid #2e3136;
+        border-radius: 6px;
+        padding: 12px 22px;
+        white-space: nowrap;
+      }
+
+      /* — Beat B — */
+      [data-composition-id="04-markdown-response"] .s4-persp {
+        position: absolute; inset: 0;
+        perspective: 1500px;
+        display: flex; align-items: center; justify-content: center;
+      }
+      [data-composition-id="04-markdown-response"] .s4-tilt {
+        transform: rotateY(20deg) rotateX(8deg) rotate(-9deg) scale(1.12);
+        transform-style: preserve-3d;
+      }
+      [data-composition-id="04-markdown-response"] .s4-pane {
+        width: 1280px;
+        background: #101113;
+        border: 1px solid #1f2125;
+        border-radius: 18px;
+        box-shadow: 0 40px 90px rgba(0,0,0,0.6);
+        padding: 44px 64px 70px;
+      }
+      [data-composition-id="04-markdown-response"] .s4-panelabel {
+        font-size: 24px; font-weight: 400;
+        color: #6f747b;
+      }
+      [data-composition-id="04-markdown-response"] .s4-bubble {
+        margin: 34px 0 0 auto;
+        width: fit-content;
+        max-width: 640px;
+        background: #1b1d20;
+        border-radius: 14px;
+        padding: 20px 28px;
+        font-size: 27px;
+        color: #ecedef;
+      }
+      [data-composition-id="04-markdown-response"] .s4-answer {
+        margin-top: 44px;
+        max-width: 980px;
+        font-size: 29px; font-weight: 400;
+        line-height: 1.55;
+        color: #d4d7da;
+      }
+      [data-composition-id="04-markdown-response"] .s4-subhead {
+        margin-top: 40px;
+        font-size: 27px; font-weight: 400;
+        color: #b9bdc2;
+      }
+      [data-composition-id="04-markdown-response"] .s4-pills {
+        margin-top: 22px;
+        margin-left: 40px;
+        display: flex; flex-direction: column; align-items: flex-start;
+        gap: 16px;
+      }
+      [data-composition-id="04-markdown-response"] .s4-pills .s4-pill {
+        font-size: 25px;
+        padding: 10px 18px;
+      }
+      [data-composition-id="04-markdown-response"] .s4-vignette {
+        position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, rgba(5,6,7,0) 45%, rgba(0,0,0,0.7) 100%);
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 4;
+        const sel = (q) => `[data-composition-id="04-markdown-response"] ${q}`;
+        const tl = gsap.timeline({ paused: true });
+
+        // BEAT A — lands 03's focus-pull: settle from soft blur.
+        tl.from(sel(".s4-flat"),
+          { filter: "blur(10px)", opacity: 0.4, duration: 0.4, ease: "power2.out" }, 0);
+
+        // Typed headline with underscore cursor (~14 chars/s, 20 chars).
+        tl.to(sel(".s4-hwrap"),
+          { maxWidth: 560, duration: 1.3333, ease: "steps(20)" }, 0.2);
+        tl.to(sel(".s4-hcur"),
+          { opacity: 0, duration: 0.3, ease: "steps(1)", repeat: 1, yoyo: true }, 1.6);
+
+        // Pills FALL ONTO the list from four different directions while the headline
+        // is still typing — overlapping motion-blurred flights, each landing power3.out
+        // (reference t=17s: one pill is a horizontal blur streak while another crosses
+        // in front of it sharp from the lower-left).
+        const FALLS = [
+          { n: 1, x: 220,  y: -120, s: 1.22, blur: 12, d: 0.55, t: 0.5  },  // upper-right
+          { n: 2, x: 340,  y: 30,   s: 1.3,  blur: 14, d: 0.6,  t: 0.68 },  // hard right — the streak
+          { n: 3, x: -210, y: 150,  s: 1.12, blur: 6,  d: 0.45, t: 0.78 },  // lower-left, crosses in front
+          { n: 4, x: 70,   y: 210,  s: 1.25, blur: 12, d: 0.55, t: 0.94 },  // from below
+        ];
+        FALLS.forEach(({ n, x, y, s, blur, d, t }) => {
+          tl.from(sel(`.s4-list .s4-pill:nth-child(${n})`),
+            { x, y, scale: s, opacity: 0, filter: `blur(${blur}px)`, duration: d, ease: "power3.out" }, t);
+        });
+
+        // A → B: quick focus pull through.
+        tl.to(sel(".s4-flat"),
+          { filter: "blur(14px)", opacity: 0, duration: 0.27, ease: "power2.in" }, 2.0);
+
+        // BEAT B — the conversation panel emerges from blur in heavy perspective.
+        tl.from(sel(".s4-persp"),
+          { opacity: 0, filter: "blur(14px)", duration: 0.35, ease: "power2.out" }, 2.05);
+
+        // The last pills land ONTO the tilted panel after it resolves (reference
+        // F_panel_01–05: pill 4 arrives blurred and settles into the stack).
+        tl.from(sel(".s4-pills .s4-pill:nth-child(3)"),
+          { x: -60, y: 60, scale: 1.15, opacity: 0, filter: "blur(10px)", duration: 0.45, ease: "power3.out" }, 2.3);
+        tl.from(sel(".s4-pills .s4-pill:nth-child(4)"),
+          { x: 50, y: 90, scale: 1.2, opacity: 0, filter: "blur(12px)", duration: 0.5, ease: "power3.out" }, 2.45);
+
+        // Slow camera drift across the hold — never parks.
+        tl.fromTo(sel(".s4-drift"),
+          { y: 26, x: 10 }, { y: -20, x: -10, duration: 1.95, ease: "none" }, 2.05);
+
+        // EXIT (local 3.6) — soft dissolve into the title-card rest.
+        tl.to(sel(".s4-persp"), { opacity: 0, duration: 0.4, ease: "sine.inOut" }, 3.6);
+
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines["04-markdown-response"] = tl;
+      })();
+    </script>
+  </div>
+</template>

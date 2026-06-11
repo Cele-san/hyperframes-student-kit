@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=3840, height=2160">
+    <title>AI Thumbnails intro — LINEAR register redo (drop-in 0:00–2:00)</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 600; font-display: block; src: url(assets/fonts/Geist-600.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        width: 3840px;
+        height: 2160px;
+        overflow: hidden;
+        background: #070b16;
+        color: #e9edf6;
+      }
+      .beat-layer {
+        position: absolute;
+        top: 0; left: 0;
+        width: 3840px;
+        height: 2160px;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      LINEAR register (DESIGN.linear.md) applied to the AI-Thumbnails intro.
+      Drop-in replacement for master 0:00–2:00 (render --fps 30000/1001 at 3840×2160).
+
+      TIMING GRID: VO-driven, not music-driven — Law #4 adapted. Every hit pins to
+      a whisper word timestamp of assets/source-audio.m4a, snapped to 1/30 frame
+      boundaries. Continuous VO leaves no room for black title-card rests; rests
+      are brief in-world holds at sprint resolutions.
+
+      COLOR RULE (Andy, 2026-06-11, rev 2): LINEAR V2 — Tier 3 brand swap over
+      color-as-villain. Spec: DESIGN.linear-v2.md (workspace root; delta doc on
+      top of DESIGN.linear.md, which stays the canonical grayscale register).
+      The world keeps the Linear luminance ramp but rotated onto cobalt #152848 —
+      canvas/surfaces/borders/text are all cobalt-cast at the same relative
+      luminance as the canonical grays. Blossom #f0a8c2 owns the accent slot
+      (DESIGN.linear.md accent swap rule): every fill state change (stamps,
+      verdicts, STEP 01, the GENERATING sweep, SOMETHING tag), edge glows, the
+      send-flash, and the live cursors (beam carets + underscores). Station
+      top-edge glints stay a cool white. The glossy AI thumbnails (thumb-1..6 +
+      the slop in 06) keep their native color — still the alien object in frame.
+
+      VO map (whisper, .work/main-audio.json of the master):
+        0.00– 3.90  "I was on YouTube… kept seeing the same"      → flag pins 3.90/4.95/6.90/8.05/9.25/9.65
+        3.90– 5.84  "thumbnail over and over again"
+        5.98–10.98  "different channels… different topics… same look"
+       11.16–15.24  "What was that glossy, futuristic, ChatGPT Image 2.0 look?"
+       15.84–33.12  "Okay, these images… this one, this one right here, ChatGPT image ×2, this one too ×2"
+       33.36–39.38  "design style… they have this particular look"
+       39.92–52.46  "these aren't as clear… more like these rather than like these"
+       52.46–59.72  "some look pretty decent, but come on, super obvious"
+       60.42–72.88  "AI isn't the problem… I use AI… so obviously AI… questioning everything"
+       73.22–84.34  "low effort? script AI? claims real? …you lose them before you've said a word"
+       84.64–93.60  "manual workflow, five steps… what you do before you touch the AI"
+       93.90–106.48 "take your title… paste into ChatGPT… make me a YouTube thumbnail"
+      106.48–121.26 "better than staring at a blank Canva file… make something than make nothing"
+
+      Slots (all on 1/30 frame boundaries):
+        01 browse-open    0    –  15.8   YT-home grid world, dolly hops, AI stamps, ChatGPT 2.0 close-up
+        02 lineup        15.8  –  39.4   evidence circuit, deictic stamps, "particular look" pills
+        03 comparison    39.4  –  60.4   LIKE THESE vs slop split, SUPER OBVIOUS hit
+        04 trust-collapse 60.4 –  84.6   headline typewriter + viewer-doubt chat modal, collapse
+        05 five-steps    84.6  –  93.9   5-station circuit teaser, STEP 01 white-fill
+        06 beginner-way  93.9  – 120     input typewriter, send, GENERATING sweep, slop materializes
+    -->
+    <div data-hf-id="hf-gwf4" id="root" data-composition-id="ai-thumbnails-intro-linear" data-start="0" data-duration="120" data-width="3840" data-height="2160">
+      <div data-hf-id="hf-zs69" class="beat-layer" data-composition-id="01-browse-open" data-composition-src="compositions/01-browse-open.html" data-start="0" data-duration="15.8" data-track-index="0" data-width="3840" data-height="2160"></div>
+
+      <div data-hf-id="hf-6pp5" class="beat-layer" data-composition-id="02-lineup" data-composition-src="compositions/02-lineup.html" data-start="15.8" data-duration="23.6" data-track-index="1" data-width="3840" data-height="2160"></div>
+
+      <div data-hf-id="hf-z9as" class="beat-layer" data-composition-id="03-comparison" data-composition-src="compositions/03-comparison.html" data-start="39.4" data-duration="21" data-track-index="0" data-width="3840" data-height="2160"></div>
+
+      <div data-hf-id="hf-083y" class="beat-layer" data-composition-id="04-trust-collapse" data-composition-src="compositions/04-trust-collapse.html" data-start="60.4" data-duration="24.2" data-track-index="1" data-width="3840" data-height="2160"></div>
+
+      <div data-hf-id="hf-jhqp" class="beat-layer" data-composition-id="05-five-steps" data-composition-src="compositions/05-five-steps.html" data-start="84.6" data-duration="9.3" data-track-index="0" data-width="3840" data-height="2160"></div>
+
+      <div data-hf-id="hf-7if6" class="beat-layer" data-composition-id="06-beginner-way" data-composition-src="compositions/06-beginner-way.html" data-start="93.9" data-duration="26.1" data-track-index="1" data-width="3840" data-height="2160"></div>
+
+      <!-- AUDIO — VO is the timing grid; music bed sits under the cold open only. -->
+      <audio data-hf-id="hf-lw8o" id="vo" src="assets/source-audio.m4a" data-start="0" data-duration="120" data-track-index="2" data-volume="1"></audio>
+      <audio data-hf-id="hf-blwj" id="music-bed" src="assets/hook-music-bed.wav" data-start="0" data-duration="15" data-track-index="3" data-volume="0.12"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      // Root anchor — 120s slot (Law #11). Sub-composition timelines auto-link.
+      tl.to({}, { duration: 120 }, 0);
+      window.__timelines["ai-thumbnails-intro-linear"] = tl;
+    </script>
+  </body>
+</html>

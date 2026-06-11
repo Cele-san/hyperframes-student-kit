@@ -1,0 +1,185 @@
+<template id="comp-04-trust-collapse">
+  <div data-composition-id="04-trust-collapse" data-width="3840" data-height="2160">
+    <!-- Authored at 1920×1080 logical, scaled ×2 to the 4K canvas. -->
+    <div class="s4-up">
+      <div class="s4-stage">
+        <div class="s4-zoom">
+          <div class="s4-headblock">
+            <div class="s4-line s4-line1">
+              <span class="s4-wrap s4-wrap1"><span class="s4-text">Using AI isn't the problem</span></span><span class="s4-cursor s4-cur1">_</span>
+            </div>
+            <div class="s4-line s4-line2">
+              <span class="s4-wrap s4-wrap2"><span class="s4-text s4-text-dim">The problem is looking obviously AI.</span></span><span class="s4-cursor s4-cur2">_</span>
+            </div>
+            <div class="s4-confess">(I use AI for thumbnails.)</div>
+          </div>
+
+          <div class="s4-modal">
+            <div class="s4-head">
+              <span class="s4-headlabel">What the viewer thinks</span>
+              <span class="s4-close">
+                <svg viewBox="0 0 20 20" fill="none" stroke="#99a5bd" stroke-width="1.6" stroke-linecap="round"><path d="M5 5l10 10"/><path d="M15 5L5 15"/></svg>
+              </span>
+            </div>
+            <div class="s4-body">
+              <div class="s4-q s4-q1">Was the video low effort too?</div>
+              <div class="s4-q s4-q2">Was the script AI?</div>
+              <div class="s4-q s4-q3">Are the claims even real?</div>
+            </div>
+          </div>
+          <div class="s4-vignette"></div>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 600; font-display: block; src: url(assets/fonts/Geist-600.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+      [data-composition-id="04-trust-collapse"] {
+        position: absolute; inset: 0;
+        background: #04070e;
+        overflow: hidden;
+        font-family: "Geist", sans-serif;
+      }
+      [data-composition-id="04-trust-collapse"] .s4-up {
+        position: absolute; top: 0; left: 0;
+        width: 1920px; height: 1080px;
+        transform: scale(2); transform-origin: top left;
+      }
+      [data-composition-id="04-trust-collapse"] .s4-stage { position: absolute; inset: 0; }
+      [data-composition-id="04-trust-collapse"] .s4-zoom { position: absolute; inset: 0; }
+      [data-composition-id="04-trust-collapse"] .s4-headblock {
+        position: absolute; left: 340px; top: 200px;
+      }
+      [data-composition-id="04-trust-collapse"] .s4-line {
+        display: flex; align-items: baseline;
+        min-height: 70px;
+      }
+      /* Underscore typewriter — mono-surface treatment for typed statements. */
+      [data-composition-id="04-trust-collapse"] .s4-wrap {
+        display: inline-block; overflow: hidden; white-space: nowrap;
+        max-width: 0; vertical-align: bottom;
+      }
+      [data-composition-id="04-trust-collapse"] .s4-text {
+        font-size: 54px; font-weight: 400; color: #b8c2d6;
+        white-space: nowrap; letter-spacing: -0.01em;
+      }
+      [data-composition-id="04-trust-collapse"] .s4-text-dim { color: #99a5bd; }
+      [data-composition-id="04-trust-collapse"] .s4-cursor {
+        font-family: "Geist Mono", monospace;
+        font-size: 50px; color: #f0a8c2;
+        margin-left: 6px;
+        opacity: 0;
+      }
+      [data-composition-id="04-trust-collapse"] .s4-confess {
+        margin-top: 26px;
+        font-family: "Geist Mono", monospace;
+        font-size: 20px; font-weight: 400;
+        letter-spacing: 0.06em;
+        color: #8995b0;
+        opacity: 0;
+      }
+      /* Bottom-anchored modal — extends past the frame bottom. */
+      [data-composition-id="04-trust-collapse"] .s4-modal {
+        position: absolute;
+        left: 50%; margin-left: -620px;
+        top: 460px;
+        width: 1240px; height: 820px;
+        background: linear-gradient(180deg, #121b2e 0%, #0c111e 100%);
+        border: 1px solid #222f4a;
+        border-radius: 24px;
+        box-shadow: 0 30px 90px rgba(0,0,0,0.6);
+        display: flex; flex-direction: column;
+      }
+      [data-composition-id="04-trust-collapse"] .s4-head {
+        flex: none;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 28px 40px;
+        border-bottom: 1px solid #222f4a;
+      }
+      [data-composition-id="04-trust-collapse"] .s4-headlabel {
+        font-size: 26px; font-weight: 400; color: #e9edf6;
+      }
+      [data-composition-id="04-trust-collapse"] .s4-close { width: 24px; height: 24px; }
+      [data-composition-id="04-trust-collapse"] .s4-close svg { width: 24px; height: 24px; }
+      [data-composition-id="04-trust-collapse"] .s4-body {
+        position: relative; flex: 1; overflow: hidden;
+      }
+      /* Chat-push rest state: blurred whenever traveling, sharp only at rest. */
+      [data-composition-id="04-trust-collapse"] .s4-q {
+        position: absolute;
+        top: 52px; right: 44px;
+        width: fit-content;
+        max-width: 720px;
+        background: #1b2742;
+        border-radius: 16px;
+        padding: 22px 30px;
+        font-size: 30px; font-weight: 400;
+        line-height: 1.45;
+        color: #edf0f7;
+        opacity: 0;
+        transform: translateY(70px);
+        filter: blur(8px);
+      }
+      [data-composition-id="04-trust-collapse"] .s4-vignette {
+        position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, rgba(4,7,14,0) 52%, rgba(0,0,0,0.55) 100%);
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 24.2;
+        const sel = (q) => `[data-composition-id="04-trust-collapse"] ${q}`;
+        const tl = gsap.timeline({ paused: true });
+
+        // "The weird part is…" — line 1 types on with a trailing underscore.
+        tl.set(sel(".s4-cur1"), { opacity: 1 }, 0.4);
+        tl.to(sel(".s4-wrap1"), { maxWidth: 640, duration: 1.9, ease: "steps(26)" }, 0.6);
+        tl.to(sel(".s4-cur1"), { opacity: 0, duration: 0.4, ease: "steps(1)", repeat: 3, yoyo: true }, 2.5);
+
+        // "I use AI for thumbnails" — the quiet confession.
+        tl.to(sel(".s4-confess"), { opacity: 1, duration: 0.8, ease: "power1.inOut" }, 4.1667);
+
+        // "…the issue is when your thumbnails look so obviously AI" — line 2.
+        tl.set(sel(".s4-cur1"), { opacity: 0 }, 5.9);
+        tl.set(sel(".s4-cur2"), { opacity: 1 }, 6.0);
+        tl.to(sel(".s4-wrap2"), { maxWidth: 900, duration: 2.6, ease: "steps(36)" }, 6.0);
+        tl.set(sel(".s4-cur2"), { opacity: 0 }, 9.4);
+
+        // "…the viewer starts questioning everything" — the doubt modal slides up
+        // through motion blur; the headline recedes to make room.
+        tl.to(sel(".s4-headblock"), { y: -60, opacity: 0.4, duration: 0.6, ease: "power3.out" }, 9.6);
+        tl.from(sel(".s4-modal"),
+          { y: 180, opacity: 0, filter: "blur(12px)", duration: 0.6, ease: "power3.out" }, 9.6);
+
+        // CHAT PUSH — the viewer's doubts arrive on their VO words. Outgoing starts
+        // moving at once (inOut, never power3.in) and the incoming trails ~0.15s.
+        // "Was the video low effort?"
+        tl.to(sel(".s4-q1"), { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 13.0);
+        // "Was the script AI?"
+        tl.to(sel(".s4-q1"), { y: -160, opacity: 0, filter: "blur(10px)", duration: 0.45, ease: "power3.inOut" }, 18.45);
+        tl.to(sel(".s4-q2"), { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 18.6);
+        // "Are the claims even real?"
+        tl.to(sel(".s4-q2"), { y: -160, opacity: 0, filter: "blur(10px)", duration: 0.45, ease: "power3.inOut" }, 20.45);
+        tl.to(sel(".s4-q3"), { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 20.6);
+
+        // Micro-drift — the modal never parks.
+        tl.to(sel(".s4-modal"), { y: -8, duration: 13, ease: "none" }, 10.3);
+
+        // "…you lose them before you've said a word" — everything defocuses and
+        // sinks; the frame collapses to black. (05 emerges from this blur.)
+        tl.to(sel(".s4-zoom"),
+          { filter: "blur(18px)", opacity: 0, y: "+=140", duration: 0.55, ease: "power3.in" }, 23.4333);
+
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines["04-trust-collapse"] = tl;
+      })();
+    </script>
+  </div>
+</template>
