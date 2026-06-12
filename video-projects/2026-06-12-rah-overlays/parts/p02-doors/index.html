@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>RAH P02 — Doors Closing takeover (overlay layer)</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 600; font-display: block; src: url(assets/fonts/Geist-600.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1920px; height: 1080px; overflow: hidden;
+        background: transparent; /* canvas fades in via .takeover — Lane B over TH only */
+        font-family: "Geist", system-ui, sans-serif;
+      }
+      :root {
+        --lin-bg: #070b16;
+        --srf-station-top: #131c30; --srf-station-bot: #0f1726; --srf-well: #0c111e;
+        --bd-station: #36486f; --bd-inner: #283755; --bd: #222f4c; --bd-card: #25334f;
+        --tx: #e9edf6; --tx-bright2: #c8d1e3; --tx-dim: #8995b0; --tx-code: #6d7894; --tx-ghost: #5b6580;
+        --blossom: #f0a8c2; --fill-tx: #152848;
+        --glow: rgba(240, 168, 194, 0.30); --glint: rgba(210, 226, 255, 0.18);
+        --font-ui: "Geist", system-ui, sans-serif;
+        --font-mono: "Geist Mono", ui-monospace, Menlo, monospace;
+      }
+      #p02-root { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+      #p02-root .reference-layer { position: absolute; inset: 0; z-index: 0; }
+      #p02-root .reference-layer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #p02-root .overlay-root { position: absolute; inset: 0; z-index: 10; }
+
+      /* ---- takeover canvas (full-frame ONLY because this beat is pure talking head) ---- */
+      #p02-root .takeover { position: absolute; inset: 0; background: var(--lin-bg); }
+      /* far depth: dim pre-blurred text-wall columns (the walls keep coming) */
+      #p02-root .farwalls { position: absolute; inset: 0; filter: blur(5px); opacity: 0.5; }
+      #p02-root .fw-col { position: absolute; top: -60px; display: flex; flex-direction: column; gap: 18px; }
+      #p02-root .fw-col .tbar { opacity: 0.32; }
+      #p02-root .tbar { height: 14px; border-radius: 3px; background: var(--tx-code); }
+      #p02-root .vignette { position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, rgba(7, 11, 22, 0) 50%, rgba(4, 7, 14, 0.62) 100%); }
+
+      /* ---- the world the camera dollies through ---- */
+      #p02-root .world { position: absolute; inset: 0; }
+
+      /* Station A — READ HARDER (sharp corners, mono, hairline rows) */
+      #p02-root .stA { position: absolute; left: 580px; top: 220px; width: 760px;
+        background: linear-gradient(180deg, var(--srf-station-top) 0%, var(--srf-station-bot) 100%);
+        border: 1px solid var(--bd-station);
+        box-shadow: inset 0 1px 0 var(--glint), 0 30px 90px rgba(0, 0, 0, 0.6); }
+      #p02-root .st-head { font: 500 24px/1 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase;
+        color: var(--tx); padding: 22px 28px; border-bottom: 1px solid var(--bd-inner);
+        display: flex; justify-content: space-between; align-items: center; }
+      #p02-root .st-head .st-num { color: var(--tx-ghost); }
+      #p02-root .stA-body { position: relative; padding: 26px 28px 22px; display: flex; flex-direction: column; gap: 20px; }
+      #p02-root .stA-body .tbar { height: 16px; }
+      /* the reading highlight — a selection bar that sweeps and snaps back */
+      #p02-root .hl { position: absolute; left: 18px; right: 18px; top: 21px; height: 26px;
+        background: rgba(200, 209, 227, 0.30); border-radius: 4px; }
+      #p02-root .stA-meter { display: flex; align-items: center; gap: 16px;
+        padding: 18px 28px 20px; border-top: 1px solid var(--bd-inner); }
+      #p02-root .stA-meter .m-label { font: 500 16px/1 var(--font-mono); letter-spacing: 0.12em; color: var(--tx-dim); }
+      #p02-root .m-track { position: relative; flex: 1; height: 6px; background: var(--srf-well); border: 1px solid var(--bd-inner); }
+      #p02-root .m-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 4%; background: var(--tx-dim); }
+
+      /* Station B — SUMMARIZE (wide: plan well | connectors | summary well) */
+      #p02-root .stB { position: absolute; left: 270px; top: 940px; width: 1380px;
+        background: linear-gradient(180deg, var(--srf-station-top) 0%, var(--srf-station-bot) 100%);
+        border: 1px solid var(--bd-station);
+        box-shadow: inset 0 1px 0 var(--glint), 0 30px 90px rgba(0, 0, 0, 0.6); }
+      #p02-root .stB-body { position: relative; display: flex; gap: 0; padding: 26px 28px 24px; }
+      #p02-root .well { background: var(--srf-well); border: 1px solid var(--bd-inner); padding: 22px 24px; }
+      #p02-root .well-label { font: 500 15px/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase;
+        color: var(--tx-ghost); margin-bottom: 16px; }
+      #p02-root .well-plan { width: 560px; }
+      #p02-root .well-plan .bars { display: flex; flex-direction: column; gap: 16px; }
+      #p02-root .well-plan .tbar { position: relative; }
+      #p02-root .well-sum { width: 470px; align-self: flex-start; }
+      #p02-root .well-sum .bars { display: flex; flex-direction: column; gap: 18px; }
+      #p02-root .wires { width: 290px; align-self: stretch; }
+      #p02-root .wires svg { width: 100%; height: 100%; }
+      #p02-root .wires path { stroke: var(--bd-station); stroke-width: 1.5; fill: none; }
+      /* dropped-step ghost label (absence = dim gray, never blossom) */
+      #p02-root .ghost { position: absolute; right: -116px; top: -2px; font: 500 15px/1 var(--font-mono);
+        letter-spacing: 0.1em; color: var(--tx-ghost); }
+      /* fabricated line (blossom fill = state change) + its stamp */
+      #p02-root .tbar.fab { background: var(--blossom); box-shadow: 0 0 18px var(--glow); opacity: 1; }
+      #p02-root .fab-tag { display: inline-block; margin-top: 12px; font: 500 15px/1 var(--font-mono);
+        letter-spacing: 0.12em; background: var(--blossom); color: var(--fill-tx); padding: 8px 12px; }
+      /* APPROVE row — width-clipped twin-label sweep (V2 recipe) */
+      #p02-root .aprow { position: relative; margin-top: 18px; height: 52px; border: 1px solid var(--bd-inner);
+        background: var(--srf-station-bot); overflow: hidden; }
+      #p02-root .ap-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+        font: 500 18px/1 var(--font-mono); letter-spacing: 0.16em; color: var(--tx-bright2); }
+      #p02-root .ap-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; overflow: hidden; background: var(--blossom); }
+      #p02-root .ap-fill .ap-label { width: 418px; color: var(--fill-tx); }
+      #p02-root .ap-b { opacity: 0; }
+
+      /* Karpathy card — enters center, glides to the P03 SEAM position.
+         SEAM CONTRACT: CSS rest = left 120 / top 150 / width 644 (P03's hold). */
+      #p02-root .kcard { position: absolute; left: 120px; top: 150px; width: 644px;
+        border-radius: 14px; overflow: hidden; border: 1px solid var(--bd-card);
+        box-shadow: inset 0 1px 0 var(--glint), 0 30px 90px rgba(0, 0, 0, 0.6); background: #04070e; }
+      #p02-root .kcard img { display: block; width: 640px; height: auto; margin: 1px; border-radius: 13px; }
+      #p02-root .kfade { position: absolute; left: 0; right: 0; bottom: 0; height: 72px;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 92%); }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-ujbv" id="p02-root" data-composition-id="p02-doors" data-start="0" data-duration="32.099" data-width="1920" data-height="1080">
+      <!-- =================================================================
+           REFERENCE LAYER START — delete this whole block in index.alpha.html
+           before the alpha export (see ../../SPLIT.md). Proxy only.
+           proxy t=0 == master 0:56.99 (56.99s)
+           ================================================================= -->
+      <div data-hf-id="hf-y6tz" class="reference-layer">
+        <video data-hf-id="hf-3wtu" id="ref-video" data-start="0" data-duration="32.099" data-track-index="0" src="assets/proxy.mp4" muted playsinline></video>
+        <audio data-hf-id="hf-68tb" id="ref-audio" data-start="0" data-duration="32.099" data-track-index="1" src="assets/proxy.mp4" data-volume="1.0"></audio>
+      </div>
+      <!-- ===================== REFERENCE LAYER END ======================= -->
+
+      <div data-hf-id="hf-js6p" class="overlay-root">
+
+        <!-- takeover canvas · 0 → 31.9 (fades out 31.1, revealing the talking head) -->
+        <div data-hf-id="hf-8c50" class="takeover clip" id="takeover" data-start="0" data-duration="31.95" data-track-index="2">
+          <div data-hf-id="hf-d482" class="farwalls" id="farwalls"></div>
+          <div data-hf-id="hf-q7bi" class="vignette"></div>
+        </div>
+
+        <!-- the station world · 0 → 27 (focus-pulled out at 26.0) -->
+        <div data-hf-id="hf-cr4s" class="world clip" id="world" data-start="0" data-duration="27.0" data-track-index="3">
+
+          <!-- STATION A · READ HARDER -->
+          <div data-hf-id="hf-6bjm" class="stA" id="stA">
+            <div data-hf-id="hf-ddps" class="st-head"><span data-hf-id="hf-5za9">READ HARDER</span><span data-hf-id="hf-9338" class="st-num">01</span></div>
+            <div data-hf-id="hf-drfa" class="stA-body" id="stA-body">
+              <div data-hf-id="hf-qbxy" class="hl" id="hl"></div>
+            </div>
+            <div data-hf-id="hf-v8qe" class="stA-meter">
+              <span data-hf-id="hf-w6hx" class="m-label">COMPREHENSION</span>
+              <div data-hf-id="hf-g7lb" class="m-track"><div data-hf-id="hf-scra" class="m-fill" id="m-fill"></div></div>
+            </div>
+          </div>
+
+          <!-- STATION B · SUMMARIZE -->
+          <div data-hf-id="hf-vop4" class="stB" id="stB">
+            <div data-hf-id="hf-mmq0" class="st-head"><span data-hf-id="hf-904e">SUMMARIZE</span><span data-hf-id="hf-7w65" class="st-num">02</span></div>
+            <div data-hf-id="hf-lwtq" class="stB-body">
+              <div data-hf-id="hf-yn82" class="well well-plan" id="well-plan">
+                <div data-hf-id="hf-azxl" class="well-label">THE PLAN · 8 STEPS</div>
+                <div data-hf-id="hf-kck4" class="bars" id="plan-bars"></div>
+              </div>
+              <div data-hf-id="hf-a5iy" class="wires" id="wires">
+                <svg data-hf-id="hf-ae0a" viewBox="0 0 290 460" preserveAspectRatio="none" id="wire-svg" />
+              </div>
+              <div data-hf-id="hf-uv8q" class="well well-sum" id="well-sum">
+                <div data-hf-id="hf-y7uc" class="well-label">THE SUMMARY</div>
+                <div data-hf-id="hf-4lwc" class="bars" id="sum-bars"></div>
+                <span data-hf-id="hf-77h1" class="fab-tag" id="fab-tag" style="opacity: 0">NOT IN PLAN</span>
+                <div data-hf-id="hf-po74" class="aprow" id="aprow">
+                  <span data-hf-id="hf-8hf9" class="ap-label ap-a">APPROVE</span>
+                  <span data-hf-id="hf-306o" class="ap-label ap-b">APPROVED</span>
+                  <span data-hf-id="hf-ocl5" class="ap-fill" id="ap-fill">
+                    <span data-hf-id="hf-28o9" class="ap-label ap-a">APPROVE</span>
+                    <span data-hf-id="hf-d5l4" class="ap-label ap-b">APPROVED</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Karpathy card · 28.8 → slot end (parks at the P03 seam position) -->
+        <div data-hf-id="hf-05fr" class="kcard clip" id="kcard" data-start="28.8" data-duration="3.299" data-track-index="4">
+          <img data-hf-id="hf-lajw" src="assets/karpathy-card.png" alt="">
+          <div data-hf-id="hf-12e5" class="kfade"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 32.099;
+        const tl = gsap.timeline({ paused: true });
+
+        /* ---------- deterministic DOM build ---------- */
+        // far text-wall columns (depth texture — the walls keep coming)
+        const colSpecs = [
+          { left: 90,  width: 300, n: 14 },
+          { left: 1560, width: 270, n: 13 },
+        ];
+        const farwalls = document.getElementById("farwalls");
+        colSpecs.forEach((c, ci) => {
+          const col = document.createElement("div");
+          col.className = "fw-col";
+          col.style.left = c.left + "px"; col.style.width = c.width + "px";
+          for (let i = 0; i < c.n; i++) {
+            const b = document.createElement("div");
+            b.className = "tbar";
+            // harmonic-sin widths — deterministic "ragged prose" texture
+            b.style.width = Math.round(c.width * (0.62 + 0.38 * Math.abs(Math.sin(ci * 3.1 + i * 0.83)))) + "px";
+            col.appendChild(b);
+          }
+          farwalls.appendChild(col);
+        });
+
+        // Station A prose bars (7) — highlight sweeps rows 1→3
+        const aW = [668, 640, 655, 610, 668, 560, 636];
+        const aBody = document.getElementById("stA-body");
+        aW.forEach((w) => {
+          const b = document.createElement("div");
+          b.className = "tbar"; b.style.width = w + "px";
+          aBody.appendChild(b);
+        });
+
+        // Station B plan bars (8) — #5 is the dropped step
+        const pW = [500, 472, 488, 450, 502, 414, 482, 444];
+        const planBars = document.getElementById("plan-bars");
+        pW.forEach((w, i) => {
+          const b = document.createElement("div");
+          b.className = "tbar"; b.style.width = w + "px"; b.id = "pb-" + (i + 1);
+          if (i === 4) {
+            const g = document.createElement("span");
+            g.className = "ghost"; g.id = "ghost"; g.textContent = "DROPPED"; g.style.opacity = "0";
+            b.appendChild(g);
+          }
+          planBars.appendChild(b);
+        });
+
+        // summary bars (3) + the fabricated 4th (blossom, no wire feeds it)
+        const sW = [400, 372, 300];
+        const sumBars = document.getElementById("sum-bars");
+        sW.forEach((w, i) => {
+          const b = document.createElement("div");
+          b.className = "tbar"; b.style.width = w + "px"; b.id = "sb-" + (i + 1);
+          sumBars.appendChild(b);
+        });
+        const fab = document.createElement("div");
+        fab.className = "tbar fab"; fab.style.width = "356px"; fab.id = "sb-fab";
+        sumBars.appendChild(fab);
+
+        // connector wires — fan-in: plan 1-3→sum1, 4-5→sum2, 6-8→sum3.
+        // y coords mirror the bar layouts (plan rows at 32px pitch from y=64; sum rows at 34px pitch).
+        const planY = (i) => 70 + i * 32;       // i = 0..7
+        const sumY  = (j) => 74 + j * 34;       // j = 0..2
+        const MAP = [[0, 0], [1, 0], [2, 0], [3, 1], [4, 1], [5, 2], [6, 2], [7, 2]];
+        const svg = document.getElementById("wire-svg");
+        MAP.forEach(([i, j], k) => {
+          const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          const y1 = planY(i), y2 = sumY(j);
+          p.setAttribute("d", `M 0 ${y1} C 120 ${y1}, 170 ${y2}, 290 ${y2}`);
+          p.id = "wire-" + (k + 1);
+          svg.appendChild(p);
+        });
+        // dash-prep all wires for draw-on
+        document.querySelectorAll("#p02-root .wires path").forEach((p) => {
+          const L = p.getTotalLength();
+          p.style.strokeDasharray = L; p.style.strokeDashoffset = L;
+          p.dataset.len = L;
+        });
+
+        /* ---------- timeline ---------- */
+        /* ENTRY (0 → 0.5) — canvas luminance-fades over the talking head as VO
+           lands "Reading harder didn't work either" (master 57.02). Station A
+           emerges from blur (Linear: incoming sharpens up). */
+        tl.fromTo("#takeover", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.inOut" }, 0);
+        tl.fromTo("#stA", { scale: 1.12, filter: "blur(10px)", opacity: 0 },
+                  { scale: 1, filter: "blur(0px)", opacity: 1, duration: 0.5, ease: "power3.out" }, 0.1);
+        // far walls drift the whole takeover (camera never sleeps)
+        tl.fromTo("#farwalls", { y: 0 }, { y: -46, duration: 26.0, ease: "none" }, 0);
+
+        /* Station A — three reading passes, each dimmer; comprehension stays flat.
+           VO: "read the same paragraph two(2.85), three times(4.1), still wouldn't stick(5.3)" */
+        const PASS = [
+          { t: 1.90, o: 0.30 },
+          { t: 3.70, o: 0.20 },
+          { t: 5.15, o: 0.12 },
+        ];
+        PASS.forEach(({ t, o }) => {
+          tl.set("#hl", { y: 0, opacity: o }, t);                       // snap to row 1
+          tl.to("#hl", { y: 72, duration: 1.05, ease: "power1.inOut" }, t); // sweep to row 3
+        });
+        tl.set("#hl", { opacity: 0 }, 6.4);
+        // the meter grinds without gaining: visible lurch per pass, settles back
+        // (4→10% + brightness flash — the 1px version of this joke was invisible at 1080p)
+        PASS.forEach(({ t }) => {
+          tl.to("#m-fill", { width: "10%", backgroundColor: "#c8d1e3", duration: 0.3, ease: "power2.out", overwrite: "auto" }, t + 0.8);
+          tl.to("#m-fill", { width: "4%", backgroundColor: "#8995b0", duration: 0.4, ease: "power2.in", overwrite: "auto" }, t + 1.15);
+        });
+
+        /* DOLLY HOP A → B (7.9 → 8.7) — full-frame smear (Law #10), outgoing parks
+           overhead, incoming sharpens. VO "summarize this" lands 8.69. */
+        tl.to("#world", { y: -720, duration: 0.55, ease: "power3.inOut" }, 8.05);
+        tl.to("#takeover", { filter: "blur(11px)", scaleY: 1.045, duration: 0.24, ease: "power2.in" }, 8.0);
+        tl.to("#takeover", { filter: "blur(0px)", scaleY: 1, duration: 0.3, ease: "power3.out" }, 8.32);
+        // outgoing Station A lags + parks: grows, defocuses, peeks into the top of frame
+        tl.to("#stA", { y: 330, scale: 1.32, opacity: 0.5, filter: "blur(13px)", duration: 0.6, ease: "power3.out" }, 8.05);
+        // incoming Station B sharpens up from 0.92
+        tl.fromTo("#stB", { scale: 0.92, filter: "blur(8px)" },
+                  { scale: 1, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 8.2);
+
+        /* SUMMARIZE builds (8.9 → 11.0) — summary bars land from different
+           directions with motion-blurred flights (never uniform stagger), wires
+           draw the mapping. VO: "summarize this(8.7), shorten it(10.2)" */
+        tl.set("#sb-fab", { opacity: 0 }, 0);
+        tl.set("#aprow", { opacity: 0 }, 0);
+        const sumFrom = [
+          { x: 90, y: -40, blur: 8, t: 8.95, d: 0.5 },
+          { x: 150, y: 30, blur: 12, t: 9.15, d: 0.55 },
+          { x: 60, y: 60, blur: 6, t: 9.38, d: 0.42 },
+        ];
+        sumFrom.forEach((v, j) => {
+          tl.fromTo("#sb-" + (j + 1),
+            { x: v.x, y: v.y, opacity: 0, filter: `blur(${v.blur}px)` },
+            { x: 0, y: 0, opacity: 0.78, filter: "blur(0px)", duration: v.d, ease: "power3.out" }, v.t);
+        });
+        document.querySelectorAll("#p02-root .wires path").forEach((p, k) => {
+          tl.to(p, { strokeDashoffset: 0, duration: 0.5, ease: "power2.out" }, 9.5 + k * 0.11);
+        });
+
+        /* "two problems" (11.4) — both wells pulse once, priming the punches */
+        tl.to("#well-plan, #well-sum", { borderColor: "#36486f", duration: 0.25, ease: "power2.out" }, 11.45);
+        tl.to("#well-plan, #well-sum", { borderColor: "#283755", duration: 0.5, ease: "power2.in" }, 11.85);
+
+        /* PROBLEM 1 (12.85) — "the summary is still a bunch of text": the summary
+           bars are still just gray bars. They shudder-pulse; nothing improves. */
+        tl.to("#sb-1, #sb-2, #sb-3", { opacity: 1, duration: 0.3, ease: "power2.out", stagger: 0.08 }, 12.85);
+        tl.to("#sb-1, #sb-2, #sb-3", { opacity: 0.78, duration: 0.5, ease: "power2.in", stagger: 0.08 }, 13.4);
+
+        /* PUNCH 1 (19.9) — "It dropped a step": plan bar 5's wire SNAPS (retracts
+           from the summary side) and the bar dims to a ghost. Absence = gray. */
+        tl.to("#wire-5", { strokeDashoffset: () => +document.getElementById("wire-5").dataset.len, duration: 0.45, ease: "power3.in" }, 19.95);
+        tl.to("#pb-5", { opacity: 0.22, duration: 0.4, ease: "power2.in" }, 20.15);
+        tl.fromTo("#ghost", { opacity: 0, x: -8 }, { opacity: 1, x: 0, duration: 0.3, ease: "power2.out" }, 20.45);
+
+        /* PUNCH 2 (21.2) — "says something the plan never said": a blossom line
+           lands in the summary with NO wire feeding it. Fabrication = fill. */
+        tl.fromTo("#sb-fab", { x: -170, y: 50, opacity: 0, filter: "blur(12px)" },
+                  { x: 0, y: 0, opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 21.25);
+        tl.fromTo("#fab-tag", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.28, ease: "power2.out" }, 21.7);
+
+        /* APPROVE the phantom (23.2 → 25.3) — row slides in, blossom fill sweeps
+           (width-clipped twin labels), the REAL plan recedes greyed behind. */
+        tl.set("#aprow", { opacity: 1 }, 23.2);
+        tl.fromTo("#aprow", { y: 16 }, { y: 0, duration: 0.3, ease: "power2.out" }, 23.2);
+        tl.fromTo("#ap-fill", { width: 0 }, { width: 418, duration: 0.8, ease: "power1.inOut" }, 23.65);
+        tl.set("#p02-root .ap-a", { opacity: 0 }, 24.5);
+        tl.set("#p02-root .ap-b", { opacity: 1 }, 24.5);
+        // the version you approved isn't the plan: the plan well drifts back, dim + soft
+        tl.to("#well-plan", { opacity: 0.45, scale: 0.97, filter: "blur(2px)", duration: 0.8, ease: "power2.inOut" }, 23.5);
+
+        /* FOCUS-PULL OUT (26.0 → 26.8) — "reading harder failed, summarizing failed":
+           the whole circuit defocuses and lifts away. Both doors closed. */
+        tl.to("#world", { y: "-=140", opacity: 0, filter: "blur(18px)", duration: 0.75, ease: "power3.in" }, 26.0);
+
+        /* KARPATHY ARRIVES (28.9) — "that's right about when the Karpathy post
+           showed up": the card emerges from blur dead-center… */
+        tl.fromTo("#kcard", { x: 518, y: 170, scale: 1.13, opacity: 0, filter: "blur(14px)" },
+                  { x: 518, y: 170, scale: 1.13, opacity: 1, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 28.9);
+        /* …then glides to its P03 rest position (SEAM CONTRACT: P03 opens holding
+           the card at CSS left 120 / top 150 / width 644, transform none, sharp). */
+        tl.to("#kcard", { x: 0, y: 0, scale: 1, duration: 1.0, ease: "power2.inOut" }, 30.55);
+        /* canvas lifts — the talking head returns under the parked card */
+        tl.to("#takeover", { opacity: 0, duration: 0.9, ease: "power1.inOut" }, 31.15); // luminance exit — ends 32.05, inside the 32.099 slot
+
+        // Law #11 anchor — timeline fills the slot
+        tl.to({}, { duration: SLOT }, 0);
+        window.__timelines["p02-doors"] = tl;
+      })();
+    </script>
+  </body>
+</html>

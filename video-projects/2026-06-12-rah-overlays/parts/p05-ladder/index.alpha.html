@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>RAH P05 — The Ladder (overlay layer)</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: transparent;
+        font-family: "Geist", system-ui, sans-serif; }
+      :root {
+        --srf-card-top: #16213a; --srf-card-bot: #111a2d; --srf-circle: #2a3a5e;
+        --bd: #222f4c; --bd-inner: #283755;
+        --tx: #e9edf6; --tx-pill: #d3dae8; --tx-bright2: #c8d1e3; --tx-ghost: #5b6580;
+        --blossom: #f0a8c2; --fill-tx: #152848;
+        --glow: rgba(240, 168, 194, 0.30); --glint: rgba(210, 226, 255, 0.18);
+        --font-ui: "Geist", system-ui, sans-serif;
+        --font-mono: "Geist Mono", ui-monospace, Menlo, monospace;
+      }
+      #p05-root { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+      #p05-root .reference-layer { position: absolute; inset: 0; z-index: 0; }
+      #p05-root .reference-layer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #p05-root .overlay-root { position: absolute; inset: 0; z-index: 10; }
+
+      #p05-root .tag { position: absolute; left: 90px; top: 80px;
+        font: 500 21px/1 var(--font-mono); letter-spacing: 0.09em; text-transform: uppercase;
+        color: var(--tx-bright2); background: rgba(15, 22, 38, 0.92);
+        border: 1px solid var(--bd); border-radius: 6px; padding: 12px 18px;
+        box-shadow: inset 0 1px 0 var(--glint);
+        display: inline-flex; align-items: center; gap: 12px; white-space: nowrap; }
+      #p05-root .tag .dotb { width: 7px; height: 7px; border-radius: 50%; background: var(--blossom); }
+
+      #p05-root .pill { position: absolute; left: 90px; top: 906px;
+        display: inline-flex; align-items: center; gap: 14px;
+        background: linear-gradient(180deg, var(--srf-card-top) 0%, var(--srf-card-bot) 100%);
+        border: 1px solid var(--bd); border-radius: 16px; padding: 16px 18px 16px 22px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 18px 50px rgba(0, 0, 0, 0.45); }
+      #p05-root .pill-type { display: inline-block; overflow: hidden; white-space: nowrap; max-width: 0; }
+      #p05-root .pill-text { font: 400 25px/1.25 var(--font-ui); color: var(--tx); white-space: nowrap; }
+      #p05-root .pill-caret { display: inline-block; width: 2.5px; height: 30px; background: var(--blossom); flex: none; }
+      #p05-root .paste-chip { font: 500 19px/1 var(--font-mono); color: var(--fill-tx);
+        background: var(--blossom); padding: 8px 11px; border-radius: 6px; flex: none; }
+      #p05-root .pill-send { width: 40px; height: 40px; border-radius: 50%; background: var(--srf-circle);
+        display: inline-flex; align-items: center; justify-content: center; flex: none; }
+      #p05-root .pill-send svg { width: 17px; height: 17px; stroke: var(--tx-pill); stroke-width: 2; fill: none; }
+
+      /* the jargon chip — the actual line from the plan, then struck */
+      #p05-root .jargon { position: absolute; left: 110px; top: 700px; max-width: 760px;
+        background: rgba(15, 22, 38, 0.94); border: 1px solid var(--bd-inner);
+        box-shadow: inset 0 1px 0 var(--glint); padding: 20px 26px; }
+      #p05-root .jargon .j-label { font: 500 14px/1 var(--font-mono); letter-spacing: 0.12em;
+        color: var(--tx-ghost); margin-bottom: 12px; text-transform: uppercase; }
+      #p05-root .j-line { position: relative; width: fit-content; font: 500 24px/1.45 var(--font-mono); color: var(--tx-bright2); }
+      #p05-root .j-mask { display: inline-block; overflow: hidden; white-space: nowrap; max-width: 0; vertical-align: bottom; }
+      #p05-root .j-strike { position: absolute; left: 0; right: 0; top: 50%; height: 3px;
+        background: var(--blossom); border-radius: 2px; transform-origin: left center;
+        box-shadow: 0 0 10px var(--glow); }
+
+      /* the ladder rail — three dots filling as the cycles complete */
+      #p05-root .rail { position: absolute; left: 90px; top: 80px;
+        font: 500 19px/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase;
+        color: var(--tx-bright2); background: rgba(15, 22, 38, 0.92);
+        border: 1px solid var(--bd); border-radius: 6px; padding: 13px 18px;
+        display: inline-flex; align-items: center; gap: 14px; white-space: nowrap; }
+      #p05-root .rd { width: 10px; height: 10px; border-radius: 50%;
+        border: 1.5px solid var(--blossom); background: rgba(240, 168, 194, 0); }
+      #p05-root .rd.on { background: var(--blossom); box-shadow: 0 0 10px var(--glow); }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-yije" id="p05-root" data-composition-id="p05-ladder" data-start="0" data-duration="53.12" data-width="1920" data-height="1080">
+
+      <div data-hf-id="hf-js6p" class="overlay-root">
+
+        <!-- CYCLE 2 eyebrow + pill #2 · 4.2–12.2 · "use the Apple website as a
+             reference to remake this" + the honest paste-chip -->
+        <div data-hf-id="hf-tsnu" class="tag clip" id="tag-c2" data-start="4.2" data-duration="8.0" data-track-index="2">
+          <span data-hf-id="hf-7jrk" class="dotb"></span>CYCLE 2 · APPLE REFERENCE
+        </div>
+        <div data-hf-id="hf-210r" class="pill clip" id="pill2" data-start="4.2" data-duration="8.0" data-track-index="3">
+          <span data-hf-id="hf-dk46" class="pill-type" id="p2-type"><span data-hf-id="hf-unx7" class="pill-text" id="p2-text">use the apple website as a reference to remake this</span></span>
+          <span data-hf-id="hf-vico" class="pill-caret" id="p2-caret"></span>
+          <span data-hf-id="hf-fwpz" class="paste-chip" id="p2-paste" style="opacity: 0">⌘V apple.com</span>
+          <span data-hf-id="hf-sqry" class="pill-send" id="p2-send">
+            <svg data-hf-id="hf-y9f5" viewBox="0 0 24 24"><path data-hf-id="hf-rogn" d="M12 19V6M6 12l6-6 6 6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </span>
+        </div>
+
+        <!-- CYCLE 3 eyebrow · 15.0–21.4 · pill #3 cut at Gate 2 (footage shows the sentence) -->
+        <div data-hf-id="hf-q4s1" class="tag clip" id="tag-c3" data-start="15.0" data-duration="6.4" data-track-index="2">
+          <span data-hf-id="hf-dqqw" class="dotb"></span>CYCLE 3 · PLAIN ENGLISH
+        </div>
+
+        <!-- the jargon chip · 24.6–39.6 · the actual line, then struck -->
+        <div data-hf-id="hf-zd1c" class="jargon clip" id="jargon" data-start="24.6" data-duration="15.0" data-track-index="4">
+          <div data-hf-id="hf-l0q0" class="j-label">FROM THE PLAN · VERBATIM</div>
+          <div data-hf-id="hf-6xcp" class="j-line">
+            <span data-hf-id="hf-f29r" class="j-mask" id="j-mask1"><span data-hf-id="hf-kuim">"the two independent counts reconcile</span></span>
+            <span data-hf-id="hf-8msj" class="j-strike" id="j-strike1"></span>
+          </div>
+          <div data-hf-id="hf-6xcq" class="j-line">
+            <span data-hf-id="hf-f29s" class="j-mask" id="j-mask2"><span data-hf-id="hf-kuin">to one locked set of four numbers"</span></span>
+            <span data-hf-id="hf-8msk" class="j-strike" id="j-strike2"></span>
+          </div>
+        </div>
+
+        <!-- the ladder rail · 40.4–51.4 · third shape completes the ladder -->
+        <div data-hf-id="hf-dp2g" class="rail clip" id="rail" data-start="40.4" data-duration="11.0" data-track-index="2">
+          <span data-hf-id="hf-8h2i" class="rd on"></span><span data-hf-id="hf-n0ki">PAGE</span>
+          <span data-hf-id="hf-uejy" class="rd on"></span><span data-hf-id="hf-jltf">APPLE</span>
+          <span data-hf-id="hf-qc8f" class="rd" id="rd-3"></span><span data-hf-id="hf-gy33">PLAIN ENGLISH</span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 53.12;
+        const tl = gsap.timeline({ paused: true });
+
+        /* local = master − 155.49 */
+
+        /* ---- CYCLE 2 (4.4 → 12.0) — VO "use the Apple website…" 5.0, paste 8.8 ---- */
+        tl.fromTo("#tag-c2", { y: -16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.25, ease: "power2.out" }, 4.35);
+        tl.fromTo("#pill2", { y: 36, opacity: 0, filter: "blur(6px)" },
+                  { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.28, ease: "power2.out" }, 4.35);
+        // types with the spoken line (5.0 → 7.4 · 51 chars)
+        tl.to("#p2-type", { maxWidth: 640, duration: 2.4, ease: "steps(51)" }, 5.0);
+        // the paste-chip snaps in on "I just paste in apple.com" (8.8) — honest ⌘V
+        tl.fromTo("#p2-paste", { opacity: 0, scale: 1.3, filter: "blur(5px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.22, ease: "power3.out" }, 8.8);
+        // send beat (9.6): caret out, flash
+        tl.set("#p2-caret", { opacity: 0 }, 9.6);
+        tl.set("#p2-send", { backgroundColor: "#f0a8c2" }, 9.6);
+        tl.set("#p2-send svg", { stroke: "#152848" }, 9.6);
+        tl.set("#p2-send", { backgroundColor: "#2a3a5e" }, 9.8);
+        tl.set("#p2-send svg", { stroke: "#d3dae8" }, 9.8);
+        tl.set("#p2-text", { color: "#6a748e" }, 9.9);
+        tl.to("#pill2", { y: 26, opacity: 0, duration: 0.25, ease: "power2.in" }, 11.8);
+        tl.to("#tag-c2", { y: -14, opacity: 0, duration: 0.25, ease: "power2.in" }, 11.8);
+
+        /* ---- CYCLE 3 (15.2 → 21.2) — "this one's the key" 15.0, line 16.1 ----
+           Eyebrow ONLY (pill doctrine): the footage's own chat shows the typed
+           sentence highlighted here — a pill duplicated the shot (Andy cut it
+           at Gate 2). */
+        tl.fromTo("#tag-c3", { y: -16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.25, ease: "power2.out" }, 15.2);
+        tl.to("#tag-c3", { y: -14, opacity: 0, duration: 0.25, ease: "power2.in" }, 21.0);
+
+        /* ---- the jargon chip (24.8 → 39.4) — over the talking head ----
+           Types with his slow quote read (25.3 → 29.4), then the blossom strike
+           lands on "I just want to know what we're doing" (39.0 exit follows). */
+        tl.fromTo("#jargon", { y: 24, opacity: 0, filter: "blur(5px)" },
+                  { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power2.out" }, 24.8);
+        tl.to("#j-mask1", { maxWidth: 535, duration: 2.1, ease: "steps(37)" }, 25.3);
+        tl.to("#j-mask2", { maxWidth: 492, duration: 1.9, ease: "steps(34)" }, 27.45);
+        // "I don't want to do a ton of cognitive processing" (35.7): strike + dim
+        tl.fromTo("#j-strike1", { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power2.out" }, 36.7);
+        tl.fromTo("#j-strike2", { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power2.out" }, 36.95);
+        tl.to("#jargon", { opacity: 0.55, duration: 0.5, ease: "power2.inOut" }, 37.2);
+        tl.to("#jargon", { y: 16, opacity: 0, duration: 0.35, ease: "power2.in" }, 39.1);
+
+        /* ---- the ladder rail (40.6 → 51.2) — "here we go… same plan, third shape" ----
+           Dots 1-2 arrive lit; dot 3 fills on "third shape" (45.8). */
+        tl.fromTo("#rail", { y: -16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power2.out" }, 40.6);
+        tl.add(() => { document.getElementById("rd-3").classList.add("on"); }, 45.85);
+        tl.fromTo("#rd-3", { scale: 1 }, { scale: 1.45, duration: 0.18, ease: "power2.out" }, 45.85);
+        tl.to("#rd-3", { scale: 1, duration: 0.25, ease: "power2.in" }, 46.05);
+        tl.to("#rail", { y: -4, duration: 4.5, ease: "none" }, 46.4); // micro-drift — camera never sleeps
+        tl.to("#rail", { opacity: 0, duration: 0.3, ease: "power2.in" }, 51.0);
+
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines["p05-ladder"] = tl;
+      })();
+    </script>
+  </body>
+</html>

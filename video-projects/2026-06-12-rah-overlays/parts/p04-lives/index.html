@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>RAH P04 — Where it lives (overlay layer)</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: transparent;
+        font-family: "Geist", system-ui, sans-serif; }
+      :root {
+        --srf-well: #0c111e; --srf-station-top: #131c30; --srf-station-bot: #0f1726;
+        --bd: #222f4c; --bd-inner: #283755; --bd-station: #36486f;
+        --tx: #e9edf6; --tx-bright2: #c8d1e3; --tx-code: #6d7894; --tx-ghost: #5b6580;
+        --blossom: #f0a8c2; --fill-tx: #152848;
+        --glow: rgba(240, 168, 194, 0.30); --glint: rgba(210, 226, 255, 0.18);
+        --font-mono: "Geist Mono", ui-monospace, Menlo, monospace;
+      }
+      #p04-root { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+      #p04-root .reference-layer { position: absolute; inset: 0; z-index: 0; }
+      #p04-root .reference-layer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #p04-root .overlay-root { position: absolute; inset: 0; z-index: 10; }
+
+      /* the "where it lives" mini-diagram — chat pane beside page pane, side panel
+         over the talking head (the footage here is all A-roll; the diagram draws
+         the layout the earlier shot proved) */
+      #p04-root .lives { position: absolute; left: 120px; top: 280px; width: 600px;
+        background: linear-gradient(180deg, var(--srf-station-top) 0%, var(--srf-station-bot) 100%);
+        border: 1px solid var(--bd-station);
+        box-shadow: inset 0 1px 0 var(--glint), 0 30px 90px rgba(0, 0, 0, 0.6);
+        padding: 22px; }
+      #p04-root .lives-head { font: 500 18px/1 var(--font-mono); letter-spacing: 0.14em;
+        text-transform: uppercase; color: var(--tx-bright2); margin-bottom: 16px; }
+      #p04-root .panes { display: flex; gap: 10px; }
+      #p04-root .pane { background: var(--srf-well); border: 1px solid var(--bd-inner); padding: 16px; }
+      #p04-root .pane-label { font: 500 14px/1 var(--font-mono); letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--tx-ghost); margin-bottom: 12px; }
+      #p04-root .pane-chat { width: 200px; }
+      #p04-root .pane-page { width: 346px; }
+      #p04-root .bub { height: 12px; border-radius: 6px; background: var(--tx-code); opacity: 0.6; margin-bottom: 10px; }
+      #p04-root .hbar { height: 18px; border-radius: 3px; background: var(--tx-code); opacity: 0.9; margin-bottom: 12px; }
+      #p04-root .pgcard { display: inline-block; width: 46%; height: 56px; border: 1px solid var(--bd-inner);
+        border-radius: 6px; background: rgba(40, 55, 85, 0.35); margin-right: 8px; }
+      #p04-root .pills { display: flex; gap: 10px; margin-top: 16px; }
+      #p04-root .lp { font: 500 17px/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase;
+        color: var(--tx-bright2); border: 1px solid var(--bd-inner); border-radius: 999px;
+        padding: 10px 14px; white-space: nowrap; }
+      #p04-root .lp .dotb { display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+        background: var(--blossom); margin-right: 8px; vertical-align: middle; }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-9vuw" id="p04-root" data-composition-id="p04-lives" data-start="0" data-duration="23.056" data-width="1920" data-height="1080">
+      <!-- =================================================================
+           REFERENCE LAYER START — delete in index.alpha.html before alpha export.
+           proxy t=0 == master 2:12.43 (132.434s)
+           ================================================================= -->
+      <div data-hf-id="hf-y6tz" class="reference-layer">
+        <video data-hf-id="hf-33h3" id="ref-video" data-start="0" data-duration="23.056" data-track-index="0" src="assets/proxy.mp4" muted playsinline></video>
+        <audio data-hf-id="hf-jfju" id="ref-audio" data-start="0" data-duration="23.056" data-track-index="1" src="assets/proxy.mp4" data-volume="1.0"></audio>
+      </div>
+      <!-- ===================== REFERENCE LAYER END ======================= -->
+
+      <div data-hf-id="hf-js6p" class="overlay-root">
+        <!-- mini-diagram · 5.2–16.5 · "Look where it lives. It opens right next to
+             your chat" (master 138.0). Pills land on their VO words. -->
+        <div data-hf-id="hf-o7ck" class="lives clip" id="lives" data-start="5.2" data-duration="11.3" data-track-index="2">
+          <div data-hf-id="hf-e50b" class="lives-head">WHERE IT LIVES</div>
+          <div data-hf-id="hf-xkfh" class="panes">
+            <div data-hf-id="hf-uyu7" class="pane pane-chat">
+              <div data-hf-id="hf-3x1q" class="pane-label">YOUR CHAT</div>
+              <div data-hf-id="hf-nnpk" class="bub" style="width: 86%"></div>
+              <div data-hf-id="hf-go2p" class="bub" style="width: 70%"></div>
+              <div data-hf-id="hf-i88p" class="bub" style="width: 78%"></div>
+            </div>
+            <div data-hf-id="hf-voso" class="pane pane-page" id="pane-page">
+              <div data-hf-id="hf-gee9" class="pane-label">THE PAGE</div>
+              <div data-hf-id="hf-547f" class="hbar" style="width: 72%"></div>
+              <span data-hf-id="hf-ayzg" class="pgcard"></span><span data-hf-id="hf-xgus" class="pgcard"></span>
+            </div>
+          </div>
+          <div data-hf-id="hf-c9cw" class="pills">
+            <span data-hf-id="hf-krcb" class="lp" id="lp-1"><span data-hf-id="hf-7jrk" class="dotb"></span>NO NEW TAB</span>
+            <span data-hf-id="hf-vo5m" class="lp" id="lp-2"><span data-hf-id="hf-dqqw" class="dotb"></span>NO PUBLISH</span>
+            <span data-hf-id="hf-dk15" class="lp" id="lp-3"><span data-hf-id="hf-cjtt" class="dotb"></span>NO SIGN-UP</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 23.056;
+        const tl = gsap.timeline({ paused: true });
+
+        /* local = master − 132.434. "Look where it lives" = 5.6 · "next to your
+           chat" = 7.2 · pills: no new tabs 8.5 / no publish 9.5 / nothing to sign
+           up for 10.9 · "It's yours. Nobody else sees it" 12.2 → collapse 12.4 */
+        tl.fromTo("#lives", { y: 24, opacity: 0, filter: "blur(5px)" },
+                  { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.35, ease: "power3.out" }, 5.3);
+        // the page pane pulses on "right next to your chat" (7.2)
+        tl.to("#pane-page", { borderColor: "#36486f", duration: 0.25, ease: "power2.out", overwrite: "auto" }, 7.2);
+        tl.to("#pane-page", { borderColor: "#283755", duration: 0.5, ease: "power2.in", overwrite: "auto" }, 7.6);
+        // rule of three — each pill lands on its spoken word
+        tl.fromTo("#lp-1", { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.25, ease: "power2.out" }, 8.5);
+        tl.fromTo("#lp-2", { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.25, ease: "power2.out" }, 9.55);
+        tl.fromTo("#lp-3", { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.25, ease: "power2.out" }, 10.95);
+        // "It's yours. Nobody else sees it." — the pills hand off to one quiet state
+        tl.to("#lp-1, #lp-2, #lp-3", { opacity: 0.45, duration: 0.4, ease: "power2.inOut" }, 12.4);
+        // EXIT before "I'm not a coder by trade" breathes alone (16.8)
+        tl.to("#lives", { y: -4, duration: 3.4, ease: "none" }, 12.6); // micro-drift — camera never sleeps
+        tl.to("#lives", { y: -40, opacity: 0, filter: "blur(8px)", duration: 0.45, ease: "power3.in", overwrite: "auto" }, 16.1);
+
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines["p04-lives"] = tl;
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,115 @@
+/* ============================================================================
+   LINEAR V2 SHARED TOKENS + OVERLAY PRIMITIVES — RAH overlay package
+   Canonical copy. Each part INLINES this block in its <style> (self-contained
+   portability rule) with selectors prefixed by the part root id (#pXX-root).
+   Source: DESIGN.linear.md + DESIGN.linear-v2.md (cobalt axis + blossom slot).
+
+   Fonts per part <head> (compiler embeds from the link):
+   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+   PILL DOCTRINE (Gate-1 finding, P03): the pill appears ONLY where the spoken
+   sentence is NOT already the shot. In P03 the footage zooms the real Revise
+   box — pill dropped there; debuts at P05 (prompts sit small in the chat pane).
+
+   PROMPT PILL markup pattern (the recurring hero object):
+     <div class="pill clip" data-start=".." data-duration=".." data-track-index="..">
+       <span class="pill-ph">Revise this plan…</span>            <!-- placeholder, dim -->
+       <span class="pill-type"><span class="pill-text">make this a page I can read</span></span>
+       <span class="pill-caret"></span>                          <!-- blossom beam -->
+       <span class="pill-send"><svg …arrow…></svg></span>        <!-- gray circle; blossom flash on send -->
+     </div>
+   Typewriter: tween .pill-type maxWidth 0→W, ease steps(chars); caret rides the
+   clip edge (absolute right of .pill-type). Send: caret hides, send circle
+   flashes blossom 3 frames, text swaps to dim (sent).
+   ========================================================================== */
+:root {
+  /* canvases (takeover beats only — Lane A overlays never paint full-frame) */
+  --lin-bg: #070b16; --lin-bg-code: #050811; --lin-bg-deep: #04070e;
+  /* surfaces */
+  --srf-panel-top: #141e33; --srf-station-top: #131c30; --srf-modal: #121b2e;
+  --srf-card-top: #16213a; --srf-card-bot: #111a2d; --srf-panel-bot: #0b101c;
+  --srf-well: #0c111e; --srf-station-bot: #0f1726; --srf-flat: #0f1626;
+  --srf-2: #141f37; --srf-bubble: #1b2742; --srf-circle: #2a3a5e;
+  /* borders */
+  --bd-station: #36486f; --bd-inner: #283755; --bd-pill: #2c3c5e;
+  --bd: #222f4c; --bd-card: #25334f; --bd-modal: #222f4a; --bd-faint: #1c2740;
+  /* text (cool-cast gray-white — NEVER blossom) */
+  --tx: #e9edf6; --tx-pill: #d3dae8; --tx-bright2: #c8d1e3; --tx-typed: #b8c2d6;
+  --tx-codehi: #99a5bd; --tx-dim: #8995b0; --tx-ph: #6a748e; --tx-code: #6d7894;
+  --tx-ghost: #5b6580;
+  /* the accent slot — fills, cursors, edge glows, send flash ONLY */
+  --blossom: #f0a8c2; --fill-tx: #152848;
+  --glow: rgba(240, 168, 194, 0.30); --glow-hi: rgba(240, 168, 194, 0.35);
+  --glint: rgba(210, 226, 255, 0.18);            /* station top-edge: cool white, never blossom */
+  --font-ui: "Geist", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, Menlo, monospace;
+}
+
+/* ---------- Lane A primitives (over footage — light-touch law) ---------- */
+
+/* mono corner tag / eyebrow — Geist Mono 500 uppercase, wide tracking */
+.tag {
+  font: 500 21px/1 var(--font-mono); letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--tx-bright2); background: rgba(15, 22, 38, 0.92);
+  border: 1px solid var(--bd); border-radius: 6px; padding: 12px 18px;
+  box-shadow: inset 0 1px 0 var(--glint);
+  display: inline-flex; align-items: center; gap: 12px; white-space: nowrap;
+}
+.tag .dotb { width: 7px; height: 7px; border-radius: 50%; background: var(--blossom); }
+
+/* prompt pill — Linear input chrome, lower-third over footage */
+.pill {
+  display: inline-flex; align-items: center; gap: 16px;
+  background: linear-gradient(180deg, var(--srf-card-top) 0%, var(--srf-card-bot) 100%);
+  border: 1px solid var(--bd); border-radius: 16px; padding: 18px 20px 18px 24px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 18px 50px rgba(0, 0, 0, 0.45);
+  font: 400 27px/1.25 var(--font-ui); color: var(--tx);
+}
+.pill-ph { color: var(--tx-ph); }
+.pill-type { display: inline-block; overflow: hidden; white-space: nowrap; max-width: 0; vertical-align: bottom; }
+.pill-caret { display: inline-block; width: 2.5px; height: 32px; background: var(--blossom); }
+.pill-send {
+  width: 42px; height: 42px; border-radius: 50%; background: var(--srf-circle);
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+}
+.pill-send svg { width: 18px; height: 18px; stroke: var(--tx-pill); }
+
+/* blossom underline sweep — the attention primitive for on-screen facts */
+.uline { height: 3px; background: var(--blossom); border-radius: 2px;
+         transform-origin: left center; box-shadow: 0 0 12px var(--glow); }
+
+/* hairline focus rect — draws around a UI region of the footage */
+.frame-rect { border: 1.5px solid var(--bd-station); border-radius: 8px;
+              box-shadow: 0 0 0 1px rgba(7, 11, 22, 0.55), 0 0 22px var(--glow); }
+
+/* fill state-change stamp — sharp corners (station genre) */
+.stamp {
+  font: 500 22px/1 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase;
+  background: var(--blossom); color: var(--fill-tx); padding: 14px 20px;
+  box-shadow: 0 0 26px var(--glow-hi);
+}
+
+/* ---------- Lane B primitives (takeover beats — full register) ---------- */
+
+/* flow station — sharp corners, mono uppercase, hairline rows, cool glint */
+.station {
+  background: linear-gradient(180deg, var(--srf-station-top) 0%, var(--srf-station-bot) 100%);
+  border: 1px solid var(--bd-station);
+  box-shadow: inset 0 1px 0 var(--glint), 0 30px 90px rgba(0, 0, 0, 0.6);
+  font-family: var(--font-mono);
+}
+.station-head {
+  font: 500 24px/1 var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--tx); padding: 20px 26px; border-bottom: 1px solid var(--bd-inner);
+}
+.station-row { padding: 16px 26px; border-bottom: 1px solid var(--bd-inner);
+               font: 400 20px/1.4 var(--font-mono); color: var(--tx-dim); }
+.station .glow-on { box-shadow: inset 0 1px 0 var(--glint), 0 0 18px var(--glow); }
+
+/* gray text-bar (plan lines in diagrams — P02 / P09 reflow) */
+.tbar { height: 16px; border-radius: 3px; background: var(--tx-code); opacity: 0.78; }
+.tbar.hi { background: var(--tx-codehi); }
+
+/* takeover vignette (Lane B only): inner stop matches canvas, never `transparent` */
+.vignette { position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(7, 11, 22, 0) 50%, rgba(4, 7, 14, 0.62) 100%); }

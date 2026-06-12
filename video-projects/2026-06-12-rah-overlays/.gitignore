@@ -1,0 +1,9 @@
+# Unreleased source footage — do NOT publish before the video is live (2026-06-26).
+# Proxies are dense-keyframe copies of the locked master; the transcript is its full script.
+parts/*/assets/proxy.mp4
+.work/master-v2-transcript.json
+.work/words.tsv
+
+# Studio caches — thumbnails are rendered WITH the reference proxy layer (unreleased frames)
+.thumbnails/
+.waveform-cache/

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>RAH P10 — Bookend + end screen (overlay layer)</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 600; font-display: block; src: url(assets/fonts/Geist-600.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1920px; height: 1080px; overflow: hidden;
+        background: transparent; /* Lane A part — overlays only */
+        font-family: "Geist", system-ui, sans-serif;
+      }
+      :root {
+        --srf-card-top: #16213a; --srf-card-bot: #111a2d; --srf-circle: #2a3a5e; --srf-well: #0c111e;
+        --bd: #222f4c; --bd-inner: #283755; --bd-card: #25334f;
+        --tx: #e9edf6; --tx-pill: #d3dae8; --tx-bright2: #c8d1e3; --tx-dim: #8995b0; --tx-ghost: #5b6580;
+        --blossom: #f0a8c2; --fill-tx: #152848;
+        --glow: rgba(240, 168, 194, 0.30); --glint: rgba(210, 226, 255, 0.18);
+        --font-ui: "Geist", system-ui, sans-serif;
+        --font-mono: "Geist Mono", ui-monospace, Menlo, monospace;
+      }
+      #p10-root { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+      #p10-root .reference-layer { position: absolute; inset: 0; z-index: 0; }
+      #p10-root .reference-layer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #p10-root .overlay-root { position: absolute; inset: 0; z-index: 10; }
+
+      /* counter callback — the P01 chip, revalued */
+      #p10-root .counter { position: absolute; left: 90px; top: 80px;
+        font: 500 22px/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase;
+        color: var(--tx-bright2); background: rgba(15, 22, 38, 0.92);
+        border: 1px solid var(--bd); border-radius: 6px; padding: 13px 18px;
+        box-shadow: inset 0 1px 0 var(--glint);
+        display: inline-flex; align-items: center; gap: 14px; white-space: nowrap; }
+      #p10-root .counter .got { background: var(--blossom); color: var(--fill-tx);
+        padding: 6px 10px; font-size: 19px; letter-spacing: 0.12em; }
+
+      /* the model-name catch — strike + correction (what reading caught) */
+      #p10-root .catch { position: absolute; left: 90px; top: 906px;
+        font: 500 23px/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase;
+        color: var(--tx-bright2); background: rgba(15, 22, 38, 0.94);
+        border: 1px solid var(--bd); border-radius: 6px; padding: 16px 20px;
+        box-shadow: inset 0 1px 0 var(--glint);
+        display: inline-flex; align-items: center; gap: 12px; white-space: nowrap; }
+      #p10-root .catch .wrong { position: relative; display: inline-block; }
+      #p10-root .catch .strike { position: absolute; left: -3px; right: -3px; top: 50%; height: 3px;
+        background: var(--blossom); border-radius: 2px; transform-origin: left center;
+        box-shadow: 0 0 10px var(--glow); }
+      #p10-root .catch .fix { background: var(--blossom); color: var(--fill-tx);
+        padding: 6px 10px; font-size: 20px; }
+
+      /* the takeaway pill — center stage over the talking head */
+      #p10-root .pill { position: absolute; left: 50%; top: 560px;
+        display: inline-flex; align-items: center; gap: 16px;
+        background: linear-gradient(180deg, var(--srf-card-top) 0%, var(--srf-card-bot) 100%);
+        border: 1px solid var(--bd); border-radius: 18px; padding: 22px 22px 22px 28px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 22px 60px rgba(0, 0, 0, 0.5); }
+      #p10-root .skill-glyph { font: 500 30px/1 var(--font-mono); color: var(--blossom); display: none; }
+      #p10-root .pill-type { display: inline-block; overflow: hidden; white-space: nowrap; max-width: 0; }
+      #p10-root .pill-text { font: 400 32px/1.25 var(--font-ui); color: var(--tx); white-space: nowrap; }
+      #p10-root .pill-caret { display: inline-block; width: 3px; height: 38px; background: var(--blossom); flex: none; }
+      #p10-root .pill-send { width: 48px; height: 48px; border-radius: 50%; background: var(--srf-circle);
+        display: inline-flex; align-items: center; justify-content: center; flex: none; }
+      #p10-root .pill-send svg { width: 20px; height: 20px; stroke: var(--tx-pill); stroke-width: 2; fill: none; }
+
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-lop8" id="p10-root" data-composition-id="p10-bookend" data-start="0" data-duration="37.371" data-width="1920" data-height="1080">
+      <!-- =================================================================
+           REFERENCE LAYER START — delete this whole block in index.alpha.html
+           before the alpha export (see ../../SPLIT.md). Proxy only.
+           proxy t=0 == master 6:12.37 (372.371s)
+           ================================================================= -->
+      <div data-hf-id="hf-y6tz" class="reference-layer">
+        <video data-hf-id="hf-6a7u" id="ref-video" data-start="0" data-duration="37.371" data-track-index="0" src="assets/proxy.mp4" muted playsinline></video>
+        <audio data-hf-id="hf-nvzf" id="ref-audio" data-start="0" data-duration="37.371" data-track-index="1" src="assets/proxy.mp4" data-volume="1.0"></audio>
+      </div>
+      <!-- ===================== REFERENCE LAYER END ======================= -->
+
+      <div data-hf-id="hf-js6p" class="overlay-root">
+
+        <!-- counter callback · 0.3–6.2 · the P01 chip returns, revalued -->
+        <div data-hf-id="hf-eheh" class="counter clip" id="counter" data-start="0.3" data-duration="5.9" data-track-index="2">
+          <span data-hf-id="hf-kd1c">2,000 WORDS</span><span data-hf-id="hf-hlid" class="got" id="got" style="opacity: 0">ACTUALLY READ</span>
+        </div>
+
+        <!-- the catch · 6.3–14.6 · "reading is literally how I caught the plan had
+             one of the model names wrong" — the error from the 0:37 table, struck -->
+        <div data-hf-id="hf-9wgl" class="catch clip" id="catch" data-start="6.3" data-duration="8.3" data-track-index="3">
+          <span data-hf-id="hf-rxz6" class="dim" style="color: var(--tx-ghost)">CHAMP ·</span>
+          <span data-hf-id="hf-x2wc" class="wrong">GEMINI 3.5 PRO<span data-hf-id="hf-0qir" class="strike" id="strike"></span></span>
+          <span data-hf-id="hf-k99a" class="fix" id="fix" style="opacity: 0">3.5 FLASH</span>
+        </div>
+
+        <!-- the takeaway pill · 20.4–31.4 · center stage over the talking head -->
+        <div data-hf-id="hf-4f3y" class="pill clip" id="pill" data-start="20.4" data-duration="11.0" data-track-index="4">
+          <span data-hf-id="hf-jyag" class="skill-glyph" id="skill-glyph">◇</span>
+          <span data-hf-id="hf-wrjv" class="pill-type" id="pill-type"><span data-hf-id="hf-w868" class="pill-text" id="pill-text">make this a page I can read</span></span>
+          <span data-hf-id="hf-qlej" class="pill-caret" id="pill-caret"></span>
+          <span data-hf-id="hf-z9nv" class="pill-send" id="pill-send">
+            <svg data-hf-id="hf-y9f5" viewBox="0 0 24 24"><path data-hf-id="hf-rogn" d="M12 19V6M6 12l6-6 6 6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 37.371;
+        const tl = gsap.timeline({ paused: true });
+
+        /* ---------- counter callback (0.4 → 6.1) ----------
+           VO "So that 2,000-word plan from the start of this video, this is it now."
+           The blossom segment lands on "I actually read it this time" (4.9). */
+        tl.fromTo("#counter", { y: -14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power2.out" }, 0.4);
+        tl.fromTo("#got", { opacity: 0, scale: 1.25, filter: "blur(5px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.22, ease: "power3.out" }, 4.95);
+        tl.to("#counter", { opacity: 0, y: -12, duration: 0.3, ease: "power2.in" }, 5.95);
+        tl.set("#counter", { opacity: 0 }, 6.3);
+
+        /* ---------- the catch (6.4 → 14.4) ----------
+           Strike leads "wrong" (VO 11.17–11.75) by 0.17s; the correction chip
+           lands mid-word — the overlay must not answer before the VO asks.
+           This pays off the P01 stamp — the same table, finally read. */
+        tl.fromTo("#catch", { y: 24, opacity: 0, filter: "blur(5px)" },
+                  { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power2.out" }, 6.4);
+        tl.fromTo("#strike", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power2.out" }, 11.0);
+        tl.fromTo("#fix", { opacity: 0, x: -14, filter: "blur(5px)" },
+                  { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.25, ease: "power3.out" }, 11.45);
+        tl.to("#catch", { opacity: 0, y: 16, duration: 0.35, ease: "power2.in" }, 14.1);
+
+        /* ---------- the takeaway pill (20.5 → 31.2) ----------
+           The pill's hero moment — over the talking head, dead center.
+           Types with VO "make this a page I can read" (22.0 → 23.4). */
+        tl.set("#pill", { xPercent: -50 }, 0); // true centering — re-centers live as the pill types/grows
+        tl.fromTo("#pill", { y: 36, opacity: 0, filter: "blur(6px)" },
+                  { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.35, ease: "power3.out" }, 20.5);
+        tl.to("#pill-caret", { opacity: 0, duration: 0.4, ease: "steps(1)", repeat: 1, yoyo: true }, 20.9);
+        tl.to("#pill-type", { maxWidth: 470, duration: 1.42, ease: "steps(27)" }, 22.0);
+        // send beat on "That's the whole thing." (23.7)
+        tl.set("#pill-send", { backgroundColor: "#f0a8c2" }, 23.72);
+        tl.set("#pill-send svg", { stroke: "#152848" }, 23.72);
+        tl.set("#pill-send", { backgroundColor: "#2a3a5e" }, 23.92);
+        tl.set("#pill-send svg", { stroke: "#d3dae8" }, 23.92);
+        tl.set("#pill-text", { color: "#6a748e" }, 24.05);
+        /* "save it as a skill, it's even shorter" (25.0 → 27.0): the sentence
+           clears, the saved-skill glyph appears, and the invocation retypes FAST —
+           a saved skill is a kept promise, not a retyped sentence. */
+        tl.to("#pill-type", { maxWidth: 0, duration: 0.3, ease: "power2.in" }, 27.0);
+        tl.add(() => {
+          document.getElementById("pill-text").textContent = "turn this into Apple design";
+          document.getElementById("pill-text").style.color = "#e9edf6";
+          document.getElementById("skill-glyph").style.display = "inline";
+        }, 27.32);
+        tl.fromTo("#skill-glyph", { opacity: 0, scale: 1.3 }, { opacity: 1, scale: 1, duration: 0.22, ease: "power3.out" }, 27.34);
+        tl.to("#pill-type", { maxWidth: 470, duration: 0.85, ease: "steps(27)" }, 27.55);
+        // send beat on "That's basically it." (29.1)
+        tl.set("#pill-send", { backgroundColor: "#f0a8c2" }, 29.15);
+        tl.set("#pill-send svg", { stroke: "#152848" }, 29.15);
+        tl.set("#pill-send", { backgroundColor: "#2a3a5e" }, 29.35);
+        tl.set("#pill-send svg", { stroke: "#d3dae8" }, 29.35);
+        tl.set("#pill-text", { color: "#6a748e" }, 29.5);
+        tl.to("#pill", { y: 26, opacity: 0, duration: 0.3, ease: "power2.in" }, 31.0);
+
+        /* No end-screen card — Andy's call 2026-06-11: the tail stays clean
+           footage; YouTube's own end-screen elements own that real estate. */
+
+        // Law #11 anchor — timeline fills the slot
+        tl.to({}, { duration: SLOT }, 0);
+        window.__timelines["p10-bookend"] = tl;
+      })();
+    </script>
+  </body>
+</html>

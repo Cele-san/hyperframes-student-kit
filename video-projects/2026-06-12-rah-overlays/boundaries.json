@@ -1,0 +1,117 @@
+{
+  "source": "/Users/andydepp/Projects/OperatorOS/videos/2026-06-26-reading-ai-output-as-html-claude-artifacts/Exports/RAH_main V2 .mp4",
+  "fps": "30000/1001",
+  "total_s": 409.749333,
+  "parts": [
+    {
+      "part": "P01",
+      "slug": "p01-hook",
+      "title": "Hook + rubber stamp (B1-B2)",
+      "start_s": 0.0,
+      "end_s": 56.99,
+      "duration_s": 56.99,
+      "start_tc": "0:00.00",
+      "end_tc": "0:56.99",
+      "proxy": "parts/p01-hook/assets/proxy.mp4"
+    },
+    {
+      "part": "P02",
+      "slug": "p02-doors",
+      "title": "Doors closing takeover (B3)",
+      "start_s": 56.99,
+      "end_s": 89.089,
+      "duration_s": 32.099,
+      "start_tc": "0:56.99",
+      "end_tc": "1:29.09",
+      "proxy": "parts/p02-doors/assets/proxy.mp4"
+    },
+    {
+      "part": "P03",
+      "slug": "p03-the-turn",
+      "title": "The turn + prompt pill #1 (B4)",
+      "start_s": 89.089,
+      "end_s": 132.432,
+      "duration_s": 43.343,
+      "start_tc": "1:29.09",
+      "end_tc": "2:12.43",
+      "proxy": "parts/p03-the-turn/assets/proxy.mp4"
+    },
+    {
+      "part": "P04",
+      "slug": "p04-lives",
+      "title": "Where it lives (B5)",
+      "start_s": 132.432,
+      "end_s": 155.489,
+      "duration_s": 23.056,
+      "start_tc": "2:12.43",
+      "end_tc": "2:35.49",
+      "proxy": "parts/p04-lives/assets/proxy.mp4"
+    },
+    {
+      "part": "P05",
+      "slug": "p05-ladder",
+      "title": "The ladder, cycles 2-3 (B6)",
+      "start_s": 155.489,
+      "end_s": 208.608,
+      "duration_s": 53.12,
+      "start_tc": "2:35.49",
+      "end_tc": "3:28.61",
+      "proxy": "parts/p05-ladder/assets/proxy.mp4"
+    },
+    {
+      "part": "P06",
+      "slug": "p06-cost",
+      "title": "Rule + cost + DeepSeek (B7)",
+      "start_s": 208.608,
+      "end_s": 262.429,
+      "duration_s": 53.82,
+      "start_tc": "3:28.61",
+      "end_tc": "4:22.43",
+      "proxy": "parts/p06-cost/assets/proxy.mp4"
+    },
+    {
+      "part": "P07",
+      "slug": "p07-smallest",
+      "title": "Smallest version walkthrough (B8)",
+      "start_s": 262.429,
+      "end_s": 298.632,
+      "duration_s": 36.203,
+      "start_tc": "4:22.43",
+      "end_tc": "4:58.63",
+      "proxy": "parts/p07-smallest/assets/proxy.mp4"
+    },
+    {
+      "part": "P08",
+      "slug": "p08-system",
+      "title": "Skill + unpack WIP (B9)",
+      "start_s": 298.632,
+      "end_s": 341.308,
+      "duration_s": 42.676,
+      "start_tc": "4:58.63",
+      "end_tc": "5:41.31",
+      "proxy": "parts/p08-system/assets/proxy.mp4"
+    },
+    {
+      "part": "P09",
+      "slug": "p09-thesis",
+      "title": "The reflow takeover (B10)",
+      "start_s": 341.308,
+      "end_s": 372.372,
+      "duration_s": 31.064,
+      "start_tc": "5:41.31",
+      "end_tc": "6:12.37",
+      "proxy": "parts/p09-thesis/assets/proxy.mp4"
+    },
+    {
+      "part": "P10",
+      "slug": "p10-bookend",
+      "title": "Bookend + end screen (B11)",
+      "start_s": 372.372,
+      "end_s": 409.743,
+      "duration_s": 37.371,
+      "start_tc": "6:12.37",
+      "end_tc": "6:49.74",
+      "proxy": "parts/p10-bookend/assets/proxy.mp4"
+    }
+  ]
+}

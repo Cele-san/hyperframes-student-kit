@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>RAH P06 — Rule + cost + DeepSeek (overlay layer)</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: transparent;
+        font-family: "Geist", system-ui, sans-serif; }
+      :root {
+        --srf-station-top: #131c30; --srf-station-bot: #0f1726; --srf-well: #0c111e;
+        --srf-card-top: #16213a; --srf-card-bot: #111a2d;
+        --bd: #222f4c; --bd-inner: #283755; --bd-station: #36486f; --bd-card: #25334f;
+        --tx: #e9edf6; --tx-bright2: #c8d1e3; --tx-dim: #8995b0; --tx-ghost: #5b6580;
+        --blossom: #f0a8c2; --fill-tx: #152848;
+        --glow: rgba(240, 168, 194, 0.30); --glint: rgba(210, 226, 255, 0.18);
+        --font-mono: "Geist Mono", ui-monospace, Menlo, monospace;
+      }
+      #p06-root { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+      #p06-root .reference-layer { position: absolute; inset: 0; z-index: 0; }
+      #p06-root .reference-layer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #p06-root .overlay-root { position: absolute; inset: 0; z-index: 10; }
+
+      /* the rule — station-genre card over the talking head */
+      #p06-root .rule { position: absolute; left: 120px; top: 300px; width: 600px;
+        background: linear-gradient(180deg, var(--srf-station-top) 0%, var(--srf-station-bot) 100%);
+        border: 1px solid var(--bd-station);
+        box-shadow: inset 0 1px 0 var(--glint), 0 30px 90px rgba(0, 0, 0, 0.6); }
+      #p06-root .rule-head { font: 500 20px/1 var(--font-mono); letter-spacing: 0.14em;
+        text-transform: uppercase; color: var(--tx); padding: 18px 24px;
+        border-bottom: 1px solid var(--bd-inner); }
+      #p06-root .rule-row { font: 500 19px/1.4 var(--font-mono); letter-spacing: 0.04em;
+        color: var(--tx-bright2); padding: 17px 24px; border-bottom: 1px solid var(--bd-inner);
+        display: flex; justify-content: space-between; gap: 18px; white-space: nowrap; }
+      #p06-root .rule-row:last-child { border-bottom: none; }
+      #p06-root .rule-row .rr-r { color: var(--tx-dim); }
+      #p06-root .rule-row.catch .rr-r { color: var(--tx-bright2); }
+      #p06-root .rule-row .dotb { display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+        background: var(--blossom); margin-right: 10px; vertical-align: middle; }
+
+      /* the bottom-left relay: price chip → chart callout → cross-link card */
+      #p06-root .chip { position: absolute; left: 90px; top: 920px;
+        font: 500 22px/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase;
+        color: var(--tx-bright2); background: rgba(15, 22, 38, 0.94);
+        border: 1px solid var(--bd); border-radius: 6px; padding: 14px 18px;
+        box-shadow: inset 0 1px 0 var(--glint);
+        display: inline-flex; align-items: center; gap: 12px; white-space: nowrap; }
+      #p06-root .chip .dotb { width: 7px; height: 7px; border-radius: 50%; background: var(--blossom); }
+      #p06-root .chip .hot { background: var(--blossom); color: var(--fill-tx); padding: 6px 9px; font-size: 20px; }
+
+      #p06-root .xlink { position: absolute; left: 90px; top: 856px; width: 460px;
+        background: linear-gradient(180deg, var(--srf-card-top) 0%, var(--srf-card-bot) 100%);
+        border: 1px solid var(--bd-card); border-radius: 12px; padding: 14px;
+        box-shadow: inset 0 1px 0 var(--glint), 0 22px 60px rgba(0, 0, 0, 0.55);
+        display: flex; align-items: center; gap: 14px; }
+      #p06-root .xl-thumb { width: 124px; aspect-ratio: 16 / 9; flex: none;
+        background: var(--srf-well); border: 1px solid var(--bd-inner); border-radius: 7px;
+        display: flex; align-items: center; justify-content: center; }
+      #p06-root .xl-thumb svg { width: 26px; height: 26px; fill: var(--tx-ghost); }
+      #p06-root .xl-label { font: 500 17px/1.45 var(--font-mono); letter-spacing: 0.08em;
+        text-transform: uppercase; color: var(--tx-bright2); }
+      #p06-root .xl-label .sub { color: var(--tx-ghost); font-size: 14px; display: block; margin-top: 5px; }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-hice" id="p06-root" data-composition-id="p06-cost" data-start="0" data-duration="53.82" data-width="1920" data-height="1080">
+
+      <div data-hf-id="hf-js6p" class="overlay-root">
+
+        <!-- the rule card · 2.7–21.2 · the most copyable info after the sentence -->
+        <div data-hf-id="hf-vezn" class="rule clip" id="rule" data-start="2.7" data-duration="18.5" data-track-index="2">
+          <div data-hf-id="hf-hd0n" class="rule-head">THE QUICK RULE</div>
+          <div data-hf-id="hf-sp2o" class="rule-row" id="rr-1" style="opacity: 0">
+            <span data-hf-id="hf-kgvv"><span data-hf-id="hf-7jrk" class="dotb"></span>OVER 5 PARAGRAPHS</span><span data-hf-id="hf-sn5b" class="rr-r">MAKE IT A PAGE</span>
+          </div>
+          <div data-hf-id="hf-ww4p" class="rule-row" id="rr-2" style="opacity: 0">
+            <span data-hf-id="hf-rue6"><span data-hf-id="hf-dqqw" class="dotb"></span>2 PARAGRAPHS OR LESS</span><span data-hf-id="hf-dv4w" class="rr-r">PLAIN ENGLISH</span>
+          </div>
+          <div data-hf-id="hf-2691" class="rule-row catch" id="rr-3" style="opacity: 0">
+            <span data-hf-id="hf-yubc"><span data-hf-id="hf-cjtt" class="dotb"></span>THE HONEST CATCH</span><span data-hf-id="hf-wvlf" class="rr-r">COSTS A LITTLE EXTRA</span>
+          </div>
+        </div>
+
+        <!-- price chip · 34.9–38.0 · the only spoken numbers, held steady -->
+        <div data-hf-id="hf-v8cx" class="chip clip" id="price" data-start="34.9" data-duration="3.1" data-track-index="3">
+          <span data-hf-id="hf-cy4u" class="dotb"></span>DEEPSEEK · <span data-hf-id="hf-a744" class="hot">$0.14 IN</span> <span data-hf-id="hf-desy" class="hot">$0.28 OUT</span>
+        </div>
+
+        <!-- chart callout CUT at Gate 2 — the chart's own headline already says 5 to 15× -->
+
+        <!-- DeepSeek cross-link · 40.8–45.4 · fills the b-roll gap -->
+        <div data-hf-id="hf-h8nj" class="xlink clip" id="xlink" data-start="40.8" data-duration="4.6" data-track-index="3">
+          <div data-hf-id="hf-qlar" class="xl-thumb"><svg data-hf-id="hf-y9f5" viewBox="0 0 24 24"><path data-hf-id="hf-y4mp" d="M8 5v14l11-7z" /></svg></div>
+          <div data-hf-id="hf-aisq" class="xl-label">RUNNING CLAUDE CODE ON DEEPSEEK<span data-hf-id="hf-k4qw" class="sub">FULL SETUP · LINKED BELOW</span></div>
+        </div>
+
+        <!-- same-trick tag · 47.0–52.4 -->
+        <div data-hf-id="hf-02bs" class="chip clip" id="trick" data-start="47.0" data-duration="5.4" data-track-index="3" style="top: 80px;">
+          <span data-hf-id="hf-c5is" class="dotb"></span>THIS PAGE · THE SAME TRICK
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 53.82;
+        const tl = gsap.timeline({ paused: true });
+
+        /* local = master − 208.61 */
+
+        /* ---- the rule card (2.8 → 21.0) — rows land on their VO words:
+           ">5 paragraphs" 5.4 · "2 paragraphs or less" 9.3 · honest catch 13.7 ---- */
+        tl.fromTo("#rule", { y: 24, opacity: 0, filter: "blur(5px)" },
+                  { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.35, ease: "power3.out" }, 2.8);
+        tl.fromTo("#rr-1", { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power2.out" }, 5.5);
+        tl.fromTo("#rr-2", { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power2.out" }, 9.3);
+        tl.fromTo("#rr-3", { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power2.out" }, 13.8);
+        tl.to("#rule", { y: -4, duration: 6.0, ease: "none" }, 14.4); // micro-drift — camera never sleeps
+        tl.to("#rule", { y: -40, opacity: 0, filter: "blur(8px)", duration: 0.45, ease: "power3.in", overwrite: "auto" }, 20.6);
+
+        /* ---- bottom-left relay over the rah-n3 page (one element at a time) ---- */
+        // price chip — "DeepSeek is 14 cents in, 28 cents out" (35.6)
+        tl.fromTo("#price", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.28, ease: "power2.out" }, 35.0);
+        tl.to("#price", { opacity: 0, duration: 0.25, ease: "power2.in" }, 37.7);
+        // chart callout cut at Gate 2 — the chart's own headline carries the number
+        // cross-link card — "I've got a whole video on running Claude Code with DeepSeek" (40.9)
+        tl.fromTo("#xlink", { y: 24, opacity: 0, filter: "blur(5px)" },
+                  { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power2.out" }, 41.0);
+        tl.to("#xlink", { y: 18, opacity: 0, duration: 0.3, ease: "power2.in" }, 45.0);
+        // same-trick tag — "that's the same trick again" (47.6), top-left
+        tl.fromTo("#trick", { x: -10, opacity: 0 }, { x: 0, opacity: 1, duration: 0.25, ease: "power2.out" }, 47.2);
+        tl.to("#trick", { opacity: 0, duration: 0.3, ease: "power2.in" }, 52.1);
+
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines["p06-cost"] = tl;
+      })();
+    </script>
+  </body>
+</html>

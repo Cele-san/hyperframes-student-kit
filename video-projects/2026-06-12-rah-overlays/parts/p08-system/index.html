@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>RAH P08 — Skill + unpack WIP (overlay layer)</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: transparent;
+        font-family: "Geist", system-ui, sans-serif; }
+      :root {
+        --srf-card-top: #16213a; --srf-card-bot: #111a2d; --srf-circle: #2a3a5e;
+        --bd: #222f4c; --bd-inner: #283755;
+        --tx: #e9edf6; --tx-pill: #d3dae8; --tx-bright2: #c8d1e3; --tx-ghost: #5b6580;
+        --blossom: #f0a8c2; --fill-tx: #152848;
+        --glow: rgba(240, 168, 194, 0.30); --glint: rgba(210, 226, 255, 0.18);
+        --font-ui: "Geist", system-ui, sans-serif;
+        --font-mono: "Geist Mono", ui-monospace, Menlo, monospace;
+      }
+      #p08-root { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+      #p08-root .reference-layer { position: absolute; inset: 0; z-index: 0; }
+      #p08-root .reference-layer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #p08-root .overlay-root { position: absolute; inset: 0; z-index: 10; }
+
+      #p08-root .pill { position: absolute; left: 90px; top: 906px;
+        display: inline-flex; align-items: center; gap: 14px;
+        background: linear-gradient(180deg, var(--srf-card-top) 0%, var(--srf-card-bot) 100%);
+        border: 1px solid var(--bd); border-radius: 16px; padding: 16px 18px 16px 22px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 18px 50px rgba(0, 0, 0, 0.45); }
+      #p08-root .pill-type { display: inline-block; overflow: hidden; white-space: nowrap; max-width: 0; }
+      #p08-root .pill-text { font: 400 25px/1.25 var(--font-ui); color: var(--tx); white-space: nowrap; }
+      #p08-root .pill-caret { display: inline-block; width: 2.5px; height: 30px; background: var(--blossom); flex: none; }
+      #p08-root .pill-send { width: 40px; height: 40px; border-radius: 50%; background: var(--srf-circle);
+        display: inline-flex; align-items: center; justify-content: center; flex: none; }
+      #p08-root .pill-send svg { width: 17px; height: 17px; stroke: var(--tx-pill); stroke-width: 2; fill: none; }
+
+      /* the saved-skill chip — what the sentence becomes */
+      #p08-root .skill { position: absolute; left: 90px; top: 916px;
+        font: 500 23px/1 var(--font-mono); letter-spacing: 0.1em;
+        color: var(--tx-bright2); background: rgba(15, 22, 38, 0.94);
+        border: 1px solid var(--bd); border-radius: 10px; padding: 16px 20px;
+        box-shadow: inset 0 1px 0 var(--glint);
+        display: inline-flex; align-items: center; gap: 12px; white-space: nowrap; }
+      #p08-root .skill .glyph { color: var(--blossom); font-size: 26px; }
+      #p08-root .skill .saved { background: var(--blossom); color: var(--fill-tx);
+        padding: 6px 10px; font-size: 19px; letter-spacing: 0.12em; }
+
+      /* unpack tag (top-left) + the honest work meter (bottom-left) */
+      #p08-root .tag { position: absolute; left: 90px; top: 80px;
+        font: 500 21px/1 var(--font-mono); letter-spacing: 0.09em; text-transform: uppercase;
+        color: var(--tx-bright2); background: rgba(15, 22, 38, 0.92);
+        border: 1px solid var(--bd); border-radius: 6px; padding: 12px 18px;
+        box-shadow: inset 0 1px 0 var(--glint);
+        display: inline-flex; align-items: center; gap: 12px; white-space: nowrap; }
+      #p08-root .tag .dotb { width: 7px; height: 7px; border-radius: 50%; background: var(--blossom); }
+
+      #p08-root .meter { position: absolute; left: 90px; top: 896px;
+        background: rgba(15, 22, 38, 0.94); border: 1px solid var(--bd); border-radius: 8px;
+        box-shadow: inset 0 1px 0 var(--glint); padding: 16px 20px;
+        display: flex; flex-direction: column; gap: 12px; }
+      #p08-root .m-row { display: flex; align-items: center; gap: 14px;
+        font: 500 17px/1 var(--font-mono); letter-spacing: 0.1em; color: var(--tx-bright2); }
+      #p08-root .m-row .m-name { width: 200px; text-transform: uppercase; }
+      #p08-root .m-cells { display: flex; gap: 5px; }
+      #p08-root .mc { width: 22px; height: 12px; background: var(--srf-circle); opacity: 0.45; }
+      #p08-root .mc.lit { background: var(--blossom); opacity: 1; box-shadow: 0 0 8px var(--glow); }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-wngd" id="p08-root" data-composition-id="p08-system" data-start="0" data-duration="42.676" data-width="1920" data-height="1080">
+      <!-- =================================================================
+           REFERENCE LAYER START — delete in index.alpha.html before alpha export.
+           proxy t=0 == master 4:58.63 (298.634s)
+           ================================================================= -->
+      <div data-hf-id="hf-y6tz" class="reference-layer">
+        <video data-hf-id="hf-dy9w" id="ref-video" data-start="0" data-duration="42.676" data-track-index="0" src="assets/proxy.mp4" muted playsinline></video>
+        <audio data-hf-id="hf-4mox" id="ref-audio" data-start="0" data-duration="42.676" data-track-index="1" src="assets/proxy.mp4" data-volume="1.0"></audio>
+      </div>
+      <!-- ===================== REFERENCE LAYER END ======================= -->
+
+      <div data-hf-id="hf-js6p" class="overlay-root">
+
+        <!-- prompt pill #5 · 1.6–6.2 · "create this into a skill, call it Apple design" -->
+        <div data-hf-id="hf-syc6" class="pill clip" id="pill" data-start="1.6" data-duration="4.6" data-track-index="3">
+          <span data-hf-id="hf-wrjv" class="pill-type" id="pill-type"><span data-hf-id="hf-u0kh" class="pill-text" id="pill-text">create this into a skill · call it Apple design</span></span>
+          <span data-hf-id="hf-qlej" class="pill-caret" id="pill-caret"></span>
+          <span data-hf-id="hf-z9nv" class="pill-send" id="pill-send">
+            <svg data-hf-id="hf-y9f5" viewBox="0 0 24 24"><path data-hf-id="hf-rogn" d="M12 19V6M6 12l6-6 6 6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </span>
+        </div>
+
+        <!-- the saved-skill chip · 6.3–13.2 · what it compresses into -->
+        <div data-hf-id="hf-lz0d" class="skill clip" id="skill" data-start="6.3" data-duration="6.9" data-track-index="3">
+          <span data-hf-id="hf-0pjy" class="glyph">◇</span><span data-hf-id="hf-laqu">turn this into Apple design</span><span data-hf-id="hf-m9r8" class="saved" id="saved">SAVED</span>
+        </div>
+
+        <!-- unpack tag · 24.9–31.4 · names the WIP system -->
+        <div data-hf-id="hf-ukgg" class="tag clip" id="utag" data-start="24.9" data-duration="6.5" data-track-index="2">
+          <span data-hf-id="hf-7jrk" class="dotb"></span>THE WIP · UNPACK SKILL
+        </div>
+
+        <!-- the honest work meter · 33.4–38.2 · one sentence vs unpack -->
+        <div data-hf-id="hf-khnp" class="meter clip" id="meter" data-start="33.4" data-duration="4.8" data-track-index="3">
+          <div data-hf-id="hf-exe6" class="m-row"><span data-hf-id="hf-zanr" class="m-name">ONE SENTENCE</span>
+            <span data-hf-id="hf-jgv6" class="m-cells"><span data-hf-id="hf-pk3u" class="mc lit"></span><span data-hf-id="hf-qwml" class="mc"></span><span data-hf-id="hf-v4o1" class="mc"></span><span data-hf-id="hf-wbl4" class="mc"></span><span data-hf-id="hf-vxa3" class="mc"></span></span>
+          </div>
+          <div data-hf-id="hf-z6vm" class="m-row"><span data-hf-id="hf-7iuo" class="m-name">UNPACK</span>
+            <span data-hf-id="hf-kri5" class="m-cells" id="u-cells"><span data-hf-id="hf-knny" class="mc lit"></span><span data-hf-id="hf-6kim" class="mc" id="uc-2"></span><span data-hf-id="hf-aimn" class="mc" id="uc-3"></span><span data-hf-id="hf-egqo" class="mc" id="uc-4"></span><span data-hf-id="hf-txqy" class="mc"></span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 42.676;
+        const tl = gsap.timeline({ paused: true });
+
+        /* local = master − 298.634 */
+
+        /* ---- pill #5 (1.7 → 6.0) — types with "create this into a skill, call
+           it Apple design" (2.7 → 5.4 · 47 chars) ---- */
+        tl.fromTo("#pill", { y: 36, opacity: 0, filter: "blur(6px)" },
+                  { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.28, ease: "power2.out" }, 1.7);
+        tl.to("#pill-type", { maxWidth: 580, duration: 2.7, ease: "steps(47)" }, 2.7);
+        tl.set("#pill-caret", { opacity: 0 }, 5.6);
+        tl.set("#pill-send", { backgroundColor: "#f0a8c2" }, 5.6);
+        tl.set("#pill-send svg", { stroke: "#152848" }, 5.6);
+        tl.set("#pill-send", { backgroundColor: "#2a3a5e" }, 5.8);
+        tl.set("#pill-send svg", { stroke: "#d3dae8" }, 5.8);
+        tl.to("#pill", { y: 26, opacity: 0, duration: 0.22, ease: "power2.in" }, 5.95);
+
+        /* ---- saved-skill chip (6.35 → 13.0) — lands on "Now it's saved" (6.4);
+           pulses on "I just say turn this into an Apple design" (10.8) ---- */
+        tl.fromTo("#skill", { y: 24, opacity: 0, filter: "blur(5px)" },
+                  { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.28, ease: "power3.out" }, 6.4);
+        tl.fromTo("#saved", { scale: 1.3, filter: "blur(4px)" }, { scale: 1, filter: "blur(0px)", duration: 0.25, ease: "power3.out" }, 6.55);
+        tl.fromTo("#skill", { scale: 1 }, { scale: 1.04, duration: 0.2, ease: "power2.out" }, 10.85);
+        tl.to("#skill", { scale: 1, duration: 0.3, ease: "power2.in" }, 11.1);
+        tl.to("#skill", { y: 18, opacity: 0, duration: 0.3, ease: "power2.in" }, 12.7);
+
+        /* ---- unpack tag (25.0 → 31.2) — "My unpack skill. It looks like this."
+           (25.2) · rides the cut into the ATLAS page ---- */
+        tl.fromTo("#utag", { y: -16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.25, ease: "power2.out" }, 25.0);
+        tl.to("#utag", { opacity: 0, duration: 0.3, ease: "power2.in" }, 31.0);
+
+        /* ---- the work meter (33.5 → 38.0) — "makes the AI do a lot more work
+           than the one sentence version" (33.5): unpack cells light up one by one ---- */
+        tl.fromTo("#meter", { y: 24, opacity: 0, filter: "blur(5px)" },
+                  { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power2.out" }, 33.5);
+        ["#uc-2", "#uc-3", "#uc-4"].forEach((c, k) => {
+          tl.add(() => { document.querySelector("#p08-root " + c).classList.add("lit"); }, 34.1 + k * 0.45);
+          // sweep the fill in instead of a one-frame pop — matches the package's fill grammar
+          tl.fromTo("#p08-root " + c, { opacity: 0.3 }, { opacity: 1, duration: 0.22, ease: "power2.out", overwrite: "auto" }, 34.1 + k * 0.45);
+        });
+        tl.to("#meter", { y: -3, duration: 2.2, ease: "none" }, 35.5); // micro-drift — camera never sleeps
+        tl.to("#meter", { y: 16, opacity: 0, duration: 0.3, ease: "power2.in", overwrite: "auto" }, 37.8);
+
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines["p08-system"] = tl;
+      })();
+    </script>
+  </body>
+</html>

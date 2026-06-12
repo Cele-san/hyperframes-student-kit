@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>RAH P07 — Smallest version (overlay layer)</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: transparent;
+        font-family: "Geist", system-ui, sans-serif; }
+      :root {
+        --srf-card-top: #16213a; --srf-card-bot: #111a2d; --srf-circle: #2a3a5e;
+        --bd: #222f4c; --bd-inner: #283755;
+        --tx: #e9edf6; --tx-pill: #d3dae8; --tx-bright2: #c8d1e3; --tx-ghost: #5b6580;
+        --blossom: #f0a8c2; --fill-tx: #152848;
+        --glow: rgba(240, 168, 194, 0.30); --glint: rgba(210, 226, 255, 0.18);
+        --font-ui: "Geist", system-ui, sans-serif;
+        --font-mono: "Geist Mono", ui-monospace, Menlo, monospace;
+      }
+      #p07-root { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+      #p07-root .reference-layer { position: absolute; inset: 0; z-index: 0; }
+      #p07-root .reference-layer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #p07-root .overlay-root { position: absolute; inset: 0; z-index: 10; }
+
+      /* step ticker — quiet persistent rail repairing the jump-cut causality */
+      #p07-root .ticker { position: absolute; left: 90px; top: 80px;
+        font: 500 19px/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase;
+        color: var(--tx-bright2); background: rgba(15, 22, 38, 0.92);
+        border: 1px solid var(--bd); border-radius: 6px; padding: 13px 18px;
+        box-shadow: inset 0 1px 0 var(--glint);
+        display: inline-flex; align-items: center; gap: 14px; white-space: nowrap; }
+      #p07-root .td { width: 9px; height: 9px; border-radius: 50%;
+        border: 1.5px solid var(--blossom); background: rgba(240, 168, 194, 0); flex: none; }
+      #p07-root .td.on { background: var(--blossom); box-shadow: 0 0 9px var(--glow); }
+      #p07-root .ticker .step { color: var(--tx-ghost); }
+      #p07-root .ticker .step.on { color: var(--tx-bright2); }
+
+      /* prompt pill #4 — lower-left (the rah-n2 composer is small on screen) */
+      #p07-root .pill { position: absolute; left: 90px; top: 906px;
+        display: inline-flex; align-items: center; gap: 14px;
+        background: linear-gradient(180deg, var(--srf-card-top) 0%, var(--srf-card-bot) 100%);
+        border: 1px solid var(--bd); border-radius: 16px; padding: 16px 18px 16px 22px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 18px 50px rgba(0, 0, 0, 0.45); }
+      #p07-root .pill-type { display: inline-block; overflow: hidden; white-space: nowrap; max-width: 0; }
+      #p07-root .pill-text { font: 400 25px/1.25 var(--font-ui); color: var(--tx); white-space: nowrap; }
+      #p07-root .pill-caret { display: inline-block; width: 2.5px; height: 30px; background: var(--blossom); flex: none; }
+      #p07-root .pill-send { width: 40px; height: 40px; border-radius: 50%; background: var(--srf-circle);
+        display: inline-flex; align-items: center; justify-content: center; flex: none; }
+      #p07-root .pill-send svg { width: 17px; height: 17px; stroke: var(--tx-pill); stroke-width: 2; fill: none; }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-t8cm" id="p07-root" data-composition-id="p07-smallest" data-start="0" data-duration="36.203" data-width="1920" data-height="1080">
+      <!-- =================================================================
+           REFERENCE LAYER START — delete in index.alpha.html before alpha export.
+           proxy t=0 == master 4:22.43 (262.434s)
+           ================================================================= -->
+      <div data-hf-id="hf-y6tz" class="reference-layer">
+        <video data-hf-id="hf-44v1" id="ref-video" data-start="0" data-duration="36.203" data-track-index="0" src="assets/proxy.mp4" muted playsinline></video>
+        <audio data-hf-id="hf-o9pg" id="ref-audio" data-start="0" data-duration="36.203" data-track-index="1" src="assets/proxy.mp4" data-volume="1.0"></audio>
+      </div>
+      <!-- ===================== REFERENCE LAYER END ======================= -->
+
+      <div data-hf-id="hf-js6p" class="overlay-root">
+
+        <!-- step ticker · 2.6–20.4 · advances with the clip's jump cuts -->
+        <div data-hf-id="hf-59hm" class="ticker clip" id="ticker" data-start="2.6" data-duration="17.8" data-track-index="2">
+          <span data-hf-id="hf-inn0" class="td on" id="td-1"></span><span data-hf-id="hf-im9f" class="step on" id="ts-1">01 RESEARCH</span>
+          <span data-hf-id="hf-37ki" class="td" id="td-2"></span><span data-hf-id="hf-b25c" class="step" id="ts-2">02 PLAN</span>
+          <span data-hf-id="hf-75oj" class="td" id="td-3"></span><span data-hf-id="hf-jk28" class="step" id="ts-3">03 ONE SENTENCE</span>
+          <span data-hf-id="hf-jo70" class="td" id="td-4"></span><span data-hf-id="hf-fgfw" class="step" id="ts-4">04 PAGE</span>
+        </div>
+
+        <!-- prompt pill #4 · 11.2–17.2 · "make this an apple design page I can read" -->
+        <div data-hf-id="hf-9xq5" class="pill clip" id="pill" data-start="11.2" data-duration="6.0" data-track-index="3">
+          <span data-hf-id="hf-wrjv" class="pill-type" id="pill-type"><span data-hf-id="hf-gi0g" class="pill-text" id="pill-text">make this an apple design page I can read</span></span>
+          <span data-hf-id="hf-qlej" class="pill-caret" id="pill-caret"></span>
+          <span data-hf-id="hf-z9nv" class="pill-send" id="pill-send">
+            <svg data-hf-id="hf-y9f5" viewBox="0 0 24 24"><path data-hf-id="hf-rogn" d="M12 19V6M6 12l6-6 6 6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 36.203;
+        const tl = gsap.timeline({ paused: true });
+        const on = (dot, step, t) => {
+          tl.add(() => {
+            document.getElementById(dot).classList.add("on");
+            document.getElementById(step).classList.add("on");
+          }, t);
+          tl.fromTo("#" + dot, { scale: 1 }, { scale: 1.45, duration: 0.16, ease: "power2.out", overwrite: "auto" }, t);
+          tl.to("#" + dot, { scale: 1, duration: 0.22, ease: "power2.in", overwrite: "auto" }, t + 0.18);
+        };
+
+        /* local = master − 262.434. Steps land on:
+           "research something" 3.8 · "came back with a full plan" 7.0 ·
+           "same move as before" 11.7 · "and there it is" 16.4 */
+        tl.fromTo("#ticker", { y: -16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power2.out" }, 2.7);
+        on("td-2", "ts-2", 7.0);
+        on("td-3", "ts-3", 11.75);
+        on("td-4", "ts-4", 16.45);
+        tl.to("#ticker", { opacity: 0, duration: 0.3, ease: "power2.in" }, 20.1);
+
+        /* pill #4 (11.3 → 17.0) — types with "make this an apple design page I
+           can read" (13.3 → 15.4 · 42 chars). Light-touch law: the ticker
+           yields (dims) while the pill is up — one element commands attention;
+           its dot advances continue silently under the dim. */
+        tl.to("#ticker", { opacity: 0.35, duration: 0.25, ease: "power2.out" }, 11.3);
+        tl.to("#ticker", { opacity: 1, duration: 0.3, ease: "power2.out" }, 17.25);
+        tl.fromTo("#pill", { y: 36, opacity: 0, filter: "blur(6px)" },
+                  { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.28, ease: "power2.out" }, 11.3);
+        tl.to("#pill-caret", { opacity: 0, duration: 0.4, ease: "steps(1)", repeat: 3, yoyo: true }, 11.7);
+        tl.to("#pill-type", { maxWidth: 540, duration: 2.1, ease: "steps(42)" }, 13.3);
+        // send beat on "and there it is" (16.4)
+        tl.set("#pill-caret", { opacity: 0 }, 16.4);
+        tl.set("#pill-send", { backgroundColor: "#f0a8c2" }, 16.4);
+        tl.set("#pill-send svg", { stroke: "#152848" }, 16.4);
+        tl.set("#pill-send", { backgroundColor: "#2a3a5e" }, 16.6);
+        tl.set("#pill-send svg", { stroke: "#d3dae8" }, 16.6);
+        tl.set("#pill-text", { color: "#6a748e" }, 16.7);
+        tl.to("#pill", { y: 26, opacity: 0, duration: 0.25, ease: "power2.in" }, 16.9);
+
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines["p07-smallest"] = tl;
+      })();
+    </script>
+  </body>
+</html>

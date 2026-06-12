@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>RAH P09 — The Reflow takeover (overlay layer)</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 600; font-display: block; src: url(assets/fonts/Geist-600.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1920px; height: 1080px; overflow: hidden;
+        background: transparent; /* takeover canvas fades in — Lane B, pure TH window */
+        font-family: "Geist", system-ui, sans-serif;
+      }
+      :root {
+        --lin-bg: #070b16;
+        --srf-well: #0c111e; --bd-inner: #283755; --bd-card: #25334f; --bd-station: #36486f;
+        --tx: #e9edf6; --tx-bright2: #c8d1e3; --tx-dim: #8995b0; --tx-code: #6d7894; --tx-ghost: #5b6580;
+        --blossom: #f0a8c2; --fill-tx: #152848;
+        --glow: rgba(240, 168, 194, 0.30); --glint: rgba(210, 226, 255, 0.18);
+        --font-mono: "Geist Mono", ui-monospace, Menlo, monospace;
+      }
+      #p09-root { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+      #p09-root .reference-layer { position: absolute; inset: 0; z-index: 0; }
+      #p09-root .reference-layer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #p09-root .overlay-root { position: absolute; inset: 0; z-index: 10; }
+
+      #p09-root .takeover { position: absolute; inset: 0; background: var(--lin-bg); }
+      #p09-root .farwalls { position: absolute; inset: 0; filter: blur(5px); opacity: 0.45; }
+      #p09-root .fw-col { position: absolute; top: -60px; display: flex; flex-direction: column; gap: 18px; }
+      #p09-root .fw-col .tbar { opacity: 0.32; }
+      #p09-root .vignette { position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, rgba(7, 11, 22, 0) 50%, rgba(4, 7, 14, 0.62) 100%); }
+
+      #p09-root .tbar { position: absolute; height: 16px; border-radius: 3px; background: var(--tx-code); opacity: 0.82; }
+
+      /* the stage that holds the 15 conserved bars (wall rest state → page state) */
+      #p09-root .stage { position: absolute; inset: 0; }
+
+      /* page chrome that materializes around the landed layout */
+      #p09-root .pagebox { position: absolute; left: 588px; top: 238px; width: 1024px; height: 560px;
+        border: 1px solid var(--bd-card); border-radius: 14px;
+        box-shadow: inset 0 1px 0 var(--glint), 0 30px 90px rgba(0, 0, 0, 0.55); }
+      #p09-root .cardbox { position: absolute; width: 300px; height: 150px;
+        border: 1px solid var(--bd-inner); border-radius: 10px; background: var(--srf-well); }
+      #p09-root .bullet { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--tx-ghost); }
+
+      /* conserved-count chip (the true fact: nothing added, nothing removed) */
+      #p09-root .chip { position: absolute; left: 50%; top: 168px; transform: translateX(-50%);
+        font: 500 20px/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase;
+        color: var(--tx-bright2); background: rgba(15, 22, 38, 0.92);
+        border: 1px solid var(--bd-inner); border-radius: 6px; padding: 11px 16px; white-space: nowrap; }
+
+      /* the BEFORE ghost — the wall, remembered (dim, left) */
+      #p09-root .ghostwall { position: absolute; left: 150px; top: 330px; width: 360px; }
+      #p09-root .ghostwall .gbar { position: absolute; height: 10px; border-radius: 2px; background: var(--tx-code); }
+      #p09-root .glabel { position: absolute; left: 150px; top: 292px;
+        font: 500 16px/1 var(--font-mono); letter-spacing: 0.12em; color: var(--tx-ghost); }
+
+      /* punch line — underscore typewriter under the page */
+      #p09-root .punch { position: absolute; left: 588px; top: 836px; width: 1024px; text-align: center;
+        font: 500 34px/1 var(--font-mono); letter-spacing: 0.1em; color: var(--tx); white-space: nowrap; }
+      #p09-root .punch-mask { display: inline-block; overflow: hidden; white-space: nowrap; max-width: 0; vertical-align: bottom; }
+      #p09-root .punch-cur { color: var(--blossom); }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-iq3z" id="p09-root" data-composition-id="p09-thesis" data-start="0" data-duration="31.064" data-width="1920" data-height="1080">
+
+      <div data-hf-id="hf-js6p" class="overlay-root">
+        <!-- takeover · 3.3 → 28.7 (the first 3s and last 2.4s stay on Andy) -->
+        <div data-hf-id="hf-yl7d" class="takeover clip" id="takeover" data-start="3.3" data-duration="25.4" data-track-index="2">
+          <div data-hf-id="hf-d482" class="farwalls" id="farwalls"></div>
+          <div data-hf-id="hf-q7bi" class="vignette"></div>
+        </div>
+
+        <div data-hf-id="hf-ca04" class="stage clip" id="stage" data-start="3.3" data-duration="25.4" data-track-index="3">
+          <!-- page chrome (hidden until the reflow lands) -->
+          <div data-hf-id="hf-ltgd" class="pagebox" id="pagebox" style="opacity: 0"></div>
+          <div data-hf-id="hf-5cx0" class="cardbox" id="card-1" style="left: 620px; top: 352px; opacity: 0"></div>
+          <div data-hf-id="hf-jnrx" class="cardbox" id="card-2" style="left: 950px; top: 352px; opacity: 0"></div>
+          <div data-hf-id="hf-kfs3" class="cardbox" id="card-3" style="left: 1280px; top: 352px; opacity: 0"></div>
+          <!-- 15 conserved bars + 6 bullets injected by script -->
+          <!-- BEFORE ghost (the wall, remembered) -->
+          <div data-hf-id="hf-jque" class="glabel" id="glabel" style="opacity: 0">BEFORE</div>
+          <div data-hf-id="hf-c4uj" class="ghostwall" id="ghostwall" style="opacity: 0"></div>
+          <!-- conserved-count chip -->
+          <div data-hf-id="hf-h0mt" class="chip" id="chip" style="opacity: 0">0 WORDS ADDED · 0 REMOVED</div>
+          <!-- punch line -->
+          <div data-hf-id="hf-j7ei" class="punch" id="punch">
+            <span data-hf-id="hf-imdv" class="punch-mask" id="punch-mask"><span data-hf-id="hf-q71c">SAME WORDS · NEW SHAPE</span></span><span data-hf-id="hf-pc5m" class="punch-cur" id="punch-cur">_</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 31.064;
+        const tl = gsap.timeline({ paused: true });
+
+        /* ---------- deterministic geometry ---------- */
+        // WALL rest state: 15 bars in one solid block (the wall of text)
+        // PAGE state: headline stack (3) + three cards (6) + bulleted list (6)
+        const wallX = 660, wallY = 320, pitch = 30;
+        const wallW = (i) => Math.round(600 * (0.86 + 0.14 * Math.abs(Math.sin(i * 1.7 + 0.4))));
+        const PAGE = [
+          // headline: bars 0-2 stack into one thick block (conservation: nothing vanishes)
+          { x: 632, y: 282, w: 560 }, { x: 632, y: 289, w: 560 }, { x: 632, y: 296, w: 560 },
+          // cards: bars 3-8 pair into 3 card interiors
+          { x: 644, y: 396, w: 220 }, { x: 644, y: 428, w: 172 },
+          { x: 974, y: 396, w: 220 }, { x: 974, y: 428, w: 172 },
+          { x: 1304, y: 396, w: 220 }, { x: 1304, y: 428, w: 172 },
+          // list: bars 9-14 indent into 6 bulleted rows
+          { x: 668, y: 548, w: 470 }, { x: 668, y: 586, w: 420 },
+          { x: 668, y: 624, w: 452 }, { x: 668, y: 662, w: 398 },
+          { x: 668, y: 700, w: 436 }, { x: 668, y: 738, w: 380 },
+        ];
+        const stage = document.getElementById("stage");
+        const bars = [];
+        for (let i = 0; i < 15; i++) {
+          const b = document.createElement("div");
+          b.className = "tbar";
+          b.style.left = wallX + "px";
+          b.style.top = (wallY + i * pitch) + "px";
+          b.style.width = wallW(i) + "px";
+          stage.appendChild(b);
+          bars.push(b);
+        }
+        // list bullets (appear at landing)
+        const bullets = [];
+        for (let j = 0; j < 6; j++) {
+          const d = document.createElement("div");
+          d.className = "bullet";
+          d.style.left = "636px";
+          d.style.top = (552 + j * 38) + "px";
+          d.style.opacity = "0";
+          stage.appendChild(d);
+          bullets.push(d);
+        }
+        // BEFORE ghost bars (wall layout, small)
+        const ghost = document.getElementById("ghostwall");
+        for (let i = 0; i < 15; i++) {
+          const g = document.createElement("div");
+          g.className = "gbar";
+          g.style.left = "0px"; g.style.top = (i * 19) + "px";
+          g.style.width = Math.round(360 * (0.86 + 0.14 * Math.abs(Math.sin(i * 1.7 + 0.4)))) + "px";
+          ghost.appendChild(g);
+        }
+        // far depth columns (texture continuity with the P02 takeover)
+        const farwalls = document.getElementById("farwalls");
+        [{ left: 90, width: 300, n: 14 }, { left: 1560, width: 270, n: 13 }].forEach((c, ci) => {
+          const col = document.createElement("div");
+          col.className = "fw-col";
+          col.style.left = c.left + "px"; col.style.width = c.width + "px";
+          for (let i = 0; i < c.n; i++) {
+            const b = document.createElement("div");
+            b.className = "tbar";
+            b.style.position = "static";
+            b.style.width = Math.round(c.width * (0.62 + 0.38 * Math.abs(Math.sin(ci * 3.1 + i * 0.83)))) + "px";
+            col.appendChild(b);
+          }
+          farwalls.appendChild(col);
+        });
+
+        /* ---------- timeline ---------- */
+        /* ENTRY (3.3) — VO "There's a reason the page fixes that" (master 344.4).
+           Canvas luminance-fades over the talking head; the WALL assembles fast
+           with motion-blurred flights (the familiar enemy, rebuilt). */
+        tl.fromTo("#takeover", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.inOut" }, 3.3);
+        tl.set("#punch-cur", { opacity: 0 }, 0); // hidden until the punch types at 25.45
+        bars.forEach((b, i) => {
+          tl.fromTo(b,
+            { x: (i % 3 === 0 ? -90 : i % 3 === 1 ? 70 : -40) + Math.round(Math.sin(i * 2.399) * 38),
+              y: 36 + (i % 4) * 10, opacity: 0, filter: "blur(8px)" },
+            { x: 0, y: 0, opacity: 0.82, filter: "blur(0px)", duration: 0.45, ease: "power3.out" },
+            3.55 + i * 0.055);
+        });
+        tl.fromTo("#farwalls", { y: 0 }, { y: -40, duration: 25.0, ease: "none" }, 3.3);
+
+        /* THE REFLOW (9.2 → 11.9) — VO "we take in something we can see way
+           better than the same thing as a block of text". The wall re-arranges
+           IN PLACE into page anatomy: headline stack, three cards, bulleted
+           list. Directional motion-blurred flights, overlapping, nothing fades
+           in, nothing fades out — the bars are conserved. */
+        bars.forEach((b, i) => {
+          const p = PAGE[i];
+          const dx = p.x - wallX;
+          tl.to(b, {
+            x: dx, y: p.y - (wallY + i * pitch), width: p.w,
+            filter: "blur(7px)", duration: 0.26, ease: "power2.in",
+          }, 9.2 + i * 0.085);
+          tl.to(b, { filter: "blur(0px)", duration: 0.3, ease: "power3.out" }, 9.46 + i * 0.085);
+        });
+        // card chrome + bullets land as their bars arrive
+        tl.to("#card-1", { opacity: 1, duration: 0.3, ease: "power2.out" }, 9.85);
+        tl.to("#card-2", { opacity: 1, duration: 0.3, ease: "power2.out" }, 10.05);
+        tl.to("#card-3", { opacity: 1, duration: 0.3, ease: "power2.out" }, 10.25);
+        bullets.forEach((d, j) => {
+          tl.to(d, { opacity: 1, duration: 0.25, ease: "power2.out" }, 10.45 + j * 0.09);
+        });
+
+        /* the true fact lands (12.2): nothing added, nothing removed */
+        tl.fromTo("#chip", { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 12.2);
+
+        /* page chrome materializes (13.4) — VO "shaped for your eyes" */
+        tl.fromTo("#pagebox", { opacity: 0, scale: 0.985 }, { opacity: 1, scale: 1, duration: 0.6, ease: "power2.out" }, 13.4);
+
+        /* rule-of-three pulse (19.2) — VO "your decisions get better and faster" */
+        ["#card-1", "#card-2", "#card-3"].forEach((c, k) => {
+          tl.to(c, { borderColor: "#36486f", duration: 0.25, ease: "power2.out", overwrite: "auto" }, 19.2 + k * 0.55);
+          tl.to(c, { borderColor: "#283755", duration: 0.45, ease: "power2.in", overwrite: "auto" }, 19.5 + k * 0.55);
+        });
+
+        /* BEFORE ghost (21.9) — VO "before and after you just watched":
+           the wall, remembered, dim at left; the page shifts right to hold both */
+        tl.to("#stage", { x: 56, duration: 0.8, ease: "power2.inOut" }, 21.9);
+        tl.to("#ghostwall", { opacity: 0.25, duration: 0.7, ease: "power1.inOut" }, 22.1);
+        tl.to("#glabel", { opacity: 0.7, duration: 0.5, ease: "power1.inOut" }, 22.3);
+
+        /* THE PUNCH (25.35) — VO "The words didn't change. The shape did."
+           Blossom edge-glow blooms on the page (the one accent moment), and the
+           thesis types on underneath with a live cursor. */
+        tl.to("#pagebox", { boxShadow: "inset 0 1px 0 rgba(210,226,255,0.18), 0 0 34px rgba(240,168,194,0.35), 0 30px 90px rgba(0,0,0,0.55)", duration: 0.5, ease: "power2.out" }, 25.35);
+        tl.set("#punch-cur", { opacity: 1 }, 25.45);
+        tl.to("#punch-mask", { maxWidth: 620, duration: 1.25, ease: "steps(22)" }, 25.45);
+        tl.to("#punch-cur", { opacity: 0, duration: 0.4, ease: "steps(1)", repeat: 3, yoyo: true }, 26.75);
+
+        /* EXIT (27.8 → 28.65) — luminance fade back to Andy for the last line
+           on camera: "I was just reading the wrong shape all this time." */
+        tl.to("#stage", { opacity: 0, duration: 1.0, ease: "power1.inOut" }, 27.85);
+        tl.to("#takeover", { opacity: 0, duration: 1.0, ease: "power1.inOut" }, 27.85);
+
+        // Law #11 anchor — timeline fills the slot
+        tl.to({}, { duration: SLOT }, 0);
+        window.__timelines["p09-thesis"] = tl;
+      })();
+    </script>
+  </body>
+</html>

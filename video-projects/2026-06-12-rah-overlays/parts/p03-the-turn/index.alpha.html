@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=1080">
+    <title>RAH P03 — The Turn (overlay layer)</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 600; font-display: block; src: url(assets/fonts/Geist-600.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1920px; height: 1080px; overflow: hidden;
+        /* TRANSPARENT canvas — Lane A part, composited over the master. */
+        background: transparent;
+        font-family: "Geist", system-ui, sans-serif;
+      }
+      /* ---- Linear V2 tokens (canonical copy: ../../.work/linear-v2-shared.css) ---- */
+      :root {
+        --srf-card-top: #16213a; --srf-card-bot: #111a2d; --srf-circle: #2a3a5e;
+        --bd: #222f4c; --bd-card: #25334f; --bd-station: #36486f; --bd-faint: #1c2740;
+        --tx: #e9edf6; --tx-pill: #d3dae8; --tx-bright2: #c8d1e3; --tx-ph: #6a748e;
+        --blossom: #f0a8c2; --fill-tx: #152848;
+        --glow: rgba(240, 168, 194, 0.30); --glint: rgba(210, 226, 255, 0.18);
+        --font-ui: "Geist", system-ui, sans-serif;
+        --font-mono: "Geist Mono", ui-monospace, Menlo, monospace;
+      }
+      #p03-root { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+      #p03-root .reference-layer { position: absolute; inset: 0; z-index: 0; }
+      #p03-root .reference-layer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      #p03-root .overlay-root { position: absolute; inset: 0; z-index: 10; }
+
+      /* ============ KARPATHY CARD (local 0 → 10.65, over TH only — footage cuts
+         to the rec at local 10.9 / master 100.0) ============
+         SEAM CONTRACT with P02: P02's exit parks this card at exactly this rest
+         position (left 120 / top 150, scale 1, sharp). P03 opens already holding it. */
+      #p03-root .kcard {
+        position: absolute; left: 120px; top: 150px; width: 644px;
+        border-radius: 14px; overflow: hidden;
+        border: 1px solid var(--bd-card);
+        box-shadow: inset 0 1px 0 var(--glint), 0 30px 90px rgba(0, 0, 0, 0.6);
+        background: #04070e;
+      }
+      #p03-root .kcard img { display: block; width: 640px; height: auto; margin: 1px; border-radius: 13px; }
+      /* blossom underline under Karpathy's line: `"structure your response as HTML"`
+         (post-image coords; verify against Gate-2 frames) */
+      #p03-root .kline {
+        position: absolute; left: 34px; top: 76px; width: 240px; height: 3px;
+        background: var(--blossom); border-radius: 2px;
+        transform-origin: left center; box-shadow: 0 0 12px var(--glow);
+      }
+
+      /* pull-quote — station-genre strip beneath the card (sharp corners, mono) */
+      #p03-root .pq {
+        position: absolute; left: 120px; top: 632px;
+        background: rgba(15, 22, 38, 0.88); border: 1px solid var(--bd-faint);
+        box-shadow: inset 0 1px 0 var(--glint);
+        padding: 22px 28px; display: flex; flex-direction: column; gap: 12px;
+      }
+      #p03-root .pq-line { font: 500 30px/1.15 var(--font-mono); letter-spacing: 0.08em; color: var(--tx); white-space: nowrap; }
+      #p03-root .pq-mask { display: inline-block; overflow: hidden; white-space: nowrap; max-width: 0; vertical-align: bottom; }
+      #p03-root .pq-cursor { color: var(--blossom); }
+
+      /* NOTE — no prompt pill in P03 (Gate-1 finding): the footage at 12.4–18 IS
+         the zoomed Revise box with the real sentence on screen; a pill would
+         duplicate and crowd the hero UI. The pill system debuts at P05, where
+         prompts sit small in the chat pane. Eyebrow alone names the ladder here. */
+
+      /* mono tags — eyebrow top-left; SAME PLAN goes top-RIGHT (the opened page
+         carries its own mono eyebrow top-left — Gate-1 collision finding) */
+      #p03-root .tag {
+        position: absolute; left: 90px; top: 80px;
+        font: 500 21px/1 var(--font-mono); letter-spacing: 0.09em; text-transform: uppercase;
+        color: var(--tx-bright2); background: rgba(15, 22, 38, 0.92);
+        border: 1px solid var(--bd); border-radius: 6px; padding: 12px 18px;
+        box-shadow: inset 0 1px 0 var(--glint);
+        display: inline-flex; align-items: center; gap: 12px; white-space: nowrap;
+      }
+      #p03-root .tag .dotb { width: 7px; height: 7px; border-radius: 50%; background: var(--blossom); }
+      #p03-root #tag1, #p03-root #tag2 { left: auto; right: 90px; }
+      /* bottom fade — softens the post screenshot's hard crop (X dark bg is #000) */
+      #p03-root .kfade { position: absolute; left: 0; right: 0; bottom: 0; height: 72px;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 92%); }
+    </style>
+  </head>
+  <body>
+    <div data-hf-id="hf-nrpj" id="p03-root" data-composition-id="p03-the-turn" data-start="0" data-duration="43.343" data-width="1920" data-height="1080">
+
+      <div data-hf-id="hf-js6p" class="overlay-root">
+
+        <!-- Karpathy card · local 0–10.8 · VO "Karpathy's whole point…" -->
+        <div data-hf-id="hf-p2b3" class="kcard clip" id="kcard" data-start="0" data-duration="10.8" data-track-index="2">
+          <img data-hf-id="hf-lajw" src="assets/karpathy-card.png" alt="">
+          <div data-hf-id="hf-aswk" class="kline" id="kline"></div>
+          <div data-hf-id="hf-12e5" class="kfade"></div>
+        </div>
+
+        <!-- pull-quote · local 6.0–10.8 · lands on "Don't read the raw output, have it show you" -->
+        <div data-hf-id="hf-jpov" class="pq clip" id="pq" data-start="6.0" data-duration="4.8" data-track-index="3">
+          <div data-hf-id="hf-gadc" class="pq-line"><span data-hf-id="hf-y8h5" class="pq-mask" id="pq-m1"><span data-hf-id="hf-fjxv">DON'T READ THE RAW OUTPUT.</span></span></div>
+          <div data-hf-id="hf-cmew" class="pq-line"><span data-hf-id="hf-4e6y" class="pq-mask" id="pq-m2"><span data-hf-id="hf-0zqk">HAVE IT SHOW YOU.</span></span><span data-hf-id="hf-gjd2" class="pq-cursor" id="pq-cur">_</span></div>
+        </div>
+
+        <!-- eyebrow · local 12.4–18.45 · names the ladder while the real Revise box
+             is the shot (no pill here — the sentence is already on screen, zoomed) -->
+        <div data-hf-id="hf-oaf1" class="tag clip" id="eyebrow" data-start="12.4" data-duration="6.05" data-track-index="5">
+          <span data-hf-id="hf-7jrk" class="dotb"></span>CYCLE 1 · ONE SENTENCE
+        </div>
+
+        <!-- SAME PLAN tag · local 18.6–23.4 · over the opened page hold -->
+        <div data-hf-id="hf-sxye" class="tag clip" id="tag1" data-start="18.6" data-duration="4.8" data-track-index="5">
+          <span data-hf-id="hf-dqqw" class="dotb"></span>SAME PLAN · NEW SHAPE
+        </div>
+
+        <!-- ANY AI tag · local 33.6–40.9 · over the rah-n2 flash -->
+        <div data-hf-id="hf-aywp" class="tag clip" id="tag2" data-start="33.6" data-duration="7.3" data-track-index="5">
+          <span data-hf-id="hf-cjtt" class="dotb"></span>ANY AI · SAME MOVE
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 43.343;
+        const tl = gsap.timeline({ paused: true });
+        const sel = (s) => document.querySelector("#p03-root " + s);
+
+        /* ---------- Karpathy card (0 → 10.65) ---------- */
+        // ENTRY — none: P03 opens holding the card at its P02-exit rest position
+        // (seam contract; P02's last tween parks it here sharp). Micro-drift keeps it alive.
+        tl.fromTo("#kcard", { scale: 1.0 }, { scale: 1.012, duration: 10.0, ease: "none" }, 0);
+        // underline draws on "the best way for humans to actually take in" (local 2.2)
+        tl.fromTo("#kline", { scaleX: 0 }, { scaleX: 1, duration: 0.7, ease: "power2.out" }, 2.2);
+
+        /* ---------- pull-quote typewriter (6.19 → 9.0) ---------- */
+        // chip rises in just before line 1 types
+        tl.fromTo("#pq", { y: 24, opacity: 0, filter: "blur(4px)" },
+                  { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power2.out" }, 6.0);
+        // line 1 · 26 chars ≈ 20 ch/s · VO "Don't read the raw output" (6.19)
+        tl.set("#pq-cur", { opacity: 0 }, 0); // cursor rides only the live line — hidden while line 1 types
+        tl.to("#pq-m1", { maxWidth: 520, duration: 1.3, ease: "steps(26)" }, 6.2);
+        // line 2 · 17 chars · VO "have it show you the output" (7.83)
+        tl.set("#pq-cur", { opacity: 1 }, 7.83);
+        tl.to("#pq-m2", { maxWidth: 360, duration: 0.85, ease: "steps(17)" }, 7.83);
+        // trailing underscore blinks (finite), then exits with the chip
+        tl.to("#pq-cur", { opacity: 0, duration: 0.4, ease: "steps(1)", repeat: 3, yoyoEase: true, yoyo: true }, 8.75);
+
+        /* ---------- card + quote EXIT (10.1 → 10.65) ----------
+           Focus-pull out — must be GONE before the footage hard-cuts to the
+           screen recording at local 10.9 (master 100.0). */
+        tl.to("#kcard", { y: -90, opacity: 0, filter: "blur(14px)", duration: 0.55, ease: "power3.in" }, 10.1);
+        tl.to("#pq",    { y: -70, opacity: 0, filter: "blur(12px)", duration: 0.5,  ease: "power3.in" }, 10.15);
+
+        /* ---------- CYCLE 1 eyebrow (12.45 → 18.35) ----------
+           Over the rec: light-touch — the real Revise box carries the sentence;
+           the eyebrow only names the ladder. */
+        tl.fromTo("#eyebrow", { y: -16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.25, ease: "power2.out" }, 12.45);
+        tl.to("#eyebrow", { y: -14, opacity: 0, duration: 0.25, ease: "power2.in" }, 18.1);
+
+        /* ---------- SAME PLAN tag (18.75 → 23.3) — top-RIGHT, clear of the page's own eyebrow ---------- */
+        tl.fromTo("#tag1", { x: -10, opacity: 0 }, { x: 0, opacity: 1, duration: 0.25, ease: "power2.out" }, 18.75);
+        tl.to("#tag1", { opacity: 0, duration: 0.3, ease: "power2.in" }, 23.0);
+
+        /* ---------- ANY AI tag (33.7 → 40.8) — over the rah-n2 flash ---------- */
+        tl.fromTo("#tag2", { x: -10, opacity: 0 }, { x: 0, opacity: 1, duration: 0.25, ease: "power2.out" }, 33.7);
+        tl.to("#tag2", { opacity: 0, duration: 0.3, ease: "power2.in" }, 40.5);
+
+        // Law #11 anchor — timeline fills the slot
+        tl.to({}, { duration: SLOT }, 0);
+        window.__timelines["p03-the-turn"] = tl;
+      })();
+    </script>
+  </body>
+</html>
