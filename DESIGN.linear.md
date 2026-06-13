@@ -1,8 +1,8 @@
 # LINEAR — Motion Design Register
 
-> Deconstruction of Linear's **Code Intelligence** 33s product spot (1920×1080, 30fps) — derived from a frame-by-frame study of the source video (`References/Linear/linear demo 2.mp4`).
+> Deconstruction of Linear's **Code Intelligence** 33s product spot (1920×1080, 30fps) — derived from a frame-by-frame study of the source video (`References/Linear/linear demo 2.mp4`). A second reference build, **Introducing Dashboards** (`References/Linear/linear demo 3.mp4`, 1920×960 @60fps, 2:1 cinematic), extends the register with a **data-viz + camera-depth grammar**. Its additions are flagged **(Dashboards build)** throughout — the Law #2 extension, the dashboard surface kit in §5, the camera & data-viz grammar in §6, and the matching anti-patterns/checklist items. Everything else is canonical Code Intelligence.
 > **Trigger:** the foundation spec for every Linear build — but the workspace **defaults to V2**: a plain *"turn this into a Linear design"* means this file **plus** the `DESIGN.linear-v2.md` Tier 3 color delta. This file alone (canonical grayscale) only when Andy explicitly asks for the original. Read fully — don't quote from memory.
-> **Reference artifact:** `video-projects/linear-code-intelligence/` (the recreation build; its render is the ground-truth look).
+> **Reference artifacts:** `video-projects/linear-code-intelligence/` (canonical grayscale — the original ground-truth look) and `video-projects/linear-dashboards/` (the Dashboards extension — neon data marks + raked depth; its render is the ground-truth look for the data-viz grammar).
 > This is a design doc, not a skill. It steers taste; the render contract and authoring mechanics still live in `CLAUDE.md`, `MOTION_PHILOSOPHY.md` (discipline layer), and the `/hyperframes` skill.
 
 ---
@@ -37,7 +37,7 @@ Use this paragraph verbatim as the north star when briefing any composition in t
 ## 3 · The Ten Laws
 
 1. **UI is the hero.** Every scene is a believable product surface (input, modal, flow stations, answer panel) or a declarative title card about it. No abstract object metaphors, no mascots.
-2. **Strictly grayscale.** Near-black canvas, gray-white type, gray hairline chrome. The canonical register has **zero hue** — send buttons are light-on-gray circles, state changes are white fills, emphasis is a white edge-glint. Luminance is the only color.
+2. **Strictly grayscale.** Near-black canvas, gray-white type, gray hairline chrome. The canonical register has **zero hue** — send buttons are light-on-gray circles, state changes are white fills, emphasis is a white edge-glint. Luminance is the only color. **— Data is the only color (Dashboards build).** The Dashboards spot deliberately bends this one law: chrome, type, titles, and the logo stay grayscale, but **data visualizations and functional status/priority chips carry saturated semantic hue** — the hue *is* the data, never decoration. Semantic map: **red** = bugs/breached, **cyan-blue** = cycle/effort, **purple** = IT/requests, **yellow** = high/in-progress, **green** = medium/healthy. If a color isn't encoding a value or a status, it doesn't belong on the frame.
 3. **Two speeds only.** Snappy beat-synced hits (0.3–0.6s arrivals, `power2/power3.out` — pressed-in, not bouncy) or slow luminance fades (≥1s, pure opacity). If an element tween sits between the two, push it to one side. (Camera moves — pull-backs, dives, dolly hops, focus-pulls — are exempt: dives 0.25–0.45s `power3.in`, drifts 1.2–4s `power2`/`none`, never overshoot.)
 4. **The camera connects, the beat times.** Product beats live in one continuous world joined by dives and focus-pulls; every hit, hop, and swap still lands on the beat grid. Build the beat map before authoring anything.
 5. **Title cards are chapter breaks.** One declarative claim, ≤5 words, 2–3s, gray-white centered on pure black, fading in over a full second. They name what the previous sprint proved.
@@ -93,6 +93,17 @@ Use this paragraph verbatim as the north star when briefing any composition in t
 | Answer panel | `--lin-surface`, dim sentence-case header label, question bubble + answer paragraph + pills; shot in **heavy perspective** (~25° composite tilt) with a slow camera drift |
 | Live code texture | Hardcoded fake-code lines, Geist Mono 17–18px, two-tone (`--lin-code` plain / `--lin-code-hi` keywords), **types on char-by-char with a trailing `_`**; far columns pre-blurred (`blur(5px)`, ~50% opacity) for depth-of-field |
 
+**Dashboard surface kit** (the data-viz genre — *Dashboards build*; saturated hue lives here and nowhere else):
+
+| Surface | Spec |
+|---|---|
+| Neon data mark | Hot saturated core + bloom falloff — a layered `box-shadow` stack (e.g. `0 0 10px / 0 0 34px / 0 0 90px` at decreasing alpha) on a small bright shape; scatter dots, glints. Reads as emissive, not filled. |
+| Rod bar | Thin (8–13px) rounded rod over an avatar/name axis — **not** a filled bar-chart rect; carries the neon shadow stack + a faint reflection pool beneath. Stacked multi-hue segment rods for category breakdowns. |
+| Layered area chart | Translucent bezier mounds (multi-crest, ±35–45px undulation) with a bright ~2.5px top-edge stroke + `drop-shadow`; cool-weighted fills (indigo/blue/cyan ~70%, red rare). Reveals left→right, never pre-drawn. |
+| Tooltip pill | Swatch + label + value (`■ Issue count 268`) popping on a beat — the data-viz analog of the white-fill state change. Small, hairline-bordered, quick scale/opacity hit. |
+| Icon chip | The one place chrome takes hue: a 40px rounded-square chip (tinted bg + 1px tinted border) holding a 1.4px-stroke functional glyph (chart / bug / shield / flame). Marks identity on module headers + priority/SLA rows. |
+| Big stat | Large display number ("46m", "29", "52") as a first-class surface — Geist 500/600, gray-white, `font-variant-numeric: tabular-nums`, paired with a small dim label. |
+
 ---
 
 ## 6 · Motion Vocabulary (GSAP recipes)
@@ -116,6 +127,20 @@ Use this paragraph verbatim as the north star when briefing any composition in t
 | **Logo outro** | The close | `tl.from(lockup, { opacity: 0, duration: 1.0, ease: 'power2.out' })` — **no scale** — then dead-still hold to the end. **No exit fade; the piece ends on the logo.** |
 
 **Scene anatomy (layer stack, bottom → top):** canvas (`--lin-bg`) → pre-blurred far code (depth) → live-typing near code / glyph texture → product surface(s) → faint vignette (`radial-gradient(ellipse at center, rgba(8,9,10,0) 45–55%, rgba(0,0,0,0.55–0.72) 100%)`, the only "texture" this register allows) → SFX-twin overlays if any. No grain layer. Depth-of-field is faked honestly across **three planes**: far layers carry a static CSS `blur(5px)`, the focal plane is razor-sharp, and passed surfaces park at the frame edge as large blurred foreground layers (~1.4×, `blur(13px)`, half opacity). Transitions rack the whole world's blur.
+
+**Camera & data-viz grammar (Dashboards build).** The Dashboards spot pushes the camera harder than Code Intelligence's station-hops — the world is raked, continuously drifting, and beats *overlap* rather than cut. These extend §6; they don't replace it.
+
+| Move | What it does | Recipe |
+|---|---|---|
+| **Dolly-rotate open** | The Dashboards establishing shot | One world wrapper, single front-loaded `fromTo`: dolly-in (`scale 1.0 → ~1.45`) + clockwise rotation (`rotation 0 → +19°`; CSS positive = clockwise) + slight rise — front-loaded `power2.out`, then a `sine.inOut` settle tail. Plane starts near-edge-on; surfaces trace/ignite during the move. Specify both endpoints in one tween (GSAP transform-composition). |
+| **Depth-staggered card cascade** | Iso cards receding into the frame | `tl.set(card, { z: N }, 0)` per card (front `+80`, mid `-70`, back `-210`) on a `transform-style: preserve-3d` world; then directional slides in reference order with decaying motion blur (no fades) — each `from { x/y: ±vector, opacity:0, filter:'blur(9px)', 0.7s power3.out }`, ~0.18s apart. Front card lands nearest + largest. |
+| **Per-element Gaussian DoF** | Honest depth on a dense field | In the (seeded) generation loop, assign `filter: blur()` by a depth proxy — near/bottom edge `blur(2.5–3.5px)`, focal mid-band sharp, far rows `blur(~1px)`. Near marks are bigger **and** softer. |
+| **Light-falloff surface** | A card reads as a lit 3D object | Top-lit → bottom-crushed: `background: linear-gradient(163deg, lighter-top, mid, near-black-bottom)` + `box-shadow: inset 0 1px 0 rgba(255,255,255,0.1)` (top glint), `inset 0 -78px 96px rgba(0,0,0,0.68)` (bottom shadow), `0 50px 120px rgba(0,0,0,0.82)` (cast). A hard vignette (`radial-gradient(ellipse W% H% at 50% 46%, transparent-rgba, dark, darker)`) crushes the corners. |
+| **Data populates on the beat** | "The data is alive" | Nothing pre-formed: rod bars grow (`scaleY 0 → 1`, `transformOrigin: bottom`), scatter dots accumulate (seeded PRNG, staggered opacity/scale pops), the area chart **sunrise-wipes** left→right (`clip-path: inset(0 100% 0 0) → inset(0 0 0 0)`, ~2.2s `sine.inOut`, soft traveling glow bar at the wipe edge). Growth runs *with* the camera arrival, not after. |
+| **Trim-path light strips** | The landing-strip open's glowing grid lines | SVG strokes lit sequentially via `stroke-dashoffset` (full → 0), white-hot gradient head, staggered starts; the strips trace on as the camera moves. |
+| **Drift cam** | Camera never fully static | Every dashboard beat carries a slow continuous travel (`ease: 'none'`/`power1.inOut`, 2–3s) whose ease-out tail carries *into* the next beat. No hold-then-lurch — if a beat stops dead, it reads flat. |
+| **Overlapped seam** | Beats bleed, never hard-cut | Extend the outgoing layer's `data-duration` ~0.4s on an alternate track so its fade rides *over* the incoming beat's first frames (a title fades out while cards already rise; cards still recede while the next title flips in). Master-`index.html` timing, not a per-comp move. |
+| **Cursor as protagonist** | Teaching software through a deliberate cursor | A visible arrow cursor follows an eased path: hover a row (highlight on, hold ~0.4s) → travel to the target row (highlight transfers) → click pulse → drill panel slides in from the right + **falls** onto the dashboard while rows staircase in (0.055 stagger, lower rows carry a DoF blur gradient); the dashboard stays visible **dimmed** (~0.26, `blur(4px)`) beneath, never removed. Drag choreography: grab a card, drag it across while placeholder widths reflow the *real* flex row, release → `expo.out` magnetic drop. |
 
 ---
 
@@ -164,6 +189,10 @@ When in doubt: keep MOTION_PHILOSOPHY's *discipline*, reject its *surface*.
 
 - ❌ **Chrome gradients, halo glows, light streaks on type.** Linear is matte. Flat gray-white *is* the look. (White edge-glints on stations are the one sanctioned luminance accent.)
 - ❌ **Any hue in the canonical form.** The reference is 100% grayscale — no purple send buttons, no colored focus rings, no colored status dots. Accent enters only as a deliberate brand swap.
+- ❌ **Hue leaking past the data (Dashboards build).** The "data is the only color" extension licenses hue on data marks + functional status/priority/icon chips **only** — never on chrome, body type, titles, or the logo. A colored heading or a tinted panel breaks it as surely as a purple send button breaks the canonical.
+- ❌ **Flat, frontal dashboards (Dashboards build).** Data surfaces are raked with depth-stagger + per-element DoF, lit top→bottom. A straight-on, evenly-lit screenshot of a chart is the wrong register — "all these images are too flat" is the failure mode.
+- ❌ **Pre-formed data (Dashboards build).** Bars that arrive grown, scatters that arrive full, areas that arrive drawn = a screenshot. Data populates *on the beat* — it grows, accumulates, and sunrise-wipes as the camera lands.
+- ❌ **Hard cuts between dashboard beats (Dashboards build).** Overlap the seams; the camera/world keeps drifting. A static hold then a cut to the next surface kills the continuous-world illusion.
 - ❌ **Block cursors.** Inputs take a thin 2px beam; mono/code surfaces take a trailing underscore. Nothing else.
 - ❌ **Rounded app-cards for flow steps.** Stations are sharp-cornered terminal blueprints — radius 0, mono uppercase, hairline-split rows. A 10px-radius "card" in the journey reads as the wrong genre.
 - ❌ **Recessing passed steps backward — or exiting them entirely.** The camera dollies *past* stations: outgoing cards grow, blur, and **park overhead**, peeking into the top of frame as foreground depth until the next hop. Shrinking them into a deck inverts the depth read; fading them fully off-frame throws the depth away.
@@ -192,6 +221,10 @@ When in doubt: keep MOTION_PHILOSOPHY's *discipline*, reject its *surface*.
 - [ ] **Passed stations park overhead** (grow + blur + stay peeking into the top of frame), never recess backward, never exit fully
 - [ ] **Motion blur on every fast move** — full-frame smear on camera hops (peaking mid-hop, resolving on arrival), per-element blur on flights; movers blurred, rests razor-sharp
 - [ ] **Multi-element arrivals come from different directions** with overlapping flights — no uniform stagger-fades
+- [ ] **(Dashboards build) Hue confined to data marks + functional chips** — chrome, type, titles, logo stay grayscale; every color encodes a value or status
+- [ ] **(Dashboards build) Dashboard surfaces are raked with depth-stagger + per-element DoF** — no flat frontal screenshots; cards lit top→bottom with crushed corners
+- [ ] **(Dashboards build) Data populates on the beat** — bars grow, scatters accumulate, areas sunrise-wipe; nothing pre-formed
+- [ ] **(Dashboards build) Beat seams overlap and the camera never fully stops** — continuous drift into each cut, no static holds between dashboard beats
 - [ ] **Background code is typing** somewhere in every code-world frame
 - [ ] **Title cards ≤5 words**, ~1.1s luminance fade, ≥1.2s legible hold, gray-white on pure black
 - [ ] **Typewriter ticks sync** with character reveals

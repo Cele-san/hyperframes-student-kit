@@ -91,6 +91,16 @@ Blossom enters **only** through the accent slot (`--lin-accent`), which in V2 ow
 
 **Foreign content rule.** Full-color photographic/UI content placed in the world (e.g. the AI-slop thumbnails in the reference build) keeps its native color and reads as the alien object. Don't tint it toward the brand — the contrast is the point.
 
+**Data-color reconciliation (Dashboards build).** When V2 is applied to a data-viz build, the `DESIGN.linear.md` *"data is the only color"* extension and the cobalt + blossom system **coexist without collision** — they are three independent color languages governing different layers, never overlapping:
+
+| Layer | Color language | Re-keyed by brand swap? |
+|---|---|---|
+| Chrome + type (surfaces, borders, all text) | Cobalt axis (full §2 token map) | **Yes** — rotated onto cobalt |
+| Interaction accent (fills, edge glows, live cursors, send flash) | Blossom `#f0a8c2`, accent slot only | **Yes** — blossom is the brand accent |
+| Data marks + functional status/priority/icon chips | **Canonical semantic hue** — red=bugs/breached, cyan=cycle/effort, purple=IT, yellow=high, green=medium | **No — never re-keyed.** The hue *is* the meaning; rotating it onto cobalt would destroy it. A breached-SLA flame is red in V1, in V2, and in every brand skin. |
+
+The disambiguating test: **blossom** answers *"did the user/system just **act**?"* · **semantic hue** answers *"what **is** this value?"* · **cobalt** is everything else. If a data mark turns up blossom, or a fill turns up red, the layers have crossed — fix it. (Semantic data hue is the same family as the foreign-content rule above: non-brand color that legitimately survives the swap because it carries meaning the brand axis can't.)
+
 ---
 
 ## 3 · V2-Specific Recipe Changes
@@ -145,7 +155,7 @@ Everything else is `DESIGN.linear.md` verbatim — re-read it, don't quote from 
 - Typography: Geist 400/500/600 + Geist Mono 400/500. **No Inter.** Type stays quiet — the brand enters through state changes, never through type stunts.
 - Surface genres: product chrome (radii, hairlines, sentence case) vs flow stations (sharp corners, mono uppercase)
 - Pacing/beat grid (or VO-pinned grid per the reference build's adaptation), audio grammar, anti-patterns, render-contract rules
-- The pre-flight checklist (§11) — with one line amended: *"Zero hue in the frame"* becomes **"Zero hue outside the cobalt axis + the blossom accent slot (+ sanctioned foreign content)"**.
+- The pre-flight checklist (§11) — with one line amended: *"Zero hue in the frame"* becomes **"Zero hue outside the cobalt axis + the blossom accent slot + semantic data hues on data marks/chips (Dashboards build) + sanctioned foreign content"**.
 
 ---
 
@@ -156,3 +166,4 @@ Everything else is `DESIGN.linear.md` verbatim — re-read it, don't quote from 
 3. Are the station glints still cool white?
 4. Is all type still gray-white (cool-cast), with zero blossom headlines?
 5. Does foreign full-color content (if any) read as the alien object, untinted?
+6. **(Data-viz build)** Point at every non-cobalt, non-blossom color — is each one a semantic data mark or a status/priority/icon chip carrying its **canonical** hue (red/cyan/purple/yellow/green), *not* re-keyed to the brand? Blossom is for *actions*, semantic hue is for *values* — if those two ever swap roles, it's off-register.
