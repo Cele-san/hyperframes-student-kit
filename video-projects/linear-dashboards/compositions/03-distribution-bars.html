@@ -1,0 +1,294 @@
+<template id="comp-03-distribution-bars">
+  <div data-composition-id="03-distribution-bars" data-width="1920" data-height="960">
+    <div class="s3-stage">
+      <div class="s3-cam">
+        <div class="s3-world">
+          <!-- Far-depth project table — pre-blurred parallax layer above the cards. -->
+          <div class="s3-depth">
+            <div class="s3-drow"><span class="s3-ddot" style="background:#ff6134"></span><span class="s3-dbar" style="width:180px"></span><span class="s3-dnum">61</span><span class="s3-dnum">2</span><span class="s3-dnum">14</span></div>
+            <div class="s3-drow"><span class="s3-ddot" style="background:#e5484d"></span><span class="s3-dbar" style="width:230px"></span><span class="s3-dnum">78</span><span class="s3-dnum">0</span><span class="s3-dnum">3</span></div>
+            <div class="s3-drow"><span class="s3-ddot" style="background:#2fbdb3"></span><span class="s3-dbar" style="width:150px"></span><span class="s3-dnum">42</span><span class="s3-dnum">9</span><span class="s3-dnum">41</span></div>
+          </div>
+
+          <!-- Card A — cyan cycle-effort rods over an avatar axis. -->
+          <div class="s3-card s3-card-a">
+            <h2 class="s3-h">Cycle distribution effort</h2>
+            <div class="s3-sub">Issue effort sliced by assignee for this cycle</div>
+            <div class="s3-chart">
+              <div class="s3-grid" style="bottom:25%"><span class="s3-tick">2</span></div>
+              <div class="s3-grid" style="bottom:50%"><span class="s3-tick">4</span></div>
+              <div class="s3-grid" style="bottom:75%"><span class="s3-tick">6</span></div>
+              <div class="s3-grid" style="bottom:100%"><span class="s3-tick">8</span></div>
+              <div class="s3-bars s3-bars-a"></div>
+            </div>
+          </div>
+
+          <!-- Card B — red bug-distribution rods + the tooltip microbeat. -->
+          <div class="s3-card s3-card-b">
+            <h2 class="s3-h">Bug distribution</h2>
+            <div class="s3-sub">Issue count sliced by assignee</div>
+            <div class="s3-chart">
+              <div class="s3-grid" style="bottom:25%"><span class="s3-tick">100</span></div>
+              <div class="s3-grid" style="bottom:50%"><span class="s3-tick">200</span></div>
+              <div class="s3-grid" style="bottom:75%"><span class="s3-tick">300</span></div>
+              <div class="s3-bars s3-bars-b"></div>
+              <div class="s3-tip">
+                <span class="s3-tip-swatch"></span>
+                <span class="s3-tip-label">Issue count</span>
+                <span class="s3-tip-val">268</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="s3-vig"></div>
+      <div class="s3-dark"></div>
+    </div>
+
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 600; font-display: block; src: url(assets/fonts/Geist-600.woff2) format('woff2'); }
+      [data-composition-id="03-distribution-bars"] {
+        position: absolute; inset: 0;
+        background: #000;
+        overflow: hidden;
+        font-family: "Geist", sans-serif;
+      }
+      [data-composition-id="03-distribution-bars"] .s3-stage { position: absolute; inset: 0; }
+      [data-composition-id="03-distribution-bars"] .s3-cam {
+        position: absolute; inset: 0;
+        perspective: 1500px;
+        display: flex; align-items: center; justify-content: center;
+      }
+      /* CSS rest = camera END (framing card B after the glide). Tilted hard away — depth first. */
+      [data-composition-id="03-distribution-bars"] .s3-world {
+        position: relative;
+        width: 2980px; height: 960px;
+        flex: none;
+        transform-style: preserve-3d;
+        transform: translateX(-430px) rotateX(17deg) rotateY(-7deg) scale(1.18);
+      }
+      [data-composition-id="03-distribution-bars"] .s3-depth {
+        position: absolute;
+        left: 480px; top: -150px;
+        width: 2100px;
+        display: flex; flex-direction: column; gap: 34px;
+        filter: blur(6px);
+        opacity: 0.55;
+      }
+      [data-composition-id="03-distribution-bars"] .s3-drow {
+        display: flex; align-items: center; gap: 28px;
+      }
+      [data-composition-id="03-distribution-bars"] .s3-ddot { width: 15px; height: 15px; border-radius: 5px; flex: none; }
+      [data-composition-id="03-distribution-bars"] .s3-dbar { height: 15px; border-radius: 7px; background: #1c1e24; }
+      [data-composition-id="03-distribution-bars"] .s3-dnum { margin-left: 90px; color: #767b85; font-size: 20px; }
+      [data-composition-id="03-distribution-bars"] .s3-card {
+        position: absolute; top: 120px;
+        width: 1240px; height: 760px;
+        background: linear-gradient(180deg, #0c0d10, #090a0c);
+        border: 1px solid #1b1d22;
+        border-radius: 18px;
+        padding: 52px 60px 44px;
+        box-shadow: 0 40px 110px rgba(0,0,0,0.6);
+        display: flex; flex-direction: column;
+      }
+      [data-composition-id="03-distribution-bars"] .s3-card-a { left: 150px; }
+      [data-composition-id="03-distribution-bars"] .s3-card-b { left: 1570px; }
+      [data-composition-id="03-distribution-bars"] .s3-h {
+        font-size: 27px; font-weight: 600;
+        letter-spacing: -0.01em;
+        color: #eceef0;
+      }
+      [data-composition-id="03-distribution-bars"] .s3-sub {
+        margin-top: 8px;
+        font-size: 16px;
+        color: #6d727c;
+      }
+      [data-composition-id="03-distribution-bars"] .s3-chart {
+        position: relative;
+        flex: 1;
+        margin-top: 30px;
+      }
+      [data-composition-id="03-distribution-bars"] .s3-grid {
+        position: absolute; left: 0; right: 52px; height: 1px;
+        background: rgba(180,190,215,0.05);
+      }
+      [data-composition-id="03-distribution-bars"] .s3-tick {
+        position: absolute; right: -52px; top: -9px;
+        font-size: 14px; color: #4e525c;
+        font-variant-numeric: tabular-nums;
+      }
+      [data-composition-id="03-distribution-bars"] .s3-bars {
+        position: absolute; inset: 0 52px 0 0;
+        display: flex; justify-content: space-between; align-items: flex-end;
+        padding: 0 14px;
+      }
+      [data-composition-id="03-distribution-bars"] .s3-bar {
+        position: relative;
+        width: 34px;
+        display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+        height: 100%;
+      }
+      [data-composition-id="03-distribution-bars"] .s3-rod {
+        width: 13px; border-radius: 6.5px;
+        transform-origin: bottom center;
+      }
+      [data-composition-id="03-distribution-bars"] .s3-rod-cyan {
+        background: linear-gradient(180deg, #d8f6ff 0%, #50caf0 16%, #2a7a9b 100%);
+        box-shadow:
+          0 0 10px 2px rgba(80,202,240,0.85),
+          0 0 30px 7px rgba(58,150,190,0.45),
+          0 0 72px 14px rgba(37,93,119,0.22);
+      }
+      [data-composition-id="03-distribution-bars"] .s3-rod-red {
+        background: linear-gradient(180deg, #ffdadd 0%, #f7545e 16%, #a1303a 100%);
+        box-shadow:
+          0 0 10px 2px rgba(247,84,94,0.85),
+          0 0 30px 7px rgba(200,64,75,0.45),
+          0 0 72px 14px rgba(161,48,58,0.22);
+      }
+      /* Reflection pools — the rods' light catching the card surface. */
+      [data-composition-id="03-distribution-bars"] .s3-pool {
+        position: absolute; bottom: 40px; left: 50%;
+        width: 54px; height: 13px; margin-left: -27px;
+        border-radius: 50%;
+        filter: blur(3px);
+      }
+      [data-composition-id="03-distribution-bars"] .s3-pool-cyan { background: radial-gradient(ellipse at center, rgba(80,202,240,0.38), rgba(80,202,240,0) 70%); }
+      [data-composition-id="03-distribution-bars"] .s3-pool-red  { background: radial-gradient(ellipse at center, rgba(247,84,94,0.38), rgba(247,84,94,0) 70%); }
+      [data-composition-id="03-distribution-bars"] .s3-ava {
+        margin-top: 14px;
+        width: 30px; height: 30px; border-radius: 50%;
+        border: 1px solid #2b2e35;
+        flex: none;
+      }
+      [data-composition-id="03-distribution-bars"] .s3-tip {
+        position: absolute;
+        left: 96px; top: 26%;
+        display: flex; align-items: center; gap: 10px;
+        background: #15161a;
+        border: 1px solid #292c32;
+        border-radius: 10px;
+        padding: 12px 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+        white-space: nowrap;
+      }
+      [data-composition-id="03-distribution-bars"] .s3-tip-swatch {
+        width: 11px; height: 11px; border-radius: 3px;
+        background: #f7545e;
+      }
+      [data-composition-id="03-distribution-bars"] .s3-tip-label { font-size: 15px; color: #9aa0a7; }
+      [data-composition-id="03-distribution-bars"] .s3-tip-val { font-size: 16px; font-weight: 600; color: #eceef0; }
+      [data-composition-id="03-distribution-bars"] .s3-vig {
+        position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, rgba(0,0,0,0) 44%, rgba(0,0,0,0.66) 100%);
+      }
+      [data-composition-id="03-distribution-bars"] .s3-dark {
+        position: absolute; inset: 0; pointer-events: none;
+        background: #000; opacity: 0;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 5.4;
+        const ID = "03-distribution-bars";
+        const sel = (q) => `[data-composition-id="${ID}"] ${q}`;
+        const tl = gsap.timeline({ paused: true });
+
+        function mulberry32(a) {
+          return function () {
+            a |= 0; a = (a + 0x6d2b79f5) | 0;
+            let t = Math.imul(a ^ (a >>> 15), 1 | a);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+          };
+        }
+        const rnd = mulberry32(13);
+
+        // Deterministic avatar fills — hue-shifted dark gradients standing in for member photos.
+        const avaFills = [
+          "radial-gradient(circle at 35% 30%, #565b66, #262a31)",
+          "radial-gradient(circle at 35% 30%, #5d564f, #2a2622)",
+          "radial-gradient(circle at 35% 30%, #4f5a57, #232a27)",
+          "radial-gradient(circle at 35% 30%, #585063, #28242e)",
+          "radial-gradient(circle at 35% 30%, #4f5663, #232830)",
+        ];
+
+        function buildBars(containerSel, heights, rodClass) {
+          const box = document.querySelector(sel(containerSel));
+          heights.forEach((h, i) => {
+            const bar = document.createElement("div");
+            bar.className = "s3-bar";
+            const rod = document.createElement("div");
+            rod.className = "s3-rod " + rodClass;
+            rod.style.height = h + "%";
+            const ava = document.createElement("div");
+            ava.className = "s3-ava";
+            ava.style.background = avaFills[i % avaFills.length];
+            const pool = document.createElement("div");
+            pool.className = "s3-pool " + (rodClass === "s3-rod-cyan" ? "s3-pool-cyan" : "s3-pool-red");
+            bar.appendChild(pool);
+            bar.appendChild(rod);
+            bar.appendChild(ava);
+            box.appendChild(bar);
+          });
+        }
+
+        // Descending-effort silhouettes, mild seeded wobble (matches the reference shape).
+        const hA = [86, 74, 66, 52, 40, 30, 22, 15, 9, 5].map(h => h + (rnd() - 0.5) * 6);
+        const hB = [90, 80, 84, 62, 54, 44, 34, 27, 18, 12, 7].map(h => h + (rnd() - 0.5) * 8);
+        buildBars(".s3-bars-a", hA, "s3-rod-cyan");
+        buildBars(".s3-bars-b", hB, "s3-rod-red");
+
+        // Hand-off in from 02's pan — the world sharpens out of a light rack.
+        tl.from(sel(".s3-world"),
+          { filter: "blur(8px)", opacity: 0.55, duration: 0.35, ease: "power2.out" }, 0);
+
+        // Camera: continuous motion the whole beat — drift, then one LONG eased glide whose
+        // ease-out tail carries straight into the cut. Never static, never erupting (Andy's note).
+        tl.fromTo(sel(".s3-world"), { x: 470 }, { x: 430, duration: 1.5, ease: "sine.inOut" }, 0);
+        tl.to(sel(".s3-world"), { x: -400, duration: 2.6, ease: "power1.inOut" }, 1.5);
+        tl.to(sel(".s3-world"), { x: -430, duration: 1.3, ease: "sine.out" }, 4.1);
+        // Mid-glide smear (Law #10) — movers blurred, rests sharp.
+        tl.to(sel(".s3-world"), { filter: "blur(6px)", duration: 0.6, ease: "power2.in" }, 2.2);
+        tl.to(sel(".s3-world"), { filter: "blur(0px)", duration: 0.7, ease: "power3.out" }, 3.3);
+        // Slow vertical drift layered under the tail.
+        tl.to(sel(".s3-world"), { y: -14, duration: 2.1, ease: "none" }, 3.3);
+
+        // Cyan rods grow on arrival — light rods, pressed-in ease, no bounce.
+        tl.from(sel(".s3-bars-a .s3-rod"),
+          { scaleY: 0, duration: 0.55, ease: "power3.out", stagger: 0.07 }, 0.3);
+        tl.from(sel(".s3-bars-a .s3-ava"),
+          { opacity: 0, duration: 0.4, ease: "power2.out", stagger: 0.05 }, 0.42);
+        tl.from(sel(".s3-bars-a .s3-pool"),
+          { opacity: 0, duration: 0.5, ease: "power2.out", stagger: 0.07 }, 0.38);
+
+        // Card B waits in shadow, then catches the light as the camera commits to the glide.
+        tl.fromTo(sel(".s3-card-b"),
+          { opacity: 0.22 }, { opacity: 1, duration: 1.0, ease: "power2.inOut" }, 2.2);
+
+        // Red rods grow DURING the glide — card B is already alive when the camera lands (~4.1).
+        tl.from(sel(".s3-bars-b .s3-rod"),
+          { scaleY: 0, duration: 0.6, ease: "power3.out", stagger: 0.06 }, 2.4);
+        tl.from(sel(".s3-bars-b .s3-ava"),
+          { opacity: 0, duration: 0.4, ease: "power2.out", stagger: 0.045 }, 2.5);
+        tl.from(sel(".s3-bars-b .s3-pool"),
+          { opacity: 0, duration: 0.5, ease: "power2.out", stagger: 0.06 }, 2.46);
+
+        // Tooltip microbeat — the data-viz analog of the white-fill state change.
+        tl.from(sel(".s3-tip"),
+          { opacity: 0, y: 16, duration: 0.4, ease: "power3.out" }, 4.3);
+
+        // EXIT: feather-light defocus — 04's field is already formed on the far side (no luma dip).
+        tl.to(sel(".s3-world"), { filter: "blur(6px)", duration: 0.25, ease: "power2.in" }, 5.15);
+        tl.to(sel(".s3-dark"), { opacity: 0.2, duration: 0.25, ease: "power2.in" }, 5.15);
+
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </div>
+</template>

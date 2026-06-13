@@ -1,0 +1,214 @@
+<template id="comp-04-effort-particles">
+  <div data-composition-id="04-effort-particles" data-width="1920" data-height="960">
+    <div class="s4-stage">
+      <div class="s4-cam">
+        <div class="s4-world">
+          <div class="s4-head">
+            <div class="s4-metric">
+              <div class="s4-mlabel">Project effort</div>
+              <div class="s4-mval">~ 2,109</div>
+            </div>
+            <div class="s4-metric">
+              <div class="s4-mlabel">Bug effort</div>
+              <div class="s4-mval">~ 722</div>
+            </div>
+            <h2 class="s4-title">Project effort and priority</h2>
+          </div>
+          <div class="s4-body">
+            <div class="s4-rowline" style="top:33%"></div>
+            <div class="s4-rowline" style="top:66%"></div>
+            <div class="s4-colline" style="left:25%"></div>
+            <div class="s4-colline" style="left:50%"></div>
+            <div class="s4-colline" style="left:75%"></div>
+            <!-- particle clusters generated deterministically below -->
+            <div class="s4-labels">
+              <span>Small redesign</span><span>Customer requests</span><span>Website polishing</span><span>Website navigation update</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="s4-vig"></div>
+      <div class="s4-dark"></div>
+    </div>
+
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      [data-composition-id="04-effort-particles"] {
+        position: absolute; inset: 0;
+        background: #020203;
+        overflow: hidden;
+        font-family: "Geist", sans-serif;
+      }
+      [data-composition-id="04-effort-particles"] .s4-stage { position: absolute; inset: 0; }
+      [data-composition-id="04-effort-particles"] .s4-cam {
+        position: absolute; inset: 0;
+        perspective: 1600px;
+        display: flex; align-items: center; justify-content: center;
+      }
+      /* CSS rest = camera END of the slow track. Yaw is POSITIVE: top-right corner is the
+         furthest away, bottom-left the nearest — the reference's depth axis (Andy's note). */
+      [data-composition-id="04-effort-particles"] .s4-world {
+        width: 2080px; height: 920px; flex: none;
+        transform-style: preserve-3d;
+        transform: translateX(-50px) rotateX(16deg) rotateY(12deg) rotateZ(-2deg) scale(1.18);
+        display: flex; flex-direction: column;
+        padding: 30px 120px 50px;
+      }
+      [data-composition-id="04-effort-particles"] .s4-head {
+        display: flex; gap: 28px; align-items: stretch;
+      }
+      [data-composition-id="04-effort-particles"] .s4-metric {
+        width: 330px;
+        background: linear-gradient(180deg, #0c0d10, #0a0b0d);
+        border: 1px solid #1a1c21;
+        border-radius: 14px;
+        padding: 22px 28px;
+      }
+      [data-composition-id="04-effort-particles"] .s4-mlabel { font-size: 16px; color: #6d727c; }
+      [data-composition-id="04-effort-particles"] .s4-mval {
+        margin-top: 10px;
+        font-size: 33px; font-weight: 500;
+        color: #d6d9dd;
+        font-variant-numeric: tabular-nums;
+      }
+      [data-composition-id="04-effort-particles"] .s4-title {
+        margin-left: auto; align-self: flex-start;
+        font-size: 22px; font-weight: 500;
+        color: #82878f;
+      }
+      [data-composition-id="04-effort-particles"] .s4-body {
+        position: relative;
+        flex: 1;
+        margin-top: 34px;
+      }
+      [data-composition-id="04-effort-particles"] .s4-rowline {
+        position: absolute; left: 0; right: 0; height: 1px;
+        background: rgba(180,190,215,0.045);
+      }
+      [data-composition-id="04-effort-particles"] .s4-colline {
+        position: absolute; top: 0; bottom: 56px; width: 1px;
+        background: rgba(180,190,215,0.035);
+      }
+      [data-composition-id="04-effort-particles"] .s4-p {
+        position: absolute;
+        border-radius: 50%;
+      }
+      [data-composition-id="04-effort-particles"] .s4-labels {
+        position: absolute; left: 0; right: 0; bottom: 0;
+        display: flex;
+        font-size: 17px;
+        color: #5d626b;
+      }
+      [data-composition-id="04-effort-particles"] .s4-labels span { flex: 1; text-align: center; }
+      [data-composition-id="04-effort-particles"] .s4-vig {
+        position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, rgba(2,2,3,0) 44%, rgba(0,0,0,0.66) 100%);
+      }
+      [data-composition-id="04-effort-particles"] .s4-dark {
+        position: absolute; inset: 0; pointer-events: none;
+        background: #000; opacity: 0;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 4.2;
+        const ID = "04-effort-particles";
+        const sel = (q) => `[data-composition-id="${ID}"] ${q}`;
+        const tl = gsap.timeline({ paused: true });
+
+        function mulberry32(a) {
+          return function () {
+            a |= 0; a = (a + 0x6d2b79f5) | 0;
+            let t = Math.imul(a ^ (a >>> 15), 1 | a);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+          };
+        }
+        const rnd = mulberry32(29);
+
+        // Multi-hue particle field — hue is data (priority mix per project), not decoration.
+        const hues = [
+          { c: "#59c4c0", glow: "89,196,192" },   // teal
+          { c: "#6fae5d", glow: "111,174,93" },   // green
+          { c: "#d9cf6a", glow: "217,207,106" },  // yellow
+          { c: "#c97b4e", glow: "201,123,78" },   // orange
+          { c: "#b9bdc2", glow: "185,189,194" },  // neutral
+        ];
+        const bright = { c: "#7ff4ee", glow: "127,244,238" }; // hot outliers
+
+        const body = document.querySelector(sel(".s4-body"));
+        const parts = [];
+        for (let col = 0; col < 4; col++) {
+          // 3-4 cluster blobs per column — finer dots, denser star-field, wider spread.
+          const blobs = 3 + Math.floor(rnd() * 2);
+          for (let b = 0; b < blobs; b++) {
+            const cx = Math.min(86, col * 25 + 5 + rnd() * 12);   // % within body, clamped in-frame
+            const cy = 12 + rnd() * 62;
+            const n = 14 + Math.floor(rnd() * 8);
+            for (let i = 0; i < n; i++) {
+              const hue = rnd() > 0.9 ? bright : hues[Math.floor(rnd() * hues.length)];
+              const r = rnd();
+              const size = 3.2 + r * 3;
+              const L = cx + (rnd() - 0.5) * 14;
+              const T = cy + (rnd() - 0.5) * 22;
+              const el = document.createElement("div");
+              el.className = "s4-p";
+              el.style.left = L + "%";
+              el.style.top = T + "%";
+              el.style.width = size + "px";
+              el.style.height = size + "px";
+              el.style.background = hue.c;
+              el.style.boxShadow =
+                `0 0 ${5 + r * 4}px ${1 + r}px rgba(${hue.glow},0.7),` +
+                `0 0 ${14 + r * 10}px ${3 + r * 3}px rgba(${hue.glow},0.22)`;
+              // DoF along the depth axis — bottom-left nearest (soft), top-right furthest.
+              const near = ((100 - L) + T) / 200;
+              let dof = 0;
+              if (near > 0.64) dof = (near - 0.64) * 9;
+              else if (near < 0.38) dof = (0.38 - near) * 3;
+              if (rnd() > 0.85) dof = Math.max(dof, 1.5); // a few off-plane
+              if (dof > 0.3) el.style.filter = `blur(${dof.toFixed(2)}px)`;
+              // Mirror ghost just below — the glossy-surface reflection read.
+              const refl = document.createElement("div");
+              refl.className = "s4-p";
+              refl.style.left = L + "%";
+              refl.style.top = T + "%";
+              refl.style.width = size + "px";
+              refl.style.height = (size * 0.55).toFixed(2) + "px";
+              refl.style.background = hue.c;
+              refl.style.transform = `translateY(${(size * 1.9).toFixed(1)}px)`;
+              refl.style.opacity = "0.18";
+              refl.style.filter = "blur(2px)";
+              body.appendChild(refl);
+              body.appendChild(el);
+              parts.push({ el, col, j: rnd() });
+            }
+          }
+        }
+
+        // Hand-off in — sharpen out of 03's feather defocus; the world is already bright.
+        tl.from(sel(".s4-world"),
+          { filter: "blur(6px)", opacity: 0.8, duration: 0.35, ease: "power2.out" }, 0);
+
+        // Camera: one slow lateral track the whole beat.
+        tl.fromTo(sel(".s4-world"),
+          { x: 30, y: 8 }, { x: -50, y: 0, duration: SLOT, ease: "none" }, 0);
+
+        // NO entrance pops — the field formed "off-screen" during 03's pan (ref is one continuous
+        // camera move, fully populated at the cut). Life comes from the breathing pulse alone.
+        parts.forEach(({ el, j }) => {
+          tl.to(el, { opacity: 0.8, duration: 1.1, ease: "sine.inOut", repeat: 1, yoyo: true },
+            0.6 + j * 0.8);
+        });
+
+        // EXIT: none — hard cut into 05 (luma-verified cut at 19.48→19.5).
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </div>
+</template>

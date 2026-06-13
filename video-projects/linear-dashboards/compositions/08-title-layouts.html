@@ -1,0 +1,50 @@
+<template id="comp-08-title-layouts">
+  <div data-composition-id="08-title-layouts" data-width="1920" data-height="960">
+    <div class="s8t-stage">
+      <h1 class="s8t-title">Build custom layouts</h1>
+    </div>
+
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 600; font-display: block; src: url(assets/fonts/Geist-600.woff2) format('woff2'); }
+      [data-composition-id="08-title-layouts"] {
+        position: absolute; inset: 0;
+        /* Transparent — flips in OVER beat 07's receding cards (z-stacked above in the master). */
+        background: transparent;
+        overflow: hidden;
+        font-family: "Geist", sans-serif;
+      }
+      [data-composition-id="08-title-layouts"] .s8t-stage {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+      }
+      [data-composition-id="08-title-layouts"] .s8t-title {
+        font-size: 96px; font-weight: 600;
+        letter-spacing: -0.015em;
+        color: #edeef1;
+        white-space: nowrap;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 2.3;
+        const sel = (q) => `[data-composition-id="08-title-layouts"] ${q}`;
+        const tl = gsap.timeline({ paused: true });
+
+        // Slow 3D flip onto the screen (Andy's note) — it lands while 07's cards still recede below.
+        tl.from(sel(".s8t-title"),
+          { opacity: 0, rotationX: 58, transformPerspective: 900, transformOrigin: "50% 100%",
+            y: 40, duration: 0.9, ease: "power2.out" }, 0.1);
+        tl.to(sel(".s8t-title"), { scale: 1.005, duration: 0.8, ease: "none" }, 1.15);
+        tl.to(sel(".s8t-title"),
+          { opacity: 0, duration: 0.35, ease: "power2.in" }, 1.95);
+
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines["08-title-layouts"] = tl;
+      })();
+    </script>
+  </div>
+</template>

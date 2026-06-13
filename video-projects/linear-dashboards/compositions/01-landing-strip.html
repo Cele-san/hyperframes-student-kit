@@ -1,0 +1,205 @@
+<template id="comp-01-landing-strip">
+  <div data-composition-id="01-landing-strip" data-width="1920" data-height="960">
+    <div class="s1-stage">
+      <div class="s1-cam">
+        <div class="s1-world">
+          <!-- Landing-strip chart plane: raking-angle timeline whose gridlines ignite as indigo light strips. -->
+          <div class="s1-strip-plane">
+            <div class="s1-rows">
+              <div class="s1-row"></div>
+              <div class="s1-row"><div class="s1-lit s1-l0" style="left:8%;  width:26%"></div></div>
+              <div class="s1-row"><div class="s1-ghost" style="left:40%; width:18%"></div></div>
+              <div class="s1-row"><div class="s1-lit s1-l1" style="left:18%; width:38%"></div></div>
+              <div class="s1-row"><div class="s1-ghost" style="left:8%;  width:12%"></div><div class="s1-lit s1-l2" style="left:52%; width:30%"></div></div>
+              <div class="s1-row"><div class="s1-lit s1-l3" style="left:30%; width:44%"></div></div>
+              <div class="s1-row"><div class="s1-ghost" style="left:60%; width:14%"></div></div>
+              <div class="s1-row"><div class="s1-lit s1-l4" style="left:12%; width:22%"></div></div>
+              <div class="s1-row"><div class="s1-lit s1-l5" style="left:44%; width:36%"></div></div>
+              <div class="s1-row"><div class="s1-ghost" style="left:22%; width:10%"></div></div>
+              <div class="s1-row"><div class="s1-lit s1-l6 s1-thick" style="left:6%; width:50%"></div></div>
+              <div class="s1-row"></div>
+            </div>
+            <div class="s1-months">
+              <span>Jan</span><span class="s1-feb">Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+            </div>
+          </div>
+
+          <!-- Issue-board panel parked at right depth — pre-blurred foreground-adjacent layer (DoF). -->
+          <div class="s1-board">
+            <div class="s1-bhead"><span class="s1-dot s1-dot-prog"></span><span class="s1-blabel">In Progress</span><span class="s1-bcount">8</span></div>
+            <div class="s1-brow"><span class="s1-bbar" style="width:62%"></span><span class="s1-bnum">3</span></div>
+            <div class="s1-brow"><span class="s1-bbar" style="width:48%"></span><span class="s1-bnum">8</span></div>
+            <div class="s1-brow"><span class="s1-bbar" style="width:71%"></span><span class="s1-bnum">1</span></div>
+            <div class="s1-bhead s1-bhead2"><span class="s1-dot s1-dot-done"></span><span class="s1-blabel">Done</span><span class="s1-bcount">12</span></div>
+            <div class="s1-brow"><span class="s1-bbar" style="width:55%"></span><span class="s1-bnum">1</span></div>
+            <div class="s1-brow"><span class="s1-bbar" style="width:67%"></span><span class="s1-bnum">7</span></div>
+            <div class="s1-brow"><span class="s1-bbar" style="width:42%"></span><span class="s1-bnum">9</span></div>
+            <div class="s1-brow"><span class="s1-bbar" style="width:58%"></span><span class="s1-bnum">2</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Title is screen-space — crisp over the drifting world. -->
+      <h1 class="s1-title">Introducing Dashboards</h1>
+      <div class="s1-vig"></div>
+    </div>
+
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      [data-composition-id="01-landing-strip"] {
+        position: absolute; inset: 0;
+        background: #000;
+        overflow: hidden;
+        font-family: "Geist", sans-serif;
+      }
+      [data-composition-id="01-landing-strip"] .s1-stage { position: absolute; inset: 0; }
+      [data-composition-id="01-landing-strip"] .s1-cam {
+        position: absolute; inset: 0;
+        perspective: 1500px;
+      }
+      /* CSS rest = camera END state; the dolly-rotate fromTo lands here. */
+      [data-composition-id="01-landing-strip"] .s1-world {
+        position: absolute; inset: 0;
+        transform-style: preserve-3d;
+        transform: translateY(30px) rotate(19deg) scale(1.46);
+      }
+      /* Floor-mat plane — near-flat in front of the camera; the world rotation sweeps it clockwise. */
+      [data-composition-id="01-landing-strip"] .s1-strip-plane {
+        position: absolute;
+        left: -560px; bottom: -600px;
+        width: 3000px; height: 1300px;
+        transform: rotateX(70deg) rotateZ(-24deg);
+        transform-origin: 30% 70%;
+      }
+      /* Near-edge DoF — the closest strip rows sit off the focal plane. */
+      [data-composition-id="01-landing-strip"] .s1-row:nth-child(n+10) .s1-lit,
+      [data-composition-id="01-landing-strip"] .s1-row:nth-child(n+10) .s1-ghost { filter: blur(2.5px); }
+      [data-composition-id="01-landing-strip"] .s1-row:nth-child(-n+3) .s1-lit,
+      [data-composition-id="01-landing-strip"] .s1-row:nth-child(-n+3) .s1-ghost { filter: blur(1.2px); }
+      [data-composition-id="01-landing-strip"] .s1-rows {
+        position: absolute; inset: 0 0 64px 0;
+        display: flex; flex-direction: column;
+      }
+      [data-composition-id="01-landing-strip"] .s1-row {
+        position: relative;
+        flex: 1;
+        border-top: 1px solid rgba(160,170,210,0.055);
+      }
+      /* Ghost bars — unlit slate schedule blocks. */
+      [data-composition-id="01-landing-strip"] .s1-ghost {
+        position: absolute; top: 50%; height: 14px; margin-top: -7px;
+        background: #14161c;
+        border: 1px solid #1f2230;
+        border-radius: 7px;
+      }
+      /* Lit strips — indigo light rods; gradient bright end is the tracing head. */
+      [data-composition-id="01-landing-strip"] .s1-lit {
+        position: absolute; top: 50%; height: 12px; margin-top: -6px;
+        border-radius: 6px;
+        background: linear-gradient(90deg, rgba(57,63,173,0.25) 0%, #4a55c4 45%, #8a96ff 82%, #e2e7ff 100%);
+        box-shadow:
+          0 0 10px 2px rgba(107,121,234,0.9),
+          0 0 34px 8px rgba(76,86,210,0.5),
+          0 0 90px 18px rgba(57,63,173,0.25);
+        transform-origin: left center;
+      }
+      [data-composition-id="01-landing-strip"] .s1-thick { height: 16px; margin-top: -8px; border-radius: 8px; }
+      [data-composition-id="01-landing-strip"] .s1-months {
+        position: absolute; left: 0; right: 0; bottom: 700px;
+        display: flex; justify-content: space-between;
+        padding: 0 720px 0 170px;
+        font-family: "Geist Mono", monospace;
+        font-size: 24px;
+        color: #505562;
+      }
+      [data-composition-id="01-landing-strip"] .s1-feb { color: #9aa3b5; }
+      /* Issue board at right depth — blurred, believable, never the focus. */
+      [data-composition-id="01-landing-strip"] .s1-board {
+        position: absolute;
+        right: 120px; top: 8px;
+        width: 700px; height: 880px;
+        background: linear-gradient(180deg, #0d0e12, #0a0b0e);
+        border: 1px solid #1c1e24;
+        border-radius: 18px;
+        padding: 44px 48px;
+        transform: rotateY(-31deg) rotateX(6deg);
+        filter: blur(3.5px);
+        opacity: 0.95;
+        display: flex; flex-direction: column; gap: 26px;
+      }
+      [data-composition-id="01-landing-strip"] .s1-bhead {
+        display: flex; align-items: center; gap: 12px;
+        font-size: 21px; font-weight: 500; color: #b6bac2;
+      }
+      [data-composition-id="01-landing-strip"] .s1-bhead2 { margin-top: 26px; }
+      [data-composition-id="01-landing-strip"] .s1-dot { width: 13px; height: 13px; border-radius: 50%; }
+      [data-composition-id="01-landing-strip"] .s1-dot-prog { background: #e2b13c; box-shadow: 0 0 10px rgba(226,177,60,0.5); }
+      [data-composition-id="01-landing-strip"] .s1-dot-done { background: #6160dc; box-shadow: 0 0 10px rgba(97,96,220,0.5); }
+      [data-composition-id="01-landing-strip"] .s1-bcount { margin-left: auto; color: #5d626c; font-size: 19px; }
+      [data-composition-id="01-landing-strip"] .s1-brow {
+        display: flex; align-items: center; gap: 16px;
+      }
+      [data-composition-id="01-landing-strip"] .s1-bbar {
+        height: 13px; border-radius: 6px;
+        background: #1b1d23;
+      }
+      [data-composition-id="01-landing-strip"] .s1-bnum {
+        margin-left: auto;
+        font-size: 18px; color: #6d727c;
+      }
+      [data-composition-id="01-landing-strip"] .s1-title {
+        position: absolute;
+        left: 0; right: 0; top: 50%;
+        transform: translateY(-58%);
+        text-align: center;
+        font-size: 96px; font-weight: 500;
+        letter-spacing: -0.01em;
+        color: #f6f7f8;
+      }
+      [data-composition-id="01-landing-strip"] .s1-vig {
+        position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, rgba(0,0,0,0) 46%, rgba(0,0,0,0.62) 100%);
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 5.1;
+        const sel = (q) => `[data-composition-id="01-landing-strip"] ${q}`;
+        const tl = gsap.timeline({ paused: true });
+
+        // Camera: dolly FORWARD while the world rotates clockwise — the source's signature open.
+        // FRONT-LOADED (final-pass note): the strip band must reach its steep left diagonal by the
+        // time the title is up (~2.2s), not only at the cut. Fast push-in, then a gentle continued drift.
+        tl.fromTo(sel(".s1-world"),
+          { rotation: -2, scale: 1.0, y: -34 },
+          { rotation: 16, scale: 1.4, y: 24, duration: 2.5, ease: "power2.out" }, 0);
+        tl.to(sel(".s1-world"),
+          { rotation: 19, scale: 1.46, y: 30, duration: SLOT - 2.5, ease: "sine.inOut" }, 2.5);
+
+        // Strips ignite sequentially — trim-path traces, head = gradient bright end.
+        const order = ["s1-l0", "s1-l1", "s1-l2", "s1-l3", "s1-l4", "s1-l5", "s1-l6"];
+        order.forEach((c, i) => {
+          tl.from(sel(`.${c}`),
+            { scaleX: 0, duration: 0.9, ease: "power2.out" }, 0.2 + i * 0.34);
+        });
+
+        // Title — slow luminance fade landing where the source's does (~2.2s in), holds to the hard cut.
+        tl.from(sel(".s1-title"),
+          { opacity: 0, duration: 0.6, ease: "power1.inOut" }, 2.2);
+
+        // Board drifts a hair against the pan for parallax depth.
+        tl.fromTo(sel(".s1-board"),
+          { x: 36 }, { x: -16, duration: SLOT, ease: "none" }, 0);
+
+        // EXIT: none — hard cut into 02 (luma-verified cut at 5.10).
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines["01-landing-strip"] = tl;
+      })();
+    </script>
+  </div>
+</template>

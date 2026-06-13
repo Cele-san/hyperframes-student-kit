@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, height=960">
+    <title>Linear — Introducing Dashboards (LINEAR register reference #2)</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 600; font-display: block; src: url(assets/fonts/Geist-600.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        width: 1920px;
+        height: 960px;
+        overflow: hidden;
+        background: #000;
+        color: #f8f8f8;
+      }
+      .beat-layer {
+        position: absolute;
+        top: 0; left: 0;
+        width: 1920px;
+        height: 960px;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      Linear "Introducing Dashboards" reproduction — 1920x960 (2:1) @ 60fps, 44.2s.
+      Spec: STORYBOARD.md (this folder) + DESIGN.linear.md (workspace root).
+      Cut map is luma-verified from the source; cuts are NOT on a clean BPM —
+      beat starts match the source frame-exactly (all ×60 are integer frames).
+      Internal micro-hits land on 0.25s subdivisions relative to each beat start.
+      No music this pass (precedent: linear-code-intelligence) — SFX twins land later.
+
+      Beat map (12 comps, one continuous dark data-world, dissolves bracket rests):
+        01   0.00– 5.10  landing-strip open: indigo trim-path strips + title  → hard cut
+        02   5.10– 9.90  time-in-triage crimson scatter accumulates           → hard cut
+        03   9.90–15.30  cyan/red rod-bar cards + tooltip pill                → pan/dissolve
+        04  15.30–19.50  effort & priority multi-hue particle clusters        → hard cut
+        05  19.50–24.35  stacked-segment bars → indigo burn-up area           → dissolve to black
+        06  24.35–26.10  TITLE "Monitor key metrics"                          → dissolve
+        07  26.10–29.10  module cascade (3 iso cards, colored icon chips)     → dissolve to black
+        08  29.10–31.40  TITLE "Build custom layouts"                         → dissolve
+        09  31.40–34.00  layout customization (cursor drags, grid reflows)    → dissolve to black
+        10  34.00–36.20  TITLE "Drill into any insight"                       → dissolve
+        11  36.20–40.90  SLA table → cursor click → 34-issues drill-down      → recede to black
+        12  40.90–44.20  Linear lockup luminance fade, dead-still, no fade-out
+    -->
+    <div data-hf-id="hf-wkre" id="root" data-composition-id="linear-dashboards" data-start="0" data-duration="44.2" data-width="1920" data-height="960">
+      <div data-hf-id="hf-usik" class="beat-layer" data-composition-id="01-landing-strip" data-composition-src="compositions/01-landing-strip.html" data-start="0" data-duration="5.1" data-track-index="0" data-width="1920" data-height="960"></div>
+      <div data-hf-id="hf-95tt" class="beat-layer" data-composition-id="02-triage-scatter" data-composition-src="compositions/02-triage-scatter.html" data-start="5.1" data-duration="4.8" data-track-index="1" data-width="1920" data-height="960"></div>
+      <div data-hf-id="hf-02f5" class="beat-layer" data-composition-id="03-distribution-bars" data-composition-src="compositions/03-distribution-bars.html" data-start="9.9" data-duration="5.4" data-track-index="0" data-width="1920" data-height="960"></div>
+      <div data-hf-id="hf-2ls0" class="beat-layer" data-composition-id="04-effort-particles" data-composition-src="compositions/04-effort-particles.html" data-start="15.3" data-duration="4.2" data-track-index="1" data-width="1920" data-height="960"></div>
+      <div data-hf-id="hf-3oyy" class="beat-layer" data-composition-id="05-issues-burnup" data-composition-src="compositions/05-issues-burnup.html" data-start="19.5" data-duration="4.85" data-track-index="0" data-width="1920" data-height="960"></div>
+      <div data-hf-id="hf-432i" class="beat-layer" style="z-index:5" data-composition-id="06-title-monitor" data-composition-src="compositions/06-title-monitor.html" data-start="24.35" data-duration="2" data-track-index="1" data-width="1920" data-height="960"></div>
+      <div data-hf-id="hf-848k" class="beat-layer" data-composition-id="07-module-cascade" data-composition-src="compositions/07-module-cascade.html" data-start="26.1" data-duration="3.4" data-track-index="0" data-width="1920" data-height="960"></div>
+      <div data-hf-id="hf-ht8g" class="beat-layer" style="z-index:5" data-composition-id="08-title-layouts" data-composition-src="compositions/08-title-layouts.html" data-start="29.1" data-duration="2.3" data-track-index="1" data-width="1920" data-height="960"></div>
+      <div data-hf-id="hf-05os" class="beat-layer" data-composition-id="09-layout-customize" data-composition-src="compositions/09-layout-customize.html" data-start="31.4" data-duration="2.6" data-track-index="0" data-width="1920" data-height="960"></div>
+      <div data-hf-id="hf-vk5q" class="beat-layer" style="z-index:5" data-composition-id="10-title-drill" data-composition-src="compositions/10-title-drill.html" data-start="34" data-duration="2.5" data-track-index="1" data-width="1920" data-height="960"></div>
+      <div data-hf-id="hf-625q" class="beat-layer" data-composition-id="11-sla-drilldown" data-composition-src="compositions/11-sla-drilldown.html" data-start="36.2" data-duration="4.7" data-track-index="0" data-width="1920" data-height="960"></div>
+      <div data-hf-id="hf-hbum" class="beat-layer" data-composition-id="12-logo-outro" data-composition-src="compositions/12-logo-outro.html" data-start="40.9" data-duration="3.3" data-track-index="1" data-width="1920" data-height="960"></div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      // Root anchor — 44.2s slot (Law #11). Sub-composition timelines auto-link.
+      tl.to({}, { duration: 44.2 }, 0);
+      window.__timelines["linear-dashboards"] = tl;
+    </script>
+  </body>
+</html>

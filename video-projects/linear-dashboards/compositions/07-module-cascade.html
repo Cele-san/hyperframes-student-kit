@@ -1,0 +1,209 @@
+<template id="comp-07-module-cascade">
+  <div data-composition-id="07-module-cascade" data-width="1920" data-height="960">
+    <div class="s7-stage">
+      <div class="s7-cam">
+        <div class="s7-world">
+          <!-- Card A — Distribution of Effort (orange chart chip). Back of the stack. -->
+          <div class="s7-mod s7-mod-a">
+            <div class="s7-modhead">
+              <span class="s7-chip s7-chip-orange">
+                <svg viewBox="0 0 16 16" fill="#e2a23c"><rect x="2" y="9" width="2.6" height="5" rx="1"/><rect x="6.7" y="5" width="2.6" height="9" rx="1"/><rect x="11.4" y="2" width="2.6" height="12" rx="1"/></svg>
+              </span>
+              <span class="s7-modtitle">Distribution of Effort</span>
+            </div>
+            <div class="s7-section">Open bugs</div>
+            <div class="s7-ghostrow" style="width:78%"></div>
+            <div class="s7-ghostrow" style="width:64%"></div>
+            <div class="s7-ghostrow" style="width:71%"></div>
+          </div>
+
+          <!-- Card B — Bug & Cycle Performance (green bug chip). Middle. -->
+          <div class="s7-mod s7-mod-b">
+            <div class="s7-modhead">
+              <span class="s7-chip s7-chip-green">
+                <svg viewBox="0 0 16 16" fill="none" stroke="#4cb782" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="9" r="3.6"/><path d="M8 5.4V3.4M4.6 7l-1.8-1M11.4 7l1.8-1M4.4 10.4H2.4M11.6 10.4h2M5 12.6l-1.4 1.4M11 12.6l1.4 1.4"/></svg>
+              </span>
+              <span class="s7-modtitle">Bug &amp; Cycle Performance</span>
+            </div>
+            <div class="s7-section">Current open bugs</div>
+            <div class="s7-microlabel">Priority</div>
+            <div class="s7-prow"><span class="s7-pico s7-pico-none">—</span><span class="s7-ptext">No priority</span><span class="s7-pnum">8</span></div>
+            <div class="s7-prow">
+              <span class="s7-pico"><svg viewBox="0 0 16 16" fill="#d9b13b"><rect x="2" y="9" width="3" height="5" rx="1"/><rect x="6.5" y="6" width="3" height="8" rx="1"/><rect x="11" y="3" width="3" height="11" rx="1"/></svg></span>
+              <span class="s7-ptext">High</span><span class="s7-pnum">1</span>
+            </div>
+            <div class="s7-prow">
+              <span class="s7-pico"><svg viewBox="0 0 16 16" fill="#6fae5d"><rect x="2" y="9" width="3" height="5" rx="1"/><rect x="6.5" y="6" width="3" height="8" rx="1"/><rect x="11" y="3" width="3" height="11" rx="1" opacity="0.25"/></svg></span>
+              <span class="s7-ptext">Medium</span><span class="s7-pnum">9</span>
+            </div>
+          </div>
+
+          <!-- Card C — IT requests (indigo shield chip). Front of the stack. -->
+          <div class="s7-mod s7-mod-c">
+            <div class="s7-modhead">
+              <span class="s7-chip s7-chip-indigo">
+                <svg viewBox="0 0 16 16" fill="none" stroke="#6e79d6" stroke-width="1.4" stroke-linejoin="round"><path d="M8 1.8l5.4 2v4.4c0 3.2-2.2 5.4-5.4 6.4-3.2-1-5.4-3.2-5.4-6.4V3.8z"/></svg>
+              </span>
+              <span class="s7-modtitle">IT requests</span>
+            </div>
+            <div class="s7-section">Outstanding SLAs</div>
+            <div class="s7-thead"><span>SLA status</span><span>Issue count</span></div>
+            <div class="s7-prow">
+              <span class="s7-pico"><svg viewBox="0 0 16 16" fill="#e5484d"><path d="M8 1.2C6.4 3.6 4 5 4 8.4a4 4 0 0 0 8 0C12 5 9.6 3.6 8 1.2z"/></svg></span>
+              <span class="s7-ptext">Breached</span><span class="s7-pnum">48</span>
+            </div>
+            <div class="s7-prow">
+              <span class="s7-pico"><svg viewBox="0 0 16 16" fill="#e2842c"><path d="M8 1.2C6.4 3.6 4 5 4 8.4a4 4 0 0 0 8 0C12 5 9.6 3.6 8 1.2z"/></svg></span>
+              <span class="s7-ptext">High Risk</span><span class="s7-pnum">6</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="s7-vig"></div>
+      <div class="s7-dark"></div>
+    </div>
+
+    <style>
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-style: normal; font-weight: 600; font-display: block; src: url(assets/fonts/Geist-600.woff2) format('woff2'); }
+      [data-composition-id="07-module-cascade"] {
+        position: absolute; inset: 0;
+        background: #000;
+        overflow: hidden;
+        font-family: "Geist", sans-serif;
+      }
+      [data-composition-id="07-module-cascade"] .s7-stage { position: absolute; inset: 0; }
+      [data-composition-id="07-module-cascade"] .s7-cam {
+        position: absolute; inset: 0;
+        perspective: 1600px;
+      }
+      [data-composition-id="07-module-cascade"] .s7-world {
+        position: absolute; inset: 0;
+        transform-style: preserve-3d;
+        /* Steeper rake — the cards read as angled glowing screens, not a frontal mockup. */
+        transform: rotateX(19deg) rotateY(-11deg) scale(1.4);
+      }
+      [data-composition-id="07-module-cascade"] .s7-mod {
+        position: absolute;
+        width: 620px; height: 560px;
+        /* Top-edge bright → bottom-edge shadow so each surface reads as a lit 3D object.
+           Deepened falloff contrast (final-pass note) — harder top-lit/bottom-crushed read. */
+        background: linear-gradient(163deg, #1c1e26 0%, #0d0e11 32%, #050507 100%);
+        border: 1px solid #1d1f24;
+        border-radius: 18px;
+        padding: 40px 44px;
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,0.1),
+          inset 0 -78px 96px rgba(0,0,0,0.68),
+          0 50px 120px rgba(0,0,0,0.82);
+        display: flex; flex-direction: column;
+      }
+      /* Diagonal cascade down-right; later cards land in FRONT (reference depth order). */
+      [data-composition-id="07-module-cascade"] .s7-mod-a { left: 330px; top: 100px; z-index: 1; }
+      [data-composition-id="07-module-cascade"] .s7-mod-b { left: 650px; top: 200px; z-index: 2; }
+      [data-composition-id="07-module-cascade"] .s7-mod-c { left: 970px; top: 300px; z-index: 3; }
+      [data-composition-id="07-module-cascade"] .s7-modhead {
+        display: flex; align-items: center; gap: 16px;
+      }
+      [data-composition-id="07-module-cascade"] .s7-chip {
+        width: 40px; height: 40px; border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        flex: none;
+      }
+      [data-composition-id="07-module-cascade"] .s7-chip svg { width: 19px; height: 19px; }
+      /* The icon chip is the one place chrome takes hue — identity marker, not decoration. */
+      [data-composition-id="07-module-cascade"] .s7-chip-orange { background: #251d10; border: 1px solid #3a2d18; }
+      [data-composition-id="07-module-cascade"] .s7-chip-green  { background: #11221a; border: 1px solid #1c3527; }
+      [data-composition-id="07-module-cascade"] .s7-chip-indigo { background: #16182b; border: 1px solid #242745; }
+      [data-composition-id="07-module-cascade"] .s7-modtitle {
+        font-size: 27px; font-weight: 600;
+        letter-spacing: -0.01em;
+        color: #e9eaec;
+      }
+      [data-composition-id="07-module-cascade"] .s7-section {
+        margin-top: 38px;
+        font-size: 18px; font-weight: 600;
+        color: #c2c6cc;
+      }
+      [data-composition-id="07-module-cascade"] .s7-microlabel {
+        margin-top: 22px;
+        font-size: 14px;
+        color: #5d626b;
+      }
+      [data-composition-id="07-module-cascade"] .s7-thead {
+        margin-top: 22px;
+        display: flex; justify-content: space-between;
+        font-size: 14px;
+        color: #5d626b;
+      }
+      [data-composition-id="07-module-cascade"] .s7-prow {
+        margin-top: 18px;
+        display: flex; align-items: center; gap: 14px;
+        font-size: 17px;
+      }
+      [data-composition-id="07-module-cascade"] .s7-pico {
+        width: 18px; height: 18px;
+        display: flex; align-items: center; justify-content: center;
+        flex: none;
+      }
+      [data-composition-id="07-module-cascade"] .s7-pico svg { width: 17px; height: 17px; }
+      [data-composition-id="07-module-cascade"] .s7-pico-none { color: #5d626b; font-size: 15px; }
+      [data-composition-id="07-module-cascade"] .s7-ptext { color: #b6bac2; }
+      [data-composition-id="07-module-cascade"] .s7-pnum {
+        margin-left: auto;
+        color: #9aa0a7;
+        font-variant-numeric: tabular-nums;
+      }
+      [data-composition-id="07-module-cascade"] .s7-ghostrow {
+        margin-top: 22px;
+        height: 13px; border-radius: 6px;
+        background: #16181d;
+      }
+      [data-composition-id="07-module-cascade"] .s7-vig {
+        position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at center, rgba(0,0,0,0) 46%, rgba(0,0,0,0.6) 100%);
+      }
+      [data-composition-id="07-module-cascade"] .s7-dark {
+        position: absolute; inset: 0; pointer-events: none;
+        background: #000; opacity: 0;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      (() => {
+        const SLOT = 3.4; // extends past the 29.1 cut — cards recede UNDER title 08's flip-in
+        const sel = (q) => `[data-composition-id="07-module-cascade"] ${q}`;
+        const tl = gsap.timeline({ paused: true });
+
+        // Stair-step the stack in DEPTH (not just x/y) so it reads as a raked plane receding
+        // into the frame like the reference — back card furthest, front card nearest the camera.
+        tl.set(sel(".s7-mod-a"), { z: -210 }, 0);
+        tl.set(sel(".s7-mod-b"), { z: -70 }, 0);
+        tl.set(sel(".s7-mod-c"), { z: 80 }, 0);
+
+        // Directional slides in the reference's order (Andy's note): IT requests leads from the
+        // right, Bug & Cycle rises from below, Distribution of Effort arrives last from lower-left.
+        // Cards begin rising at t=0 — they coexist with title 06's fade-out (overlapped seam).
+        tl.from(sel(".s7-mod-c"),
+          { x: 300, y: 40, opacity: 0, filter: "blur(9px)", duration: 0.7, ease: "power3.out" }, 0);
+        tl.from(sel(".s7-mod-b"),
+          { y: 260, opacity: 0, filter: "blur(9px)", duration: 0.7, ease: "power3.out" }, 0.18);
+        tl.from(sel(".s7-mod-a"),
+          { x: -220, y: 200, opacity: 0, filter: "blur(9px)", duration: 0.7, ease: "power3.out" }, 0.36);
+
+        // Collective slow rise through the hold — motion never fully stops.
+        tl.to(sel(".s7-world"), { y: -22, duration: 1.45, ease: "none" }, 1.3);
+
+        // EXIT: the stack recedes downward while title 08 flips in above it (ref b08_01).
+        tl.to(sel(".s7-world"),
+          { y: "+=300", filter: "blur(6px)", duration: 0.62, ease: "power2.in" }, 2.78);
+        tl.to(sel(".s7-dark"), { opacity: 0.85, duration: 0.62, ease: "power2.in" }, 2.78);
+
+        tl.to({}, { duration: SLOT }, 0); // Law #11 anchor
+        window.__timelines["07-module-cascade"] = tl;
+      })();
+    </script>
+  </div>
+</template>
