@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIDR v6 hook — hv-seesay (overlay layer)</title>
+    <style>
+      @font-face { font-family: 'Cormorant Garamond'; font-style: italic; font-weight: 600; font-display: block; src: url(assets/fonts/CormorantGaramond-italic-600.woff2) format('woff2'); }
+      @font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/DMSans-normal-400.woff2) format('woff2'); }
+      @font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/DMSans-normal-500.woff2) format('woff2'); }
+      @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/JetBrainsMono-normal-400.woff2) format('woff2'); }
+      @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 700; font-display: block; src: url(assets/fonts/JetBrainsMono-normal-700.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      :root {
+        --cobalt: #152848; --card-fill: rgba(8, 14, 26, 0.80); --blossom: #F0A8C2;
+        --chrome: #F2F5F8; --divider: #243A60; --muted: rgba(242,245,248,0.55);
+        --hero: 'Cormorant Garamond', Georgia, serif;
+        --body: 'DM Sans', system-ui, sans-serif;
+        --mono: 'JetBrains Mono', ui-monospace, monospace;
+      }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: transparent;
+        font-family: var(--body); -webkit-font-smoothing: antialiased; }
+      .reference-layer { position: absolute; inset: 0; z-index: 0; }
+      .reference-layer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .overlay-root { position: absolute; inset: 0; z-index: 10; }
+      .eyebrow { font-family: var(--mono); font-weight: 700; font-size: 17px; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--blossom); display: flex; align-items: center; gap: 12px; }
+      .eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blossom); flex: none; }
+      .hero-line { font-family: var(--hero); font-style: italic; font-weight: 600;
+        color: var(--chrome); line-height: 1.08; letter-spacing: 0.005em; }
+      .kw { color: var(--blossom); }
+      .w { display: inline-block; opacity: 0; will-change: transform, opacity; }
+
+      /* ---- hv-seesay ---- */
+      #hv-seesay .hk { position: absolute; left: 108px; bottom: 132px; }
+      #hv-seesay .eyebrow { opacity: 0; margin-bottom: 20px; white-space: nowrap; }
+      #hv-seesay .l1 { font-size: 62px; white-space: nowrap; }
+      #hv-seesay .l2 { font-size: 62px; margin-top: 10px; white-space: nowrap; }
+      #hv-seesay .scrim { position: absolute; left: -170px; bottom: -140px; width: 1250px; height: 520px;
+        background: radial-gradient(115% 130% at 10% 92%, rgba(6,11,22,0.74) 0%, rgba(6,11,22,0) 68%);
+        opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="hv-seesay" data-composition-id="hv-seesay" data-start="0" data-duration="9.2"
+      data-width="1920" data-height="1080">
+      <!-- =================================================================
+           REFERENCE LAYER START — stripped before alpha export (gate3-strip.py).
+           Proxy only. proxy t=0 == AIDR v6 timecode 0:46.80
+           ================================================================= -->
+      <div class="reference-layer">
+        <video id="ref-video" data-start="0" data-duration="9.2" data-track-index="0"
+          src="assets/proxy.mp4" muted playsinline></video>
+      </div>
+      <audio id="ref-audio" data-start="0" data-duration="9.2" data-track-index="1"
+        src="assets/proxy.mp4" data-volume="1.0"></audio>
+      <!-- ===================== REFERENCE LAYER END ======================= -->
+
+      <div class="overlay-root">
+        <div class="scrim"></div>
+        <div class="hk">
+          <div class="eyebrow"><span class="dot"></span>sometimes you do it yourself</div>
+          <div class="hero-line l1">
+            <span class="w">You</span> <span class="w">know</span> <span class="w">what</span> <span class="w">you</span> <span class="w">need</span> <span class="w">to</span> <span class="w">do</span><span class="w">&hairsp;—</span>
+          </div>
+          <div class="hero-line l2">
+            <span class="w">but</span> <span class="w">you</span> <span class="w">can't</span> <span class="w kw">describe</span> <span class="w kw">it.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>window.__timelines = window.__timelines || {};</script>
+    <script type="module">
+      // anime.js v4 through the hyperframes adapter — GSAP-seconds facade on
+      // window.__timelines['hv-seesay']; the stock CLI drives it per-frame.
+      import { createComposition } from './assets/vendor/hyperframes-anime-adapter.js';
+      import { stagger } from './assets/vendor/anime.esm.js';
+
+      const SLOT = 9.2;
+      const { tl } = createComposition('hv-seesay', { duration: SLOT });
+      const S = 1000;
+
+      tl.add('#hv-seesay .scrim',   { opacity: [0, 1], duration: 500, ease: 'out(2)' }, 0.60 * S)
+        .add('#hv-seesay .eyebrow', { opacity: [0, 1], y: [14, 0], duration: 430, ease: 'out(3)' }, 0.80 * S)
+        // L1 carrier reveal on "you know what you need to do" (51.36; local 4.56, −0.2)
+        .add('#hv-seesay .l1 .w', {
+          opacity: [0, 1],
+          y: [(el, i) => [42, 30, 22, 16, 12, 9, 7, 5][i], 0],
+          scale: [0.97, 1],
+          duration: 440, ease: 'out(3)',
+        }, stagger(95, { start: 4.40 * S }))
+        // L2 lands on "but you can't describe it" (53.26; local 6.46)
+        .add('#hv-seesay .l2 .w', {
+          opacity: [0, 1],
+          y: [(el, i) => [38, 26, 18, 12, 8][i], 0],
+          scale: [0.97, 1],
+          duration: 440, ease: 'out(3)',
+        }, stagger(110, { start: 6.50 * S }))
+        // slow breathing drift while it holds
+        .add('#hv-seesay .hk', { scale: [1, 1.014], duration: 2200, ease: 'out(1)' }, 6.60 * S)
+        // out before "So this is the best of both worlds" (56.26)
+        .add('#hv-seesay .hk',    { opacity: [1, 0], y: [0, -22], duration: 350, ease: 'in(2)' }, 8.80 * S)
+        .add('#hv-seesay .scrim', { opacity: 0, duration: 350, ease: 'in(2)' }, 8.80 * S);
+    </script>
+  </body>
+</html>
