@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>b3-wordrain</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #b3-wordrain-root {
+    position: relative; width: 1920px; height: 1080px;
+    background: #050b13; overflow: hidden;
+    font-family: Inter, sans-serif;
+  }
+  .stage { position: absolute; inset: 0; }
+  .cam { position: absolute; inset: 0; }
+  .grid-tex { position: absolute; inset: 0; opacity: .5;
+    background: repeating-linear-gradient(0deg, rgba(242,245,248,.022) 0 1px, transparent 1px 96px),
+                repeating-linear-gradient(90deg, rgba(242,245,248,.022) 0 1px, transparent 1px 96px);
+    background-position: 0px 0px, 0px 0px; }
+  .grain { position: absolute; inset: 0; pointer-events: none; opacity: .55;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,.03) 1px, transparent 1px),
+      radial-gradient(circle at 2px 3px, rgba(255,255,255,.02) 1px, transparent 1px),
+      radial-gradient(circle at 4px 2px, rgba(255,255,255,.015) 1px, transparent 1px);
+    background-size: 3px 3px, 5px 5px, 7px 7px; }
+  .vignette { position: absolute; inset: 0; pointer-events: none; opacity: .72;
+    background: radial-gradient(ellipse at center, transparent 42%, rgba(0,0,0,.6) 100%); }
+  .kicker { position: absolute; left: 96px; top: 72px;
+    font: 600 24px 'JetBrains Mono', monospace; letter-spacing: .14em; color: #5a7194; }
+  .ruler { position: absolute; height: 2px; background: #2a4270; transform-origin: left center; }
+  .tick { position: absolute; width: 2px; height: 14px; background: #2a4270; }
+  .ticklab { position: absolute; font: 400 18px 'JetBrains Mono', monospace; color: #3f6294;
+    transform: translateX(-50%); }
+  .word { position: absolute; font: 700 34px Inter, sans-serif; color: #F2F5F8;
+    white-space: nowrap; transform: translate(-50%, -50%); text-align: center; }
+  .tag { display: block; font: 600 15px 'JetBrains Mono', monospace; color: #F0A8C2;
+    opacity: 0; margin-top: 2px; letter-spacing: -.02em; }
+  .pin { position: absolute; width: 2px; background: rgba(240,168,194,.4); transform-origin: top center; }
+  .playhead { position: absolute; width: 3px; border-radius: 2px; background: #F0A8C2;
+    box-shadow: 0 0 18px rgba(240,168,194,.9), 0 0 54px rgba(240,168,194,.4); opacity: 0; }
+  .endlab { position: absolute; left: 96px; bottom: 84px;
+    font: 600 26px 'JetBrains Mono', monospace; color: #F0A8C2; letter-spacing: .06em; }
+</style>
+</head>
+<body>
+<div id="b3-wordrain-root" data-composition-id="b3-wordrain" data-start="0"
+     data-duration="8" data-width="1920" data-height="1080">
+  <div class="stage clip" id="stage" data-start="0" data-duration="8" data-track-index="0">
+    <div class="cam" id="cam">
+      <div class="grid-tex"></div>
+      <div class="kicker" id="kicker">WHISPERX · WORD-LEVEL TIMESTAMPS</div>
+      <div class="endlab" id="endlab">17 WORDS · EVERY ONE ADDRESSED</div>
+    </div>
+    <div class="grain"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <script src="assets/gsap.min.js"></script>
+  <script>
+  (() => {
+    const DUR = 8;
+    const W = 1920, H = 1080;
+    // REAL word-level timestamps — C2288.json, the used take (source 31.13–38.71s)
+    const WORDS = [
+      ["this",31.13,31.97],["whole",31.97,32.17],["video",32.17,32.61],["an",32.61,33.35],
+      ["AI",33.35,33.65],["edited",33.65,34.07],["for",34.07,34.39],["me",34.39,34.59],
+      ["inside",34.59,35.15],["DaVinci",35.15,35.57],["Resolve",35.57,35.99],["a",35.99,36.33],
+      ["real",36.33,36.67],["editable",36.67,37.37],["timeline",37.37,37.91],
+      ["not",37.91,38.51],["just",38.51,38.71]
+    ];
+    const T0 = 31.13, T1 = 38.71;
+    const hash = i => Math.abs(Math.sin(i * 0.73 + 0.31) * Math.cos(i * 1.37 + 0.71));
+
+    const cam = document.getElementById('cam');
+    const x0 = 110, x1 = 1810;
+    const tx = t => x0 + (t - T0) / (T1 - T0) * (x1 - x0);
+    const rulerY = 830;
+
+    // --- build hero-frame DOM (final lattice = CSS ground truth) ---
+    const mk = (cls, css, html) => {
+      const d = document.createElement('div');
+      d.className = cls; d.style.cssText = css;
+      if (html) d.innerHTML = html;
+      cam.appendChild(d);
+      return d;
+    };
+    const ruler = mk('ruler', `left:${x0}px; top:${rulerY}px; width:${x1 - x0}px;`);
+    const ticklabs = [];
+    for (let s = 32; s <= 38; s++) {
+      mk('tick', `left:${tx(s)}px; top:${rulerY}px;`);
+      ticklabs.push(mk('ticklab', `left:${tx(s)}px; top:${rulerY + 22}px;`, `00:${s}`));
+    }
+    const words = WORDS.map(([w, a, b], i) => {
+      const row = (i % 2 === 0) ? rulerY - 60 : rulerY - 138;
+      const x = tx((a + b) / 2);
+      const el = mk('word', `left:${x}px; top:${row}px;`,
+        `${w}<span class="tag">${a.toFixed(2)}–${b.toFixed(2)}</span>`);
+      const pin = mk('pin', `left:${x}px; top:${row + 30}px; height:${rulerY - row - 30}px;`);
+      // R2 low-discrepancy scatter → well-spread chaos pose (deterministic)
+      const frac = v => v - Math.floor(v);
+      const cx = W * (0.10 + 0.76 * frac(i * 0.7548776662 + 0.13));
+      const cy = H * (0.16 + 0.40 * frac(i * 0.5698402910 + 0.29));
+      return { el, pin, x, dx: cx - x, dy: cy - row, rot: -20 + 40 * hash(i * 7 + 3), i,
+               tag: el.querySelector('.tag') };
+    });
+    const playhead = mk('playhead',
+      `left:${x0}px; top:${rulerY - 168}px; height:${168 + 30}px;`);
+
+    // --- timeline ---
+    const tl = gsap.timeline({ paused: true });
+    // hidden states at t=0 (seek-safe)
+    tl.set('#kicker', { opacity: 0, y: 14 }, 0);
+    tl.set('#endlab', { opacity: 0 }, 0);
+    tl.set(ruler, { scaleX: 0 }, 0);
+    tl.set(ticklabs, { opacity: 0 }, 0);
+    words.forEach(w => {
+      tl.set(w.el, { x: w.dx, y: w.dy, rotation: w.rot, opacity: 0 }, 0);
+      tl.set(w.pin, { scaleY: 0 }, 0);
+    });
+
+    // AMBIENT — camera push, grid parallax, vignette breath (Law #4)
+    tl.fromTo('#cam', { scale: 1 }, { scale: 1.014, duration: DUR, ease: 'none' }, 0);
+    tl.to('.grid-tex', { backgroundPosition: '26px 18px, 18px 26px', duration: DUR, ease: 'none' }, 0);
+    tl.to('.vignette', { opacity: 0.88, duration: DUR / 2, ease: 'sine.inOut', yoyo: true, repeat: 1 }, 0);
+
+    // kicker
+    tl.to('#kicker', { opacity: 1, y: 0, duration: 0.6, ease: 'expo.out' }, 0.25);
+
+    // words tumble in as a disordered cloud, drifting + slowly turning while they hang
+    words.forEach(w => {
+      tl.to(w.el, { opacity: 0.92, duration: 0.5, ease: 'power2.out' }, 0.35 + w.i * 0.045);
+      tl.to(w.el, { y: '+=' + (8 + 12 * hash(w.i * 11)), duration: 0.75,
+        ease: 'sine.inOut', yoyo: true, repeat: 1 }, 0.8 + 0.03 * w.i);
+      tl.to(w.el, { rotation: w.rot + (hash(w.i * 13) > 0.5 ? 5 : -5), duration: 0.75,
+        ease: 'sine.inOut', yoyo: true, repeat: 1 }, 0.85 + 0.03 * w.i);
+    });
+
+    // snap to addressed order, one word at a time in spoken sequence
+    const SNAP = 2.3;
+    words.forEach(w => {
+      const t = SNAP + w.i * 0.14;
+      tl.to(w.el, { x: 0, y: 0, rotation: 0, opacity: 1, duration: 0.6, ease: 'power2.inOut' }, t);
+      tl.to(w.pin, { scaleY: 1, duration: 0.32, ease: 'power3.out' }, t + 0.5);
+      tl.to(w.tag, { opacity: 0.9, duration: 0.3, ease: 'power2.out' }, t + 0.55);
+    });
+
+    // ruler draws through beneath the landing words
+    tl.to(ruler, { scaleX: 1, duration: 0.9, ease: 'power2.inOut' }, 2.6);
+    tl.to(ticklabs, { opacity: 1, duration: 0.4, ease: 'power2.out', stagger: 0.05 }, 2.9);
+
+    // PUNCH — a playhead scrubs the ruler and every word ignites as it passes:
+    // the footage is now seekable text
+    const SW0 = 5.35, SWLEN = 1.5;
+    tl.to(playhead, { opacity: 1, duration: 0.15, ease: 'power2.out' }, SW0 - 0.15);
+    tl.fromTo(playhead, { left: x0 }, { left: x1, duration: SWLEN, ease: 'none' }, SW0);
+    tl.to(playhead, { opacity: 0, duration: 0.3, ease: 'power2.out' }, SW0 + SWLEN);
+    words.forEach(w => {
+      const t = SW0 + (w.x - x0) / (x1 - x0) * SWLEN;
+      tl.to(w.el, { color: '#F0A8C2', textShadow: '0 0 20px rgba(240,168,194,.9)',
+        duration: 0.16, ease: 'power2.out' }, t);
+      tl.to(w.el, { color: '#F8ECF1', textShadow: '0 0 6px rgba(240,168,194,.25)',
+        duration: 0.5, ease: 'power2.out' }, t + 0.3);
+    });
+    tl.to('#endlab', { opacity: 1, duration: 0.5, ease: 'power2.out' }, 5.7);
+
+    // Law #11 anchor — timeline fills the slot
+    tl.to({}, { duration: DUR }, 0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['b3-wordrain'] = tl;
+  })();
+  </script>
+</div>
+</body>
+</html>

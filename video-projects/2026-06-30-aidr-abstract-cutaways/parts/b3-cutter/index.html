@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>b3-cutter</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #b3-cutter-root {
+    position: relative; width: 1920px; height: 1080px;
+    background: #050b13; overflow: hidden;
+    font-family: Inter, sans-serif;
+  }
+  .stage { position: absolute; inset: 0; }
+  .cam { position: absolute; inset: 0; }
+  .grid-tex { position: absolute; inset: 0; opacity: .5;
+    background: repeating-linear-gradient(0deg, rgba(242,245,248,.022) 0 1px, transparent 1px 96px),
+                repeating-linear-gradient(90deg, rgba(242,245,248,.022) 0 1px, transparent 1px 96px);
+    background-position: 0px 0px, 0px 0px; }
+  .grain { position: absolute; inset: 0; pointer-events: none; opacity: .55;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,.03) 1px, transparent 1px),
+      radial-gradient(circle at 2px 3px, rgba(255,255,255,.02) 1px, transparent 1px),
+      radial-gradient(circle at 4px 2px, rgba(255,255,255,.015) 1px, transparent 1px);
+    background-size: 3px 3px, 5px 5px, 7px 7px; }
+  .vignette { position: absolute; inset: 0; pointer-events: none; opacity: .72;
+    background: radial-gradient(ellipse at center, transparent 42%, rgba(0,0,0,.6) 100%); }
+  .kicker { position: absolute; left: 96px; top: 72px;
+    font: 600 24px 'JetBrains Mono', monospace; letter-spacing: .14em; color: #5a7194; }
+  .chip { position: absolute; top: 240px; padding: 18px 34px; border-radius: 12px;
+    font: 700 28px Inter, sans-serif; color: #F2F5F8; transform: translateX(-50%); }
+  .chip.script { left: 760px; background: rgba(240,168,194,.12); border: 2px solid #F0A8C2; }
+  .chip.footage { left: 1160px; background: rgba(21,40,72,.85); border: 2px solid #2a4270; }
+  .seg { position: absolute; border-radius: 8px; background: #2a4a80; border: 2px solid #3a5f9e; }
+  .seg .lab { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font: 600 19px 'JetBrains Mono', monospace; letter-spacing: .05em;
+    color: rgba(242,245,248,.9); white-space: nowrap; }
+  .seg.debris { background: #4a2333; border-color: #6a3548; }
+  .seg.debris .lab { color: #d9a3b3; }
+  .blade { position: absolute; width: 5px; border-radius: 3px; background: #F0A8C2;
+    box-shadow: 0 0 22px rgba(240,168,194,.9), 0 0 70px rgba(240,168,194,.4); }
+  .seam { position: absolute; width: 3px; border-radius: 2px; background: #F0A8C2;
+    box-shadow: 0 0 14px rgba(240,168,194,.7); opacity: 0; }
+  .counter { position: absolute; right: 96px; top: 150px; text-align: right;
+    font: 600 34px 'JetBrains Mono', monospace; color: #F0A8C2; }
+  .counter small { display: block; font-size: 17px; letter-spacing: .18em; color: #5a7194; margin-bottom: 6px; }
+  .endlab { position: absolute; left: 96px; bottom: 84px;
+    font: 600 26px 'JetBrains Mono', monospace; color: #F0A8C2; letter-spacing: .06em; }
+</style>
+</head>
+<body>
+<div id="b3-cutter-root" data-composition-id="b3-cutter" data-start="0"
+     data-duration="14" data-width="1920" data-height="1080">
+  <div class="stage clip" id="stage" data-start="0" data-duration="14" data-track-index="0">
+    <div class="cam" id="cam">
+      <div class="grid-tex"></div>
+      <div class="kicker" id="kicker">SCRIPT × TRANSCRIPT → THE FIRST CUT</div>
+      <div class="chip script" id="chipS">YOUR SCRIPT</div>
+      <div class="chip footage" id="chipF">YOUR FOOTAGE</div>
+      <div class="counter" id="counter"><small>REMOVED</small><span id="cnum">0.0s</span></div>
+      <div class="endlab" id="endlab">BAD TAKES + ANYTHING YOU TOLD IT TO DROP</div>
+    </div>
+    <div class="grain"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <script src="assets/gsap.min.js"></script>
+  <script>
+  (() => {
+    const DUR = 14;
+    // Real debris classes from the C2288 audit: slates, abandoned attempt, flubs, dead room.
+    const SEGS = [
+      { lab: "SLATE 5s",       w: 5,  debris: true },
+      { lab: "ATTEMPT 1 · 11s", w: 11, debris: true },
+      { lab: "SLATE 4s",       w: 4,  debris: true },
+      { lab: "TAKE ✓ 8s",      w: 8 },
+      { lab: "FLUB 3s",        w: 3,  debris: true },
+      { lab: "TAKE ✓ 9s",      w: 9 },
+      { lab: "DEAD AIR 4s",    w: 4,  debris: true },
+      { lab: "TAKE ✓ 7s",      w: 7 }
+    ];
+    const cam = document.getElementById('cam');
+    const barY = 560, barH = 130, gap = 7, bx0 = 96;
+    const total = SEGS.reduce((a, s) => a + s.w, 0);
+    const bw = 1728 - gap * (SEGS.length - 1);
+
+    SEGS.forEach((s, i) => {
+      s.px = s.w / total * bw;
+      const e = document.createElement('div');
+      e.className = s.debris ? 'seg debris' : 'seg';
+      e.style.cssText = `top:${barY}px; height:${barH}px; width:${s.px}px; left:0px;`;
+      e.innerHTML = `<div class="lab">${s.lab}</div>`;
+      cam.appendChild(e);
+      s.el = e;
+    });
+    const blade = document.createElement('div');
+    blade.className = 'blade';
+    blade.style.cssText = `top:${barY - 70}px; height:${barH + 140}px; left:${bx0}px;`;
+    cam.appendChild(blade);
+
+    // packed layout for whichever segments remain
+    const layout = gone => {
+      let x = bx0; const pos = {};
+      SEGS.forEach((s, i) => { if (gone.has(i)) return; pos[i] = x; x += s.px + gap; });
+      return pos;
+    };
+
+    const tl = gsap.timeline({ paused: true });
+    // hidden states (seek-safe)
+    tl.set('#kicker', { opacity: 0, y: 14 }, 0);
+    tl.set(['#chipS', '#chipF'], { opacity: 0, y: -26 }, 0);
+    tl.set('#counter', { opacity: 0, scale: 0.95 }, 0);
+    tl.set('#endlab', { opacity: 0 }, 0);
+    tl.set(blade, { opacity: 0 }, 0);
+    const pos0 = layout(new Set());
+    SEGS.forEach((s, i) => tl.set(s.el, { left: pos0[i], y: -30, opacity: 0 }, 0));
+
+    // AMBIENT — camera push, grid parallax, vignette breath (Law #4)
+    tl.fromTo('#cam', { scale: 1 }, { scale: 1.014, duration: DUR, ease: 'none' }, 0);
+    tl.to('.grid-tex', { backgroundPosition: '26px 18px, 18px 26px', duration: DUR, ease: 'none' }, 0);
+    tl.to('.vignette', { opacity: 0.88, duration: DUR / 2, ease: 'sine.inOut', yoyo: true, repeat: 1 }, 0);
+
+    // kicker + the TWO INPUTS ("you give it two things") — varied entrances
+    tl.to('#kicker', { opacity: 1, y: 0, duration: 0.6, ease: 'expo.out' }, 0.25);
+    tl.to('#chipS', { opacity: 1, y: 0, duration: 0.65, ease: 'expo.out' }, 0.55);
+    tl.to('#chipF', { opacity: 1, y: 0, duration: 0.55, ease: 'power3.out' }, 0.95);
+
+    // the two inputs converge into the footage bar
+    tl.to(['#chipS', '#chipF'], { y: 120, opacity: 0, scale: 0.92, duration: 0.65,
+      ease: 'power2.in' }, 1.9);
+    SEGS.forEach((s, i) =>
+      tl.to(s.el, { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }, 2.25 + i * 0.08));
+    tl.to('#counter', { opacity: 1, scale: 1, duration: 0.45, ease: 'power2.out' }, 3.1);
+
+    // hold on the before-state, then the blade walks the bar;
+    // debris drops with weight; a seam-flash marks each heal; counter ticks real seconds
+    let t = 4.1, removed = 0;
+    const gone = new Set();
+    const cnum = { v: 0 };
+    tl.to(blade, { opacity: 1, duration: 0.3, ease: 'power2.out' }, t - 0.3);
+    SEGS.forEach((s, i) => {
+      const posNow = layout(gone);
+      const target = posNow[i] + (s.debris ? s.px / 2 : s.px);
+      tl.to(blade, { left: target, duration: 0.40, ease: 'power2.inOut' }, t);
+      t += 0.44;
+      if (s.debris) {
+        tl.fromTo(blade, { scaleX: 1 }, { scaleX: 2.8, duration: 0.09, yoyo: true, repeat: 1,
+          ease: 'power2.out' }, t);
+        // gravity: the cut piece falls, accelerating, tipping as it goes
+        tl.to(s.el, { y: 430, duration: 0.7, ease: 'power1.in' }, t);
+        tl.to(s.el, { rotation: (i % 2 ? 8 : -8), duration: 0.7, ease: 'power2.out' }, t);
+        tl.to(s.el, { opacity: 0, duration: 0.25, ease: 'power2.in' }, t + 0.42);
+        gone.add(i);
+        removed += s.w;
+        tl.to(cnum, { v: removed, duration: 0.45, ease: 'power2.out',
+          onUpdate: () => { document.getElementById('cnum').textContent = cnum.v.toFixed(1) + 's'; }
+        }, t);
+        const posAfter = layout(gone);
+        SEGS.forEach((s2, j) => { if (gone.has(j)) return;
+          tl.to(s2.el, { left: posAfter[j], duration: 0.5, ease: 'power2.inOut' }, t + 0.26); });
+        // seam-flash where the gap closes
+        const seam = document.createElement('div');
+        seam.className = 'seam';
+        seam.style.cssText = `top:${barY - 10}px; height:${barH + 20}px; left:${posNow[i]}px;`;
+        cam.appendChild(seam);
+        tl.fromTo(seam, { opacity: 0, scaleY: 0.6 }, { opacity: 0.85, scaleY: 1,
+          duration: 0.12, ease: 'power2.out' }, t + 0.5);
+        tl.to(seam, { opacity: 0, duration: 0.3, ease: 'power2.out' }, t + 0.66);
+        t += 0.62;
+      } else {
+        t += 0.10;
+      }
+    });
+
+    // PUNCH — blade flicks off; the healed bar recenters with weight, then flushes take-by-take
+    tl.to(blade, { x: '+=40', opacity: 0, duration: 0.25, ease: 'power2.in' }, t + 0.05);
+    const keeps = SEGS.filter((s, i) => !gone.has(i));
+    const keepPx = keeps.reduce((a, s) => a + s.px, 0) + gap * (keeps.length - 1);
+    const shift = (1920 - keepPx) / 2 - bx0;
+    keeps.forEach(s => {
+      tl.to(s.el, { left: '+=' + (shift + 5), duration: 0.55, ease: 'power2.out' }, t + 0.3);
+      tl.to(s.el, { left: '-=5', duration: 0.18, ease: 'power2.inOut' }, t + 0.87);
+    });
+    tl.to(keeps.map(s => s.el), { borderColor: '#F0A8C2',
+      boxShadow: '0 0 26px rgba(240,168,194,.45)', duration: 0.45, ease: 'power2.out',
+      stagger: 0.1 }, t + 1.1);
+    tl.to('#endlab', { opacity: 1, duration: 0.5, ease: 'power2.out' }, t + 1.45);
+
+    // Law #11 anchor
+    tl.to({}, { duration: DUR }, 0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['b3-cutter'] = tl;
+  })();
+  </script>
+</div>
+</body>
+</html>

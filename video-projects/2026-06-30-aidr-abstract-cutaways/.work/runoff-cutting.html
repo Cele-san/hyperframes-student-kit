@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Runoff — Agent-cutting beat (A vs C)</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<style>
+  :root { --bg:#050b13; --cobalt:#152848; --blossom:#F0A8C2; --chrome:#F2F5F8; --dim:#5a7194; --debris:#8a4a5a; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:#02060c; color:var(--chrome); font-family:'DM Sans',sans-serif; padding:28px 32px 60px; }
+  h1 { font-size:20px; font-weight:700; margin-bottom:4px; }
+  .sub { color:var(--dim); font-size:13px; margin-bottom:24px; }
+  .panels { display:grid; grid-template-columns:1fr 1fr; gap:24px; max-width:2000px; }
+  @media (max-width:1400px){ .panels{ grid-template-columns:1fr; } }
+  section h2 { font-size:14px; font-weight:700; letter-spacing:.04em; margin-bottom:8px; }
+  section h2 span { color:var(--blossom); }
+  .stage { position:relative; width:100%; aspect-ratio:16/9; background:var(--bg); border:1px solid #1b2f52; border-radius:10px; overflow:hidden; }
+  .stage::after { content:''; position:absolute; inset:0; pointer-events:none;
+    background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,.55) 100%); }
+  .grid-tex { position:absolute; inset:0; opacity:.5;
+    background: repeating-linear-gradient(0deg, rgba(240,245,248,.025) 0 1px, transparent 1px 64px),
+                repeating-linear-gradient(90deg, rgba(240,245,248,.025) 0 1px, transparent 1px 64px); }
+  .caption { color:var(--dim); font-size:12.5px; margin-top:8px; line-height:1.5; }
+  .caption b { color:var(--chrome); }
+  .replay { margin-top:6px; background:var(--cobalt); color:var(--chrome); border:1px solid #2a4270;
+    border-radius:6px; padding:5px 14px; font:600 12px 'DM Sans'; cursor:pointer; }
+  .colhead { position:absolute; font:600 10.5px 'JetBrains Mono'; letter-spacing:.12em; color:var(--dim); opacity:0; }
+  .card { position:absolute; border-radius:7px; padding:9px 12px; font:500 12.5px/1.35 'DM Sans';
+    background:rgba(21,40,72,.75); border:1px solid #2a4270; opacity:0; width:34%; }
+  .card .k { display:block; font:600 8.5px 'JetBrains Mono'; letter-spacing:.1em; color:var(--dim); margin-bottom:3px; }
+  .card.debris { background:rgba(60,22,32,.55); border-color:#5a2a3a; }
+  .card.debris .k { color:#c98a9a; }
+  .link { position:absolute; height:2px; background:linear-gradient(90deg, rgba(240,168,194,.15), var(--blossom)); transform-origin:left center; border-radius:2px; opacity:0; box-shadow:0 0 10px rgba(240,168,194,.35); }
+  .seg { position:absolute; border-radius:5px; background:#2a4a80; border:1px solid #3a5f9e; overflow:hidden; }
+  .seg .lab { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font:600 9.5px 'JetBrains Mono'; letter-spacing:.06em; color:rgba(242,245,248,.85); white-space:nowrap; }
+  .seg.debris { background:#4a2333; border-color:#6a3548; }
+  .seg.debris .lab { color:#d9a3b3; }
+  .blade { position:absolute; width:3px; border-radius:2px; background:var(--blossom);
+    box-shadow:0 0 14px rgba(240,168,194,.9), 0 0 44px rgba(240,168,194,.4); opacity:0; }
+  .counter { position:absolute; right:5%; top:9%; font:600 13px 'JetBrains Mono'; color:var(--blossom); opacity:0; text-align:right; }
+  .counter small { display:block; font-size:9px; letter-spacing:.14em; color:var(--dim); margin-bottom:2px; }
+  .endlab { position:absolute; left:5%; bottom:7%; font:600 13px 'JetBrains Mono'; color:var(--blossom); opacity:0; letter-spacing:.05em; }
+</style>
+</head>
+<body>
+<h1>Runoff — Agent-cutting beat (~3:39.3) · “script × transcript → the cut”</h1>
+<div class="sub">Both use the REAL debris from C2288.json (the slates and abandoned attempt WhisperX heard) against the v3 script lines. Judge the motion. Loops forever.</div>
+<div class="panels">
+  <section>
+    <h2><span>A</span> — Two-column diff</h2>
+    <div class="stage" id="stageA"><div class="grid-tex"></div></div>
+    <p class="caption"><b>Punch:</b> script left, transcript right; match-lines draw one at a time — matches glow blossom, slates and false starts dim and fall away, and the survivors compact into a timeline strip. The diff <i>becomes</i> the cut.</p>
+    <button class="replay" onclick="tlA.restart()">replay A</button>
+  </section>
+  <section>
+    <h2><span>C</span> — Traveling cutter</h2>
+    <div class="stage" id="stageC"><div class="grid-tex"></div></div>
+    <p class="caption"><b>Punch:</b> one footage bar, everything WhisperX heard laid along it; a blade walks the bar, stamps out the debris, and the gaps heal shut — the counter ticks off the real seconds removed.</p>
+    <button class="replay" onclick="tlC.restart()">replay C</button>
+  </section>
+</div>
+
+<script>
+/* ---------- PANEL A — two-column diff ---------- */
+// Left: script (v3). Right: what WhisperX actually heard in C2288 (real).
+const SCRIPT = [
+  "This whole video? An AI edited it for me.",
+  "Inside DaVinci Resolve. A real editable timeline,",
+  "not just some mp4 it spat out.",
+  "And I'll prove it. Watch this."
+];
+const TRANS = [
+  {t:"“beat zero, rolling, and action”", k:"SLATE · 0:00.18", debris:true},
+  {t:"“this whole video, an AI edited for me—”", k:"ATTEMPT 1 · abandoned", debris:true},
+  {t:"“cut, reset, and action”", k:"SLATE · 0:17.1", debris:true},
+  {t:"“this whole video, an AI edited for me inside DaVinci Resolve”", k:"TAKE · 0:31.1", match:0},
+  {t:"“a real editable timeline, not just some mp4 it spat out”", k:"TAKE · 0:36.3", match:1},
+  {t:"“and I'll prove it, watch this”", k:"TAKE · 0:41.5", match:3}
+];
+
+const stA = document.getElementById('stageA');
+const AW = stA.clientWidth, AH = stA.clientHeight;
+const el = (cls, css, html, host) => { const d=document.createElement('div'); d.className=cls; d.style.cssText=css; if(html)d.innerHTML=html; host.appendChild(d); return d; };
+
+const headL = el('colhead', `left:${AW*0.06}px; top:${AH*0.075}px;`, 'YOUR SCRIPT', stA);
+const headR = el('colhead', `left:${AW*0.58}px; top:${AH*0.075}px;`, 'WHAT WHISPERX HEARD', stA);
+const scriptEls = SCRIPT.map((s,i)=> el('card', `left:${AW*0.06}px; top:${AH*(0.14+ i*0.135)}px;`, `<span class="k">LINE ${i+1}</span>${s}`, stA));
+const transEls = TRANS.map((tr,i)=> el(tr.debris?'card debris':'card', `left:${AW*0.58}px; top:${AH*(0.14+ i*0.115)}px; width:37%;`, `<span class="k">${tr.k}</span>${tr.t}`, stA));
+// match links
+const links = TRANS.map((tr,i)=>{
+  if(tr.debris) return null;
+  const y1 = AH*(0.14+ i*0.115) + 24, x1 = AW*0.58;
+  const y0 = AH*(0.14+ tr.match*0.135) + 24, x0 = AW*0.06 + AW*0.34;
+  const len = Math.hypot(x1-x0, y1-y0), ang = Math.atan2(y1-y0, x1-x0)*180/Math.PI;
+  return el('link', `left:${x0}px; top:${y0}px; width:${len}px; transform:rotate(${ang}deg) scaleX(0);`, '', stA);
+});
+// final strip (the assembled cut)
+const stripY = AH*0.86, stripX0 = AW*0.06, stripW = AW*0.88;
+const stripSegs = [0,1,2].map(i=> el('seg', `left:${stripX0 + i*(stripW/3+4)}px; top:${stripY}px; width:${stripW/3-4}px; height:${AH*0.055}px; opacity:0;`, `<div class="lab">TAKE ${i+1}</div>`, stA));
+const endA = el('endlab', `left:${AW*0.06}px; bottom:4.5%;`, '162 FRAGMENTS MATCHED · THE DIFF IS THE CUT', stA);
+
+const tlA = gsap.timeline({repeat:-1});
+// columns enter
+tlA.set([...scriptEls,...transEls,...stripSegs,endA,headL,headR],{opacity:0});
+tlA.set(links.filter(Boolean),{scaleX:0,opacity:0});
+tlA.to([headL,headR],{opacity:1,duration:0.4},0.15);
+tlA.fromTo(scriptEls,{x:-26,opacity:0},{x:0,opacity:1,duration:0.55,ease:'power2.out',stagger:0.09},0.25);
+tlA.fromTo(transEls,{x:26,opacity:0},{x:0,opacity:1,duration:0.55,ease:'power2.out',stagger:0.09},0.55);
+// hold on the before-state
+tlA.to({},{duration:1.2});
+// matching: one mover at a time
+let tm = 2.6;
+TRANS.forEach((tr,i)=>{
+  if(tr.debris){
+    tlA.to(transEls[i],{opacity:0.28,filter:'saturate(0.4)',duration:0.4,ease:'power2.inOut'},tm);
+    tlA.to(transEls[i],{y:'+='+AH*0.5, rotation:(i%2?5:-5), opacity:0, duration:0.7, ease:'power2.in'},tm+0.35);
+    tm += 0.75;
+  } else {
+    tlA.to(links[i],{opacity:1,scaleX:1,duration:0.45,ease:'power2.inOut'},tm);
+    tlA.to([scriptEls[tr.match],transEls[i]],{borderColor:'#F0A8C2',boxShadow:'0 0 16px rgba(240,168,194,.35)',duration:0.35},tm+0.3);
+    tm += 0.8;
+  }
+});
+// survivors compact into the strip
+tm += 0.5;
+const survivors = TRANS.map((tr,i)=>tr.debris?null:transEls[i]).filter(Boolean);
+tlA.to(links.filter(Boolean),{opacity:0,duration:0.35},tm);
+tlA.to(scriptEls,{opacity:0.15,duration:0.5},tm);
+survivors.forEach((s,j)=>{
+  tlA.to(s,{left:stripX0 + j*(stripW/3+4), top:stripY-2, width:stripW/3-4, height:AH*0.055+4, opacity:0, duration:0.65, ease:'power2.inOut'},tm+0.15+j*0.12);
+  tlA.to(stripSegs[j],{opacity:1,duration:0.2},tm+0.68+j*0.12);
+});
+tlA.to(stripSegs,{boxShadow:'0 0 18px rgba(240,168,194,.5)',borderColor:'#F0A8C2',duration:0.45,ease:'power2.out'},tm+1.25);
+tlA.to(endA,{opacity:1,duration:0.5},tm+1.4);
+tlA.to({},{duration:2.0});
+tlA.to([...stripSegs,endA,...scriptEls,headL,headR],{opacity:0,duration:0.5},'>');
+tlA.set(stripSegs,{boxShadow:'none',borderColor:'#3a5f9e'},'>');
+tlA.set(scriptEls,{borderColor:'#2a4270',boxShadow:'none'},'>');
+tlA.set(transEls,{y:0,rotation:0,filter:'none',left:AW*0.58,top:(i,t)=>AH*(0.14+ transEls.indexOf(t)*0.115),width:AW*0.37,height:'auto',borderColor:(i,t)=>t.classList.contains('debris')?'#5a2a3a':'#2a4270',boxShadow:'none'},'>');
+
+/* ---------- PANEL C — traveling cutter ---------- */
+// Real spans from the C2288 debris audit: slates, abandoned attempt, then the kept takes.
+const SEGS = [
+  {lab:"SLATE 5s", w:5,  debris:true},
+  {lab:"ATTEMPT 1 · 11s", w:11, debris:true},
+  {lab:"SLATE 4s", w:4,  debris:true},
+  {lab:"TAKE ✓ 8s", w:8},
+  {lab:"FLUB 3s", w:3, debris:true},
+  {lab:"TAKE ✓ 9s", w:9},
+  {lab:"DEAD AIR 4s", w:4, debris:true},
+  {lab:"TAKE ✓ 7s", w:7}
+];
+const stC = document.getElementById('stageC');
+const CW = stC.clientWidth, CH = stC.clientHeight;
+const barY = CH*0.46, barH = CH*0.11, gap = 3;
+const total = SEGS.reduce((a,s)=>a+s.w,0);
+const bx0 = CW*0.05, bw = CW*0.90 - gap*(SEGS.length-1);
+let acc = 0;
+const segEls = SEGS.map((s,i)=>{
+  const w = s.w/total*bw;
+  const e = el(s.debris?'seg debris':'seg', `left:0px; top:${barY}px; width:${w}px; height:${barH}px;`, `<div class="lab">${s.lab}</div>`, stC);
+  s.el=e; s.px=w; acc+=w;
+  return e;
+});
+const blade = el('blade', `top:${barY-CH*0.06}px; height:${barH+CH*0.12}px; left:${bx0}px;`, '', stC);
+const counter = el('counter', '', '<small>REMOVED</small><span id="cnum">0.0s</span>', stC);
+const endC = el('endlab', `left:5%; bottom:7%;`, '13:16 → 8:17 · GAPS HEALED', stC);
+
+function layoutC(excludeSet){
+  // returns left positions for segments not in excludeSet, packed with gaps
+  let x = bx0; const pos = {};
+  SEGS.forEach((s,i)=>{ if(excludeSet.has(i)) return; pos[i]=x; x += s.px + gap; });
+  return pos;
+}
+const tlC = gsap.timeline({repeat:-1});
+tlC.set(endC,{opacity:0}); tlC.set(counter,{opacity:0});
+// bar assembles
+const pos0 = layoutC(new Set());
+SEGS.forEach((s,i)=> tlC.fromTo(s.el,{left:pos0[i], y:-18, opacity:0},{y:0,opacity:1,duration:0.5,ease:'power2.out'},0.2+i*0.07));
+tlC.to(counter,{opacity:1,duration:0.4},1.0);
+// hold on the before-state
+tlC.to({},{duration:1.1});
+// blade walks; debris pops out and the bar heals behind it
+let t = 2.4, removedS = 0; const gone = new Set();
+const cnum = {v:0};
+tlC.to(blade,{opacity:1,duration:0.25},t-0.2);
+SEGS.forEach((s,i)=>{
+  const posNow = layoutC(gone);
+  const target = posNow[i] + (s.debris? s.px/2 : s.px);
+  // travel to this segment
+  tlC.to(blade,{left:target,duration:0.42,ease:'power2.inOut'},t);
+  t += 0.46;
+  if(s.debris){
+    // stamp: flash + segment drops
+    tlC.to(s.el,{y:'+='+CH*0.34, rotation:(i%2?6:-6), opacity:0, duration:0.6, ease:'power2.in'},t);
+    tlC.fromTo(blade,{scaleX:1},{scaleX:2.6,duration:0.09,yoyo:true,repeat:1,ease:'power2.out'},t);
+    gone.add(i);
+    removedS += s.w;
+    tlC.to(cnum,{v:removedS,duration:0.5,ease:'power2.out',onUpdate:()=>{document.getElementById('cnum').textContent=cnum.v.toFixed(1)+'s';}},t);
+    // heal: everything after slides left
+    const posAfter = layoutC(gone);
+    SEGS.forEach((s2,j)=>{ if(gone.has(j)) return; tlC.to(s2.el,{left:posAfter[j],duration:0.5,ease:'power2.inOut'},t+0.28); });
+    t += 0.7;
+  } else {
+    t += 0.12;
+  }
+});
+// punch: tight bar glows
+tlC.to(blade,{opacity:0,duration:0.3},t);
+const keepEls = SEGS.filter((s,i)=>!gone.has(i)).map(s=>s.el);
+tlC.to(keepEls,{borderColor:'#F0A8C2',boxShadow:'0 0 18px rgba(240,168,194,.45)',duration:0.5,ease:'power2.out'},t+0.2);
+tlC.to(endC,{opacity:1,duration:0.5},t+0.35);
+tlC.to({},{duration:2.0});
+tlC.to([...SEGS.map(s=>s.el),counter,endC],{opacity:0,duration:0.5},'>');
+tlC.set(SEGS.map(s=>s.el),{y:0,rotation:0,borderColor:(i,e)=>e.classList.contains('debris')?'#6a3548':'#3a5f9e',boxShadow:'none'},'>');
+tlC.call(()=>{ gone.clear(); removedS=0; cnum.v=0; const p=layoutC(gone); SEGS.forEach((s,i)=>gsap.set(s.el,{left:p[i]})); document.getElementById('cnum').textContent='0.0s'; gsap.set(blade,{left:bx0,scaleX:1}); },[], '>');
+</script>
+</body>
+</html>

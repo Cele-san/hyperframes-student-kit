@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>hook-missingtrack</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #hook-missingtrack-root {
+    position: relative; width: 1920px; height: 1080px;
+    background: #050b13; overflow: hidden;
+    font-family: Inter, sans-serif;
+  }
+  .stage { position: absolute; inset: 0; }
+  .cam { position: absolute; inset: 0; }
+  .grid-tex { position: absolute; inset: 0; opacity: .5;
+    background: repeating-linear-gradient(0deg, rgba(242,245,248,.022) 0 1px, transparent 1px 96px),
+                repeating-linear-gradient(90deg, rgba(242,245,248,.022) 0 1px, transparent 1px 96px);
+    background-position: 0px 0px, 0px 0px; }
+  .grain { position: absolute; inset: 0; pointer-events: none; opacity: .55;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,.03) 1px, transparent 1px),
+      radial-gradient(circle at 2px 3px, rgba(255,255,255,.02) 1px, transparent 1px),
+      radial-gradient(circle at 4px 2px, rgba(255,255,255,.015) 1px, transparent 1px);
+    background-size: 3px 3px, 5px 5px, 7px 7px; }
+  .vignette { position: absolute; inset: 0; pointer-events: none; opacity: .72;
+    background: radial-gradient(ellipse at center, transparent 42%, rgba(0,0,0,.6) 100%); }
+  .kicker { position: absolute; left: 96px; top: 72px;
+    font: 600 24px 'JetBrains Mono', monospace; letter-spacing: .14em; color: #5a7194; }
+  .row { position: absolute; left: 0; width: 1920px; height: 96px; }
+  .lab { position: absolute; left: 280px; width: 210px; height: 96px; line-height: 96px;
+    text-align: right; font: 600 23px 'JetBrains Mono', monospace;
+    letter-spacing: .08em; color: #5a7194; }
+  .rail { position: absolute; left: 520px; top: 6px; width: 1100px; height: 84px;
+    border: 1px solid rgba(90,113,148,.28); border-radius: 8px;
+    background: rgba(21,40,72,.18); }
+  .clipblk { position: absolute; top: 10px; height: 68px; border-radius: 5px;
+    background: #2a4a80; border: 2px solid #3a5f9e; }
+  .chip { position: absolute; left: 1646px; top: 26px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 16px 0 calc(16px + .1em); border-radius: 6px; box-sizing: border-box;
+    font: 600 22px 'JetBrains Mono', monospace; letter-spacing: .1em;
+    background: #152848; border: 2px solid #2a4270; color: #F2F5F8; }
+  #yourow .rail { border: 2px solid #F0A8C2; background: rgba(240,168,194,.08);
+    box-shadow: 0 0 28px rgba(240,168,194,.25); }
+  #yourow .lab { color: #F0A8C2; }
+  #yourow .chip { background: rgba(240,168,194,.14); border-color: #F0A8C2; color: #F0A8C2; }
+  .youtext { position: absolute; left: 552px; top: 30px;
+    font: italic 500 29px Inter, sans-serif; color: #F2F5F8; opacity: .94; }
+  .sumline { position: absolute; left: 520px; top: 896px; width: 1100px; text-align: center;
+    font: 600 40px 'JetBrains Mono', monospace; letter-spacing: .05em; color: #F2F5F8; }
+  .sumline b { color: #5a7194; font-weight: 600; }
+  .shock { position: absolute; left: 1070px; top: 312px; width: 140px; height: 140px;
+    margin: -70px 0 0 -70px; border: 2px solid #F0A8C2; border-radius: 50%;
+    box-shadow: 0 0 24px rgba(240,168,194,.5); opacity: 0; }
+</style>
+</head>
+<body>
+<div id="hook-missingtrack-root" data-composition-id="hook-missingtrack" data-start="0"
+     data-duration="13.3" data-width="1920" data-height="1080">
+  <div class="stage clip" id="stage" data-start="0" data-duration="13.3" data-track-index="0">
+    <div class="cam" id="cam">
+      <div class="grid-tex"></div>
+      <div class="kicker" id="kicker">THIS VIDEO'S OWN TIMELINE</div>
+      <div class="sumline" id="sumline">80% <b>· EDITED BY AI</b></div>
+      <div class="shock" id="shock"></div>
+    </div>
+    <div class="grain"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <script src="assets/gsap.min.js"></script>
+  <script>
+  (() => {
+    const DUR = 13.3;
+    // Master slot 0:11.00–0:24.30 of AIDR-v6-hook-v2. Local anchors (master − 11.0):
+    // text 1.46 · graphic 2.82 · overlay/B-roll 4.58/5.28 · cuts 6.52 ·
+    // "all edited by AI" 8.26–9.24 · "wasn't" 11.84 · "AI" 12.74
+    const cam = document.getElementById('cam');
+
+    // Rows mirror the real v5 stack: text→V5, HF cutaways→V4, screen-recs→V2, cuts→V1.
+    const ROWS = [
+      { id: 'text',   lab: 'V5 · TEXT',     top: 321,
+        clips: [[60, 190], [420, 150], [760, 210]] },
+      { id: 'gfx',    lab: 'V4 · GRAPHICS', top: 435,
+        clips: [[30, 120], [210, 120], [390, 120], [570, 120], [750, 120], [930, 120]] },
+      { id: 'broll',  lab: 'V2 · B-ROLL',   top: 549,
+        clips: [[0, 240], [290, 230], [560, 250], [850, 240]] },
+      { id: 'cuts',   lab: 'V1 · CUTS',     top: 663, clips: [] },
+    ];
+    // 22 fragments fill the cuts lane — the 162-fragment texture at lane scale
+    const CUTW = [46,30,64,38,52,28,58,34,70,30,44,56,32,62,38,50,28,66,36,48,30,58];
+    let cx = 0;
+    CUTW.forEach(w => { ROWS[3].clips.push([cx, w]); cx += w + 4; });
+
+    const rows = {};
+    ROWS.forEach(r => {
+      const el = document.createElement('div');
+      el.className = 'row'; el.id = 'row-' + r.id; el.style.top = r.top + 'px';
+      el.innerHTML = '<div class="lab">' + r.lab + '</div><div class="rail"></div>' +
+        '<div class="chip">AI</div>';
+      const rail = el.querySelector('.rail');
+      r.clips.forEach(([x, w]) => {
+        const c = document.createElement('div');
+        c.className = 'clipblk'; c.style.left = x + 'px'; c.style.width = w + 'px';
+        rail.appendChild(c);
+      });
+      cam.appendChild(el);
+      rows[r.id] = { el, clips: [...el.querySelectorAll('.clipblk')],
+        rail, chip: el.querySelector('.chip'), lab: el.querySelector('.lab') };
+    });
+
+    // The missing track — enters only at the punch
+    const you = document.createElement('div');
+    you.className = 'row'; you.id = 'yourow'; you.style.top = '210px';
+    you.innerHTML = '<div class="lab">YOU</div><div class="rail"></div>' +
+      '<div class="chip">20%</div>' +
+      '<div class="youtext" id="youtext">taste · judgment · the final say</div>';
+    cam.appendChild(you);
+
+    const tl = gsap.timeline({ paused: true });
+
+    // hidden states (seek-safe: set at t=0, tween later)
+    tl.set('#kicker', { opacity: 0, y: 14 }, 0);
+    tl.set('#sumline', { opacity: 0, y: 12, scale: 0.94, transformOrigin: 'center center' }, 0);
+    Object.values(rows).forEach(r => {
+      tl.set([r.lab, r.rail], { opacity: 0, x: -26 }, 0);
+      tl.set(r.chip, { opacity: 0, scale: 1.3, transformOrigin: 'center center' }, 0);
+      tl.set(r.clips, { opacity: 0 }, 0);
+    });
+    tl.set(you, { opacity: 0, top: 210 }, 0);
+    tl.set('#youtext', { opacity: 0 }, 0);
+
+    // AMBIENT — camera push, grid parallax, vignette breath (Law #4)
+    // boosted past sibling values: this part has two ~1s VO lulls that froze at 1.014
+    tl.fromTo('#cam', { scale: 1 }, { scale: 1.035, duration: DUR, ease: 'none' }, 0);
+    tl.to('.grid-tex', { backgroundPosition: '72px 50px, 50px 72px', duration: DUR, ease: 'none' }, 0);
+    tl.to('.vignette', { opacity: 0.9, duration: DUR / 4, ease: 'sine.inOut', yoyo: true, repeat: 3 }, 0);
+
+    // BEFORE-STATE — the empty timeline skeleton assembles early, then holds
+    tl.to('#kicker', { opacity: 1, y: 0, duration: 0.5, ease: 'expo.out' }, 0.12);
+    ROWS.forEach((r, i) => {
+      tl.to([rows[r.id].lab, rows[r.id].rail],
+        { opacity: 1, x: 0, duration: 0.45, ease: 'power3.out' }, 0.22 + i * 0.08);
+    });
+
+    const dimPrev = (id, at) => tl.to(rows[id].clips, { opacity: 0.65, duration: 0.4,
+      ease: 'power2.out' }, at);
+    const stamp = (id, at) => tl.to(rows[id].chip, { opacity: 1, scale: 1, duration: 0.4,
+      ease: 'power2.out' }, at);
+
+    // "text animation" 1.46 — overlays drop from above
+    tl.fromTo(rows.text.clips, { y: -42, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.55, ease: 'power3.out', stagger: 0.09 }, 1.46);
+    stamp('text', 2.25);
+
+    // "graphic animation" 2.82 — the six cutaways slide in from the left
+    dimPrev('text', 2.82);
+    tl.fromTo(rows.gfx.clips, { x: -64, opacity: 0 },
+      { x: 0, opacity: 1, duration: 0.5, ease: 'expo.out', stagger: 0.07 }, 2.82);
+    stamp('gfx', 3.72);
+
+    // "overlaying the B-roll" 4.58 — wide blocks push in from the right
+    dimPrev('gfx', 4.58);
+    tl.fromTo(rows.broll.clips, { x: 64, opacity: 0 },
+      { x: 0, opacity: 1, duration: 0.55, ease: 'power2.out', stagger: 0.11 }, 4.58);
+    stamp('broll', 5.65);
+
+    // "the cuts themselves" 6.52 — fragment run, left to right
+    dimPrev('broll', 6.52);
+    tl.fromTo(rows.cuts.clips, { scaleX: 0.55, opacity: 0, transformOrigin: 'left center' },
+      { scaleX: 1, opacity: 1, duration: 0.3, ease: 'power2.out', stagger: 0.022 }, 6.52);
+    stamp('cuts', 7.55);
+
+    // "they were ALL edited by AI" 8.26 — the whole stack answers as one
+    ROWS.forEach(r => {
+      tl.to(rows[r.id].clips, { opacity: 1, duration: 0.35, ease: 'power2.out' }, 8.26);
+      tl.to(rows[r.id].rail, { borderColor: 'rgba(242,245,248,.45)', duration: 0.4,
+        ease: 'power2.out' }, 8.26);
+      tl.to(rows[r.id].chip, { borderColor: '#3a5f9e', duration: 0.4,
+        ease: 'power2.out' }, 8.26);
+    });
+    tl.to('#sumline', { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: 'power2.out' }, 8.55);
+
+    // settle while VO turns: "I'm going to show you what..."
+    ROWS.forEach(r => {
+      tl.to(rows[r.id].clips, { opacity: 0.68, duration: 0.6, ease: 'power2.inOut' }, 10.3);
+      tl.to(rows[r.id].rail, { borderColor: 'rgba(90,113,148,.28)', duration: 0.6,
+        ease: 'power2.inOut' }, 10.3);
+    });
+
+    // PUNCH — "what WASN'T edited by AI" 11.84: the stack makes room,
+    // the missing track drops in on top, blossom
+    ROWS.forEach(r => {
+      tl.to(rows[r.id].el, { top: r.top + 57, duration: 0.55, ease: 'power2.inOut' }, 11.84);
+    });
+    tl.to('#sumline', { opacity: 0.45, duration: 0.5, ease: 'power2.inOut' }, 11.84);
+    tl.to(you, { opacity: 1, top: 264, duration: 0.6, ease: 'power3.out' }, 12.0);
+    tl.fromTo('#shock', { scale: 0.2, opacity: 0.9 },
+      { scale: 2.2, opacity: 0, duration: 0.7, ease: 'power2.out',
+        immediateRender: false }, 12.15);
+    tl.to('#youtext', { opacity: 1, duration: 0.5, ease: 'power2.out' }, 12.25);
+    // breathing hold on the blossom rail
+    tl.to(you.querySelector('.rail'), { boxShadow: '0 0 44px rgba(240,168,194,.4)',
+      duration: 0.55, ease: 'sine.inOut', yoyo: true, repeat: 1 }, 12.2);
+
+    // Law #11 anchor
+    tl.to({}, { duration: DUR }, 0);
+    // force the t=0 hidden states to apply on a fresh load — GSAP skips a 0→0
+    // seek render, which would leak the YOU-row punchline into frame 0
+    tl.render(0.001, true, true);
+    tl.render(0, true, true);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['hook-missingtrack'] = tl;
+  })();
+  </script>
+</div>
+</body>
+</html>

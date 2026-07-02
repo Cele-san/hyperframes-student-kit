@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>b7-asymptote</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #b7-asymptote-root {
+    position: relative; width: 1920px; height: 1080px;
+    background: #050b13; overflow: hidden;
+    font-family: Inter, sans-serif;
+  }
+  .stage { position: absolute; inset: 0; }
+  .cam { position: absolute; inset: 0; }
+  .grid-tex { position: absolute; inset: 0; opacity: .5;
+    background: repeating-linear-gradient(0deg, rgba(242,245,248,.022) 0 1px, transparent 1px 96px),
+                repeating-linear-gradient(90deg, rgba(242,245,248,.022) 0 1px, transparent 1px 96px);
+    background-position: 0px 0px, 0px 0px; }
+  .grain { position: absolute; inset: 0; pointer-events: none; opacity: .55;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,.03) 1px, transparent 1px),
+      radial-gradient(circle at 2px 3px, rgba(255,255,255,.02) 1px, transparent 1px),
+      radial-gradient(circle at 4px 2px, rgba(255,255,255,.015) 1px, transparent 1px);
+    background-size: 3px 3px, 5px 5px, 7px 7px; }
+  .vignette { position: absolute; inset: 0; pointer-events: none; opacity: .72;
+    background: radial-gradient(ellipse at center, transparent 42%, rgba(0,0,0,.6) 100%); }
+  .kicker { position: absolute; left: 96px; top: 72px;
+    font: 600 24px 'JetBrains Mono', monospace; letter-spacing: .14em; color: #5a7194; }
+  svg#plot { position: absolute; inset: 0; }
+  #curve { filter: drop-shadow(0 0 10px rgba(240,168,194,.55)); }
+  #tip { filter: drop-shadow(0 0 14px rgba(240,168,194,.9)); }
+  .endlab { position: absolute; left: 96px; bottom: 84px;
+    font: 600 26px 'JetBrains Mono', monospace; color: #F0A8C2; letter-spacing: .06em; }
+</style>
+</head>
+<body>
+<div id="b7-asymptote-root" data-composition-id="b7-asymptote" data-start="0"
+     data-duration="8" data-width="1920" data-height="1080">
+  <div class="stage clip" id="stage" data-start="0" data-duration="8" data-track-index="0">
+    <div class="cam" id="cam">
+      <div class="grid-tex"></div>
+      <div class="kicker" id="kicker">TEACH IT — IT CHASES YOU</div>
+      <svg id="plot" width="1920" height="1080" viewBox="0 0 1920 1080">
+        <line x1="200" y1="880" x2="1760" y2="880" stroke="#2a4270" stroke-width="2"/>
+        <text id="p80" x="164" y="566" text-anchor="end" font-family="JetBrains Mono, monospace"
+              font-size="22" fill="#5a7194">80</text>
+        <line id="t80" x1="176" y1="560" x2="200" y2="560" stroke="#2a4270" stroke-width="2"/>
+        <text id="p90" x="164" y="476" text-anchor="end" font-family="JetBrains Mono, monospace"
+              font-size="22" fill="#5a7194">90</text>
+        <line id="t90" x1="176" y1="470" x2="200" y2="470" stroke="#2a4270" stroke-width="2"/>
+        <g id="ceil">
+          <line x1="200" y1="380" x2="1640" y2="380" stroke="#F2F5F8" stroke-width="3"
+                stroke-dasharray="18 14" opacity="0.85"/>
+          <text x="1660" y="388" font-family="JetBrains Mono, monospace" font-size="26"
+                font-weight="600" fill="#F2F5F8">100 — YOU</text>
+        </g>
+        <!-- the GAP itself, made visible: measure brackets between tip and ceiling -->
+        <line id="gb1" x1="1284" y1="398" x2="1284" y2="380" stroke="#F0A8C2" stroke-width="2"
+              stroke-dasharray="5 5" opacity="0"/>
+        <line id="gb2" x1="1712" y1="318" x2="1712" y2="300" stroke="#F0A8C2" stroke-width="2"
+              stroke-dasharray="5 5" opacity="0"/>
+        <text id="agentlab" x="240" y="820" font-family="JetBrains Mono, monospace" font-size="22"
+              font-weight="600" fill="#F0A8C2">YOUR AGENT</text>
+        <path id="curve" d="M 200 880 C 480 850, 640 640, 860 520 C 1020 432, 1140 405, 1260 398
+              C 1400 390, 1480 352, 1700 318" fill="none" stroke="#F0A8C2" stroke-width="6"
+              stroke-linecap="round"/>
+        <circle id="tip" cx="200" cy="880" r="10" fill="#F0A8C2"/>
+      </svg>
+      <div class="endlab" id="endlab">IT ONLY HITS 100 IF YOU STOP EVOLVING</div>
+    </div>
+    <div class="grain"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <script src="assets/gsap.min.js"></script>
+  <script>
+  (() => {
+    const DUR = 8;
+    const curve = document.getElementById('curve');
+    const tip = document.getElementById('tip');
+    const L = curve.getTotalLength();
+    curve.style.strokeDasharray = L;
+    curve.style.strokeDashoffset = L;
+
+    const prog = { p: 0 };
+    const setTip = () => {
+      const pt = curve.getPointAtLength(prog.p * L);
+      tip.setAttribute('cx', pt.x); tip.setAttribute('cy', pt.y);
+      curve.style.strokeDashoffset = L * (1 - prog.p);
+    };
+
+    const tl = gsap.timeline({ paused: true });
+    tl.set('#kicker', { opacity: 0, y: 14 }, 0);
+    tl.set('#endlab', { opacity: 0 }, 0);
+    tl.set(['#p80', '#p90', '#t80', '#t90'], { opacity: 0 }, 0);
+    tl.set('#agentlab', { opacity: 0, x: -14 }, 0);
+    tl.set(tip, { opacity: 0 }, 0);
+
+    // AMBIENT — camera push, grid parallax, vignette breath (Law #4)
+    tl.fromTo('#cam', { scale: 1 }, { scale: 1.014, duration: DUR, ease: 'none' }, 0);
+    tl.to('.grid-tex', { backgroundPosition: '26px 18px, 18px 26px', duration: DUR, ease: 'none' }, 0);
+    tl.to('.vignette', { opacity: 0.88, duration: DUR / 2, ease: 'sine.inOut', yoyo: true, repeat: 1 }, 0);
+
+    tl.to('#kicker', { opacity: 1, y: 0, duration: 0.6, ease: 'expo.out' }, 0.25);
+    tl.to(tip, { opacity: 1, duration: 0.25, ease: 'power2.out' }, 0.75);
+    tl.to('#agentlab', { opacity: 1, x: 0, duration: 0.5, ease: 'power3.out' }, 1.1);
+
+    // stage 1 — the curve climbs toward the ceiling (draws to 62%)
+    tl.to(prog, { p: 0.62, duration: 2.6, ease: 'power1.inOut', onUpdate: setTip }, 0.8);
+    tl.to(['#p80', '#t80'], { opacity: 1, duration: 0.4, ease: 'power2.out' }, 2.1);
+    tl.to(['#p90', '#t90'], { opacity: 1, duration: 0.4, ease: 'power2.out' }, 2.8);
+
+    // the ceiling RISES as the curve closes in — and the GAP itself stretches open
+    tl.to('#gb1', { opacity: 0.85, duration: 0.2, ease: 'power2.out' }, 3.5);
+    tl.to('#ceil', { y: -80, duration: 0.8, ease: 'power2.inOut' }, 3.6);
+    tl.to('#gb1', { attr: { y2: 300 }, duration: 0.8, ease: 'power2.inOut' }, 3.6);
+    tl.to('#gb1', { opacity: 0, duration: 0.4, ease: 'power2.out' }, 4.9);
+
+    // stage 2 — the curve keeps chasing
+    tl.to(prog, { p: 1, duration: 1.7, ease: 'power1.inOut', onUpdate: setTip }, 4.5);
+
+    // ...and the ceiling escapes again; the gap re-opens, measured
+    tl.to('#gb2', { opacity: 0.85, duration: 0.15, ease: 'power2.out' }, 6.05);
+    tl.to('#ceil', { y: -108, duration: 0.5, ease: 'power2.inOut' }, 6.15);
+    tl.to('#gb2', { attr: { y2: 272 }, duration: 0.5, ease: 'power2.inOut' }, 6.15);
+    tl.to('#gb2', { opacity: 0.5, duration: 0.5, ease: 'power2.out' }, 7.0);
+
+    tl.to('#endlab', { opacity: 1, duration: 0.5, ease: 'power2.out' }, 6.6);
+    // tip breathes on the held end-state (finite)
+    tl.to(tip, { scale: 1.35, transformOrigin: 'center', duration: 0.55, ease: 'sine.inOut',
+      yoyo: true, repeat: 1 }, 6.8);
+
+    // Law #11 anchor
+    tl.to({}, { duration: DUR }, 0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['b7-asymptote'] = tl;
+  })();
+  </script>
+</div>
+</body>
+</html>

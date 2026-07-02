@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>b5-relay</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #b5-relay-root {
+    position: relative; width: 1920px; height: 1080px;
+    background: #050b13; overflow: hidden;
+    font-family: Inter, sans-serif;
+  }
+  .stage { position: absolute; inset: 0; }
+  .cam { position: absolute; inset: 0; }
+  .grid-tex { position: absolute; inset: 0; opacity: .5;
+    background: repeating-linear-gradient(0deg, rgba(242,245,248,.022) 0 1px, transparent 1px 96px),
+                repeating-linear-gradient(90deg, rgba(242,245,248,.022) 0 1px, transparent 1px 96px);
+    background-position: 0px 0px, 0px 0px; }
+  .grain { position: absolute; inset: 0; pointer-events: none; opacity: .55;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,.03) 1px, transparent 1px),
+      radial-gradient(circle at 2px 3px, rgba(255,255,255,.02) 1px, transparent 1px),
+      radial-gradient(circle at 4px 2px, rgba(255,255,255,.015) 1px, transparent 1px);
+    background-size: 3px 3px, 5px 5px, 7px 7px; }
+  .vignette { position: absolute; inset: 0; pointer-events: none; opacity: .72;
+    background: radial-gradient(ellipse at center, transparent 42%, rgba(0,0,0,.6) 100%); }
+  .kicker { position: absolute; left: 96px; top: 72px;
+    font: 600 24px 'JetBrains Mono', monospace; letter-spacing: .14em; color: #5a7194; }
+  .lane { position: absolute; left: 160px; width: 1600px; height: 180px; border-radius: 16px;
+    background: rgba(21,40,72,.22); border: 1px solid #1e3358; }
+  #laneSr { top: 290px; }
+  #laneJr { top: 620px; }
+  .lanelab { position: absolute; left: 176px; font: 600 21px 'JetBrains Mono', monospace;
+    letter-spacing: .12em; color: #5a7194; }
+  #labSr { top: 254px; }
+  #labJr { top: 584px; }
+  .strip { position: absolute; left: 208px; top: 315px; }
+  .blk { position: absolute; top: 0; height: 130px; border-radius: 8px;
+    background: #2a4a80; border: 2px solid #3a5f9e; box-sizing: border-box; }
+  .blk.rough { background: #4a2333; border-color: #6a3548; }
+  #cursor { position: absolute; left: 0; top: 0; transform-origin: 3px 3px; z-index: 5; }
+  .endlab { position: absolute; left: 96px; bottom: 84px;
+    font: 600 26px 'JetBrains Mono', monospace; color: #F0A8C2; letter-spacing: .06em; }
+</style>
+</head>
+<body>
+<div id="b5-relay-root" data-composition-id="b5-relay" data-start="0"
+     data-duration="10" data-width="1920" data-height="1080">
+  <div class="stage clip" id="stage" data-start="0" data-duration="10" data-track-index="0">
+    <div class="cam" id="cam">
+      <div class="grid-tex"></div>
+      <div class="kicker" id="kicker">A JUNIOR EDITOR IN YOUR POCKET</div>
+      <div class="lane" id="laneSr"></div>
+      <div class="lane" id="laneJr"></div>
+      <div class="lanelab" id="labSr">YOU — SENIOR · JUDGES THE TASTE</div>
+      <div class="lanelab" id="labJr">AI — JUNIOR · DOES THE FIRST PASS</div>
+      <div class="strip" id="strip"></div>
+      <svg id="cursor" width="40" height="44" viewBox="0 0 40 44">
+        <path d="M3 2 L3 34 L12 26 L18 40 L24 37 L18 24 L29 24 Z"
+              fill="#F2F5F8" stroke="#0b1626" stroke-width="2"/>
+      </svg>
+      <div class="endlab" id="endlab">THE JUNIOR DOES THE PASS · YOU JUDGE THE TASTE</div>
+    </div>
+    <div class="grain"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <script src="assets/gsap.min.js"></script>
+  <script>
+  (() => {
+    const DUR = 10;
+    const WIDTHS = [150,120,180,140,110,160,170,130,150,140];
+    const GAP = 6, STRIP_X = 208, SR_Y = 315, JR_DY = 330;
+    const ROUGH = 3, MISALIGNED = 6, TRIM = 8;
+    const strip = document.getElementById('strip');
+
+    const xs = []; let acc = 0;
+    WIDTHS.forEach(w => { xs.push(acc); acc += w + GAP; });
+    const blocks = WIDTHS.map((w, i) => {
+      const b = document.createElement('div');
+      b.className = 'blk' + (i === ROUGH ? ' rough' : '');
+      b.style.cssText = `left:${xs[i]}px; width:${w}px;`;
+      strip.appendChild(b);
+      return b;
+    });
+    const jit = i => [3,-4,2,8,-3,4,10,-2,3,-4][i]; // baked rough-pass jitter (px)
+
+    const tl = gsap.timeline({ paused: true });
+    tl.set('#kicker', { opacity: 0, y: 14 }, 0);
+    tl.set(['#laneSr', '#laneJr', '#labSr', '#labJr'], { opacity: 0 }, 0);
+    tl.set('#endlab', { opacity: 0 }, 0);
+    tl.set(strip, { y: JR_DY }, 0);
+    blocks.forEach((b, i) => tl.set(b, { opacity: 0, y: 50 + jit(i) }, 0));
+    tl.set('#cursor', { x: 1500, y: 1120, opacity: 0 }, 0);
+
+    // AMBIENT — grid parallax + vignette breath (the fix-zooms carry the camera here)
+    tl.to('.grid-tex', { backgroundPosition: '26px 18px, 18px 26px', duration: DUR, ease: 'none' }, 0);
+    tl.to('.vignette', { opacity: 0.88, duration: DUR / 2, ease: 'sine.inOut', yoyo: true, repeat: 1 }, 0);
+
+    tl.to('#kicker', { opacity: 1, y: 0, duration: 0.6, ease: 'expo.out' }, 0.25);
+    tl.to(['#laneSr', '#laneJr'], { opacity: 1, duration: 0.5, ease: 'power2.out', stagger: 0.08 }, 0.45);
+    tl.to(['#labSr', '#labJr'], { opacity: 1, x: 0, duration: 0.55, ease: 'expo.out', stagger: 0.08 }, 0.5);
+
+    // the junior assembles the rough strip FAST (jitter stays — it's a first pass)
+    blocks.forEach((b, i) =>
+      tl.to(b, { opacity: 1, y: jit(i), duration: 0.32, ease: 'power3.out' }, 0.9 + i * 0.14));
+
+    // hold, then the HANDOFF — strip rises to the senior lane
+    tl.to(strip, { y: 0, duration: 0.9, ease: 'power2.inOut' }, 3.2);
+    tl.to('#labJr', { opacity: 0.4, duration: 0.4 }, 3.3);
+    tl.to('#labSr', { color: '#F2F5F8', duration: 0.4 }, 3.4);
+
+    // the senior's 3 slow taste fixes — camera leans in on each one
+    const cx = i => STRIP_X + xs[i] + WIDTHS[i] / 2;
+    const CY = SR_Y + 70;
+    const zin = (t, ox) => {
+      tl.set('#cam', { transformOrigin: `${ox}px 380px` }, t - 0.02);
+      tl.to('#cam', { scale: 1.45, duration: 0.5, ease: 'power2.inOut', overwrite: 'auto' }, t);
+    };
+    const zout = t => tl.to('#cam', { scale: 1, duration: 0.45, ease: 'power2.inOut',
+      overwrite: 'auto' }, t);
+
+    // fix 1 — the rough block goes (drops with gravity)
+    tl.to('#cursor', { opacity: 1, x: cx(ROUGH), y: CY, duration: 0.75, ease: 'power2.inOut' }, 4.3);
+    zin(4.35, cx(ROUGH));
+    tl.to('#cursor', { scale: 0.85, duration: 0.08, ease: 'power2.in' }, 5.15);
+    tl.to('#cursor', { scale: 1, duration: 0.22, ease: 'power2.out' }, 5.25);
+    tl.to(blocks[ROUGH], { y: 190, duration: 0.55, ease: 'power1.in' }, 5.25);
+    tl.to(blocks[ROUGH], { rotation: 8, duration: 0.55, ease: 'power2.out' }, 5.25);
+    tl.to(blocks[ROUGH], { opacity: 0, duration: 0.22, ease: 'power2.in' }, 5.55);
+    blocks.forEach((b, i) => { if (i > ROUGH)
+      tl.to(b, { x: -(WIDTHS[ROUGH] + GAP), duration: 0.55, ease: 'power2.inOut' }, 5.6); });
+    zout(5.85);
+    // fix 2 — the misaligned block snaps flush
+    tl.to('#cursor', { x: cx(MISALIGNED) - (WIDTHS[ROUGH] + GAP), duration: 0.55,
+      ease: 'power2.inOut' }, 6.3);
+    zin(6.35, cx(MISALIGNED) - (WIDTHS[ROUGH] + GAP));
+    tl.to('#cursor', { scale: 0.85, duration: 0.08, ease: 'power2.in' }, 6.95);
+    tl.to('#cursor', { scale: 1, duration: 0.22, ease: 'power2.out' }, 7.05);
+    tl.to(blocks[MISALIGNED], { y: 0, duration: 0.3, ease: 'power3.out' }, 7.05);
+    zout(7.4);
+    // fix 3 — one seam trimmed (starts after zoom-out 2 fully settles at 7.85)
+    tl.to('#cursor', { x: cx(TRIM) + WIDTHS[TRIM] / 2 - (WIDTHS[ROUGH] + GAP), duration: 0.5,
+      ease: 'power2.inOut' }, 7.88);
+    zin(7.95, cx(TRIM) + WIDTHS[TRIM] / 2 - (WIDTHS[ROUGH] + GAP));
+    tl.to('#cursor', { scale: 0.85, duration: 0.08, ease: 'power2.in' }, 8.45);
+    tl.to('#cursor', { scale: 1, duration: 0.22, ease: 'power2.out' }, 8.55);
+    tl.to(blocks[TRIM], { width: WIDTHS[TRIM] - 26, duration: 0.35, ease: 'power2.inOut' }, 8.55);
+    tl.to(blocks[TRIM + 1], { x: '-=26', duration: 0.35, ease: 'power2.inOut' }, 8.55);
+    zout(8.9);
+    tl.to('#cursor', { opacity: 0, duration: 0.3, ease: 'power2.out' }, 8.98);
+
+    // PUNCH — shipped, but only after the senior's touch
+    const kept = blocks.filter((b, i) => i !== ROUGH);
+    tl.to(kept, { borderColor: '#F0A8C2', boxShadow: '0 0 22px rgba(240,168,194,.4)',
+      duration: 0.45, ease: 'power2.out', stagger: 0.03 }, 9.1);
+    tl.to('#endlab', { opacity: 1, duration: 0.5, ease: 'power2.out' }, 9.35);
+
+    // Law #11 anchor
+    tl.to({}, { duration: DUR }, 0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['b5-relay'] = tl;
+  })();
+  </script>
+</div>
+</body>
+</html>

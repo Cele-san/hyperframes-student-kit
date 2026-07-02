@@ -6,6 +6,18 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["hyperframes", "preview", "video-projects/claude-edit-intro", "--port", "3010", "--force-new"],
       "port": 3010
+    },
+    {
+      "name": "aidr-runoffs",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "video-projects/2026-06-30-aidr-abstract-cutaways/.work", "-p", "8081", "-n"],
+      "port": 8081
+    },
+    {
+      "name": "aidr-parts",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "video-projects/2026-06-30-aidr-abstract-cutaways", "-p", "8082", "-n"],
+      "port": 8082
     }
   ]
 }

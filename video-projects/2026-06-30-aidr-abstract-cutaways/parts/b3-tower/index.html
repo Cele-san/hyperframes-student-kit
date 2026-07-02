@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>b3-tower</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #b3-tower-root {
+    position: relative; width: 1920px; height: 1080px;
+    background: #050b13; overflow: hidden;
+    font-family: Inter, sans-serif;
+  }
+  .stage { position: absolute; inset: 0; }
+  .cam { position: absolute; inset: 0; }
+  .grid-tex { position: absolute; inset: 0; opacity: .5;
+    background: repeating-linear-gradient(0deg, rgba(242,245,248,.022) 0 1px, transparent 1px 96px),
+                repeating-linear-gradient(90deg, rgba(242,245,248,.022) 0 1px, transparent 1px 96px);
+    background-position: 0px 0px, 0px 0px; }
+  .grain { position: absolute; inset: 0; pointer-events: none; opacity: .55;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,.03) 1px, transparent 1px),
+      radial-gradient(circle at 2px 3px, rgba(255,255,255,.02) 1px, transparent 1px),
+      radial-gradient(circle at 4px 2px, rgba(255,255,255,.015) 1px, transparent 1px);
+    background-size: 3px 3px, 5px 5px, 7px 7px; }
+  .vignette { position: absolute; inset: 0; pointer-events: none; opacity: .72;
+    background: radial-gradient(ellipse at center, transparent 42%, rgba(0,0,0,.6) 100%); }
+  .kicker { position: absolute; left: 96px; top: 72px;
+    font: 600 24px 'JetBrains Mono', monospace; letter-spacing: .14em; color: #5a7194; }
+  .block { position: absolute; left: 560px; width: 340px; border-radius: 6px;
+    background: #2a4a80; border: 2px solid #3a5f9e; }
+  .block.dead    { background: #1a2740; border-color: #24365a; }
+  .block.debris  { background: #4a2333; border-color: #6a3548; }
+  .block.silence { background: #10203a; border-color: #1e3358; }
+  .baseline { position: absolute; left: 480px; top: 942px; width: 500px; height: 2px; background: #2a4270; }
+  .counter { position: absolute; left: 1120px; top: 300px;
+    font: 600 150px 'JetBrains Mono', monospace; color: #F2F5F8; letter-spacing: -.02em; }
+  .counterlab { position: absolute; left: 1126px; top: 262px;
+    font: 600 19px 'JetBrains Mono', monospace; letter-spacing: .18em; color: #5a7194; }
+  .pass { position: absolute; left: 1126px; font: 600 25px 'JetBrains Mono', monospace;
+    letter-spacing: .04em; color: #F2F5F8; }
+  .pass b { color: #F0A8C2; font-weight: 600; }
+  .shock { position: absolute; left: 1340px; top: 395px; width: 140px; height: 140px;
+    border: 2px solid #F0A8C2; border-radius: 50%; margin: -70px 0 0 -70px;
+    box-shadow: 0 0 24px rgba(240,168,194,.5); opacity: 0; }
+  .endlab { position: absolute; left: 96px; bottom: 84px;
+    font: 600 26px 'JetBrains Mono', monospace; color: #F0A8C2; letter-spacing: .06em; }
+</style>
+</head>
+<body>
+<div id="b3-tower-root" data-composition-id="b3-tower" data-start="0"
+     data-duration="9" data-width="1920" data-height="1080">
+  <div class="stage clip" id="stage" data-start="0" data-duration="9" data-track-index="0">
+    <div class="cam" id="cam">
+      <div class="grid-tex"></div>
+      <div class="kicker" id="kicker">THE AGENT'S FIRST CUT · REAL NUMBERS</div>
+      <div class="baseline"></div>
+      <div class="counterlab" id="counterlab">RUNTIME</div>
+      <div class="counter" id="counter">13:16</div>
+      <div class="pass" id="pass1" style="top:520px">PASS 1 · DEAD AIR <b>−60.6s</b></div>
+      <div class="pass" id="pass2" style="top:572px">PASS 2 · RETAKE DEBRIS <b>−169s</b></div>
+      <div class="pass" id="pass3" style="top:624px">PASS 3 · SILENCE CAPPED <b>−68.8s</b></div>
+      <div class="shock" id="shock"></div>
+      <div class="endlab" id="endlab">85–90% RIGHT · BEFORE A SINGLE NOTE FROM ME</div>
+    </div>
+    <div class="grain"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <script src="assets/gsap.min.js"></script>
+  <script>
+  (() => {
+    const DUR = 9;
+    // Real runtime math: 13:16 (796s) → −60.6 dead air → −169 debris → −68.8 silence → 8:17.6
+    const BLOCKS = [
+      ['keep',52],['dead',20],['keep',48],['debris',34],['keep',55],['silence',10],
+      ['keep',50],['debris',35],['silence',10],['keep',46],['dead',21],['keep',53],
+      ['debris',33],['silence',10],['keep',49],['silence',10],['debris',34],['keep',51],
+      ['silence',10],['keep',47],['dead',20],['debris',33],['silence',9],['keep',47],['silence',9]
+    ];
+    const S = 0.82, GAP = 3, BOTTOM = 940;
+    const cam = document.getElementById('cam');
+    const vignetteRef = document.querySelector('.vignette');
+
+    const blocks = BLOCKS.map(([cls, sec], i) => {
+      const el = document.createElement('div');
+      el.className = 'block ' + cls;
+      el.style.height = Math.max(5, sec * S - GAP) + 'px';
+      cam.appendChild(el);
+      return { el, cls, sec, i };
+    });
+    // stacked-from-bottom layout for whichever blocks remain
+    const layout = gone => {
+      let y = BOTTOM; const pos = {};
+      blocks.forEach(b => { if (gone.has(b.i)) return;
+        const h = Math.max(5, b.sec * S - GAP);
+        y -= h; pos[b.i] = y; y -= GAP; });
+      return pos;
+    };
+    const pos0 = layout(new Set());
+    blocks.forEach(b => { b.el.style.top = pos0[b.i] + 'px'; });
+
+    const fmt = v => { const m = Math.floor(v / 60), s = Math.floor(v % 60);
+      return m + ':' + String(s).padStart(2, '0'); };
+
+    const tl = gsap.timeline({ paused: true });
+    tl.set('#kicker', { opacity: 0, y: 14 }, 0);
+    tl.set('#counterlab', { opacity: 0 }, 0);
+    tl.set('#counter', { opacity: 0, scale: 0.94, transformOrigin: 'left center' }, 0);
+    tl.set(['#pass1', '#pass2', '#pass3'], { opacity: 0, x: 18 }, 0);
+    tl.set('#endlab', { opacity: 0 }, 0);
+    blocks.forEach(b => tl.set(b.el, { opacity: 0, y: 26 }, 0));
+
+    // AMBIENT — camera push, grid parallax, vignette breath (Law #4)
+    tl.fromTo('#cam', { scale: 1 }, { scale: 1.014, duration: DUR, ease: 'none' }, 0);
+    tl.to('.grid-tex', { backgroundPosition: '26px 18px, 18px 26px', duration: DUR, ease: 'none' }, 0);
+    tl.to('.vignette', { opacity: 0.88, duration: DUR / 2, ease: 'sine.inOut', yoyo: true, repeat: 1 }, 0);
+
+    tl.to('#kicker', { opacity: 1, y: 0, duration: 0.6, ease: 'expo.out' }, 0.25);
+    // tower assembles from the bottom up
+    const fromBottom = [...blocks].reverse().map(b => b.el);
+    tl.to(fromBottom, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out', stagger: 0.04 }, 0.4);
+    tl.to('#counterlab', { opacity: 1, duration: 0.5, ease: 'power2.out' }, 1.1);
+    tl.to('#counter', { opacity: 1, scale: 1, duration: 0.55, ease: 'power2.out' }, 1.1);
+
+    const cnt = { v: 796 };
+    const tick = (to, at, d) => tl.to(cnt, { v: to, duration: d, ease: 'power2.out',
+      onUpdate: () => { document.getElementById('counter').textContent = fmt(cnt.v); } }, at);
+
+    const gone = new Set();
+    const pass = (cls, label, at, newV) => {
+      tl.to(label, { opacity: 1, x: 0, duration: 0.5, ease: 'expo.out' }, at);
+      const out = blocks.filter(b => b.cls === cls);
+      out.forEach((b, j) => {
+        const t0 = at + 0.15 + j * 0.11;
+        // arc fall: kicked left, then gravity takes it
+        tl.to(b.el, { x: -320, duration: 0.7, ease: 'power2.out' }, t0);
+        tl.to(b.el, { top: '+=520', rotation: (b.i % 2 ? -9 : 9), duration: 0.7,
+          ease: 'power1.in' }, t0);
+        tl.to(b.el, { opacity: 0, duration: 0.25, ease: 'power2.in' }, t0 + 0.45);
+        gone.add(b.i);
+      });
+      const posAfter = layout(gone);
+      blocks.forEach(b => { if (gone.has(b.i)) return;
+        tl.to(b.el, { top: posAfter[b.i], duration: 0.6, ease: 'power2.inOut' }, at + 0.55); });
+      tick(newV, at + 0.6, 0.6);
+    };
+
+    // hold on the before-state, then three passes
+    pass('dead',    '#pass1', 2.4, 735.4);
+    tl.to('#pass1', { opacity: 0.35, duration: 0.4 }, 4.0);
+    pass('debris',  '#pass2', 4.0, 566.4);
+    tl.to('#pass2', { opacity: 0.35, duration: 0.4 }, 5.8);
+    pass('silence', '#pass3', 5.8, 497.6);
+    tl.to('#pass3', { opacity: 0.35, duration: 0.4 }, 7.3);
+
+    // PUNCH — shockwave off the 8:17, counter pops, kept tower flushes bottom→top
+    tl.fromTo('#shock', { scale: 0.2, opacity: 0.9 }, { scale: 3.4, opacity: 0,
+      duration: 0.75, ease: 'power2.out' }, 7.35);
+    tl.to('#counter', { scale: 1.07, duration: 0.12, ease: 'power2.out' }, 7.3);
+    tl.to('#counter', { scale: 1, duration: 0.3, ease: 'power2.inOut' }, 7.44);
+    tl.to('#counter', { color: '#F0A8C2', duration: 0.45, ease: 'power2.out' }, 7.35);
+    const keeps = blocks.filter(b => b.cls === 'keep').map(b => b.el);
+    tl.to(keeps, { borderColor: '#F0A8C2', boxShadow: '0 0 24px rgba(240,168,194,.4)',
+      duration: 0.4, ease: 'power2.out', stagger: 0.06 }, 7.35);
+    tl.to('#endlab', { opacity: 1, duration: 0.5, ease: 'power2.out' }, 7.7);
+
+    // Law #11 anchor
+    tl.to({}, { duration: DUR }, 0);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['b3-tower'] = tl;
+  })();
+  </script>
+</div>
+</body>
+</html>
