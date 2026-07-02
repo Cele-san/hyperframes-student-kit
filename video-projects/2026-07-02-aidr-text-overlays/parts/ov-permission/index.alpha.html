@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIDR text overlays — ov-permission (overlay layer)</title>
+    <style>
+
+      @font-face { font-family: 'Cormorant Garamond'; font-style: italic; font-weight: 600; font-display: block; src: url(assets/fonts/CormorantGaramond-italic-600.woff2) format('woff2'); }
+      @font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/DMSans-normal-400.woff2) format('woff2'); }
+      @font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/DMSans-normal-500.woff2) format('woff2'); }
+      @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/JetBrainsMono-normal-400.woff2) format('woff2'); }
+      @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 700; font-display: block; src: url(assets/fonts/JetBrainsMono-normal-700.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      :root {
+        --cobalt: #152848; --card-fill: rgba(8, 14, 26, 0.80); --blossom: #F0A8C2;
+        --chrome: #F2F5F8; --divider: #243A60; --muted: rgba(242,245,248,0.55);
+        --hero: 'Cormorant Garamond', Georgia, serif;
+        --body: 'DM Sans', system-ui, sans-serif;
+        --mono: 'JetBrains Mono', ui-monospace, monospace;
+      }
+      html, body {
+        width: 1920px; height: 1080px; overflow: hidden;
+        /* TRANSPARENT canvas — overlay composites over AIDR-v5 in Resolve.
+           The reference proxy is the only visible bed; stripped for alpha export. */
+        background: transparent;
+        font-family: var(--body);
+        -webkit-font-smoothing: antialiased;
+      }
+      .reference-layer { position: absolute; inset: 0; z-index: 0; }
+      .reference-layer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .overlay-root { position: absolute; inset: 0; z-index: 10; }
+
+      /* ---- Tokyo Midnight glass vocabulary (alpha-safe: NO backdrop-filter) ---- */
+      .gw-edge {
+        background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 38%), var(--card-fill);
+        border: 1px solid rgba(240, 168, 194, 0.45);
+        border-radius: 16px;
+        box-shadow: 0 18px 50px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08);
+      }
+      .gw-inner {
+        background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 40%), var(--card-fill);
+        border: 1px solid var(--divider);
+        border-radius: 16px;
+        box-shadow: inset 0 0 36px rgba(120, 160, 230, 0.10), 0 14px 40px rgba(0,0,0,0.4);
+      }
+      .gw-naked { background: radial-gradient(120% 140% at 50% 50%, rgba(6,11,22,0.62) 0%, rgba(6,11,22,0) 70%); }
+
+      .eyebrow {
+        font-family: var(--mono); font-weight: 700; font-size: 17px;
+        letter-spacing: 0.2em; text-transform: uppercase; color: var(--blossom);
+        display: flex; align-items: center; gap: 12px;
+      }
+      .eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blossom); flex: none; }
+      .hero-line {
+        font-family: var(--hero); font-style: italic; font-weight: 600;
+        color: var(--chrome); line-height: 1.06; letter-spacing: 0.005em;
+      }
+      .kw { color: var(--blossom); }
+      .mono { font-family: var(--mono); }
+      .muted { color: var(--muted); }
+      .num {
+        font-family: var(--mono); font-weight: 700; color: var(--chrome);
+        font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1;
+      }
+      /* word-reveal atoms: every .w starts hidden; anime.js brings them in */
+      .w { display: inline-block; opacity: 0; will-change: transform, opacity; }
+      .pre { opacity: 0; }
+
+      /* ---- ov-permission ---- */
+
+      #ov-permission .pw { position: absolute; left: 108px; bottom: 148px; max-width: 900px; }
+      #ov-permission .l1 { font-size: 64px; }
+      #ov-permission .l2 { font-family: var(--body); font-weight: 500; font-size: 28px; color: var(--muted); margin-top: 14px; }
+      #ov-permission .l2 .hi { color: var(--blossom); font-weight: 700; }
+      #ov-permission .scrim { position: absolute; left: 0; bottom: 0; width: 1100px; height: 460px;
+        background: radial-gradient(115% 130% at 6% 96%, rgba(6,11,22,0.70) 0%, rgba(6,11,22,0) 68%); opacity: 0; }
+
+    </style>
+  </head>
+  <body>
+    <div
+      id="ov-permission"
+      data-composition-id="ov-permission"
+      data-start="0"
+      data-duration="7.0"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- reference layer stripped for alpha export -->
+
+      <div class="overlay-root">
+        <div class="scrim"></div>
+        <div class="pw">
+          <div class="hero-line l1">
+            <span class="w">zero</span> <span class="w">code</span> <span class="w">required.</span>
+          </div>
+          <div class="l2 pre">all it takes is <span class="hi">creative vision</span> + direction</div>
+        </div>
+
+      </div>
+    </div>
+
+    <script>window.__timelines = window.__timelines || {};</script>
+    <script type="module">
+      // anime.js v4 through the hyperframes adapter — GSAP-seconds facade on
+      // window.__timelines['ov-permission']; the stock CLI drives it per-frame.
+      import { createComposition } from './assets/vendor/hyperframes-anime-adapter.js';
+      import { stagger, svg, utils } from './assets/vendor/anime.esm.js';
+
+      const SLOT = 7.0;              // seconds — adapter anchors Law #11
+      const { tl } = createComposition('ov-permission', { duration: SLOT });
+      const S = 1000;                   // anime.js positions/durations are ms
+
+      tl.add('#ov-permission .scrim', { opacity: [0, 1], duration: 500, ease: 'out(2)' }, 0)
+        .add('#ov-permission .l1 .w', {
+          opacity: [0, 1],
+          y: [(el, i) => [42, 24, 12][i], 0],
+          scale: [0.95, 1],
+          duration: 500, ease: 'out(3)',
+        }, stagger(190, { start: 0.10 * S }))
+        // "creative vision and the direction" spoken ~local 3.4 — sub lands 3.2
+        .add('#ov-permission .l2', { opacity: [0, 1], y: [16, 0], duration: 480, ease: 'out(3)' }, 3.20 * S)
+        .add(['#ov-permission .pw', '#ov-permission .scrim'], { opacity: [1, 0], y: [0, -22], duration: 460, ease: 'in(2)' }, 6.30 * S);
+
+    </script>
+  </body>
+</html>

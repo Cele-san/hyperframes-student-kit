@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIDR text overlays — ov-cta (overlay layer)</title>
+    <style>
+
+      @font-face { font-family: 'Cormorant Garamond'; font-style: italic; font-weight: 600; font-display: block; src: url(assets/fonts/CormorantGaramond-italic-600.woff2) format('woff2'); }
+      @font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/DMSans-normal-400.woff2) format('woff2'); }
+      @font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/DMSans-normal-500.woff2) format('woff2'); }
+      @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/JetBrainsMono-normal-400.woff2) format('woff2'); }
+      @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 700; font-display: block; src: url(assets/fonts/JetBrainsMono-normal-700.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      :root {
+        --cobalt: #152848; --card-fill: rgba(8, 14, 26, 0.80); --blossom: #F0A8C2;
+        --chrome: #F2F5F8; --divider: #243A60; --muted: rgba(242,245,248,0.55);
+        --hero: 'Cormorant Garamond', Georgia, serif;
+        --body: 'DM Sans', system-ui, sans-serif;
+        --mono: 'JetBrains Mono', ui-monospace, monospace;
+      }
+      html, body {
+        width: 1920px; height: 1080px; overflow: hidden;
+        /* TRANSPARENT canvas — overlay composites over AIDR-v5 in Resolve.
+           The reference proxy is the only visible bed; stripped for alpha export. */
+        background: transparent;
+        font-family: var(--body);
+        -webkit-font-smoothing: antialiased;
+      }
+      .reference-layer { position: absolute; inset: 0; z-index: 0; }
+      .reference-layer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .overlay-root { position: absolute; inset: 0; z-index: 10; }
+
+      /* ---- Tokyo Midnight glass vocabulary (alpha-safe: NO backdrop-filter) ---- */
+      .gw-edge {
+        background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 38%), var(--card-fill);
+        border: 1px solid rgba(240, 168, 194, 0.45);
+        border-radius: 16px;
+        box-shadow: 0 18px 50px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08);
+      }
+      .gw-inner {
+        background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 40%), var(--card-fill);
+        border: 1px solid var(--divider);
+        border-radius: 16px;
+        box-shadow: inset 0 0 36px rgba(120, 160, 230, 0.10), 0 14px 40px rgba(0,0,0,0.4);
+      }
+      .gw-naked { background: radial-gradient(120% 140% at 50% 50%, rgba(6,11,22,0.62) 0%, rgba(6,11,22,0) 70%); }
+
+      .eyebrow {
+        font-family: var(--mono); font-weight: 700; font-size: 17px;
+        letter-spacing: 0.2em; text-transform: uppercase; color: var(--blossom);
+        display: flex; align-items: center; gap: 12px;
+      }
+      .eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blossom); flex: none; }
+      .hero-line {
+        font-family: var(--hero); font-style: italic; font-weight: 600;
+        color: var(--chrome); line-height: 1.06; letter-spacing: 0.005em;
+      }
+      .kw { color: var(--blossom); }
+      .mono { font-family: var(--mono); }
+      .muted { color: var(--muted); }
+      .num {
+        font-family: var(--mono); font-weight: 700; color: var(--chrome);
+        font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1;
+      }
+      /* word-reveal atoms: every .w starts hidden; anime.js brings them in */
+      .w { display: inline-block; opacity: 0; will-change: transform, opacity; }
+      .pre { opacity: 0; }
+
+      /* ---- ov-cta ---- */
+
+      #ov-cta .lt { position: absolute; left: 108px; bottom: 132px; padding: 24px 32px; max-width: 760px; }
+      #ov-cta .row { display: flex; align-items: center; gap: 16px; }
+      #ov-cta .term { font-family: var(--mono); font-weight: 700; font-size: 32px; color: var(--chrome); letter-spacing: 0.02em; }
+      #ov-cta .free { font-family: var(--mono); font-weight: 700; font-size: 15px; letter-spacing: 0.16em;
+        text-transform: uppercase; color: var(--cobalt); background: var(--blossom); border-radius: 7px; padding: 7px 12px; }
+      #ov-cta .sub { font-family: var(--body); font-size: 22px; color: var(--muted); margin-top: 12px; }
+      #ov-cta .sub .hi { color: var(--chrome); font-weight: 500; }
+      #ov-cta .ask { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--divider);
+        font-family: var(--body); font-size: 24px; color: var(--chrome); font-weight: 500; }
+      #ov-cta .ask .kw { font-weight: 700; }
+
+    </style>
+  </head>
+  <body>
+    <div
+      id="ov-cta"
+      data-composition-id="ov-cta"
+      data-start="0"
+      data-duration="16.2"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- =================================================================
+           REFERENCE LAYER START — stripped before alpha export (gate3-strip.py).
+           Proxy only. proxy t=0 == AIDR-v5 timecode 10:17.30
+           ================================================================= -->
+      <div class="reference-layer">
+        <video id="ref-video" data-start="0" data-duration="16.2" data-track-index="0"
+          src="assets/proxy.mp4" muted playsinline></video>
+      </div>
+      <audio id="ref-audio" data-start="0" data-duration="16.2" data-track-index="1"
+        src="assets/proxy.mp4" data-volume="1.0"></audio>
+      <!-- ===================== REFERENCE LAYER END ======================= -->
+
+      <div class="overlay-root">
+        <div class="lt gw-edge pre">
+          <div class="eyebrow" style="margin-bottom:14px"><span class="dot"></span>build it yourself</div>
+          <div class="row">
+            <div class="term">davinci-resolve-mcp</div>
+            <div class="free pre">free · link below</div>
+          </div>
+          <div class="sub pre">pair it with <span class="hi">WhisperX</span> · point it at a scripted video</div>
+          <div class="ask pre">want the full setup, from scratch? <span class="kw">say so in the comments</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <script>window.__timelines = window.__timelines || {};</script>
+    <script type="module">
+      // anime.js v4 through the hyperframes adapter — GSAP-seconds facade on
+      // window.__timelines['ov-cta']; the stock CLI drives it per-frame.
+      import { createComposition } from './assets/vendor/hyperframes-anime-adapter.js';
+      import { stagger, svg, utils } from './assets/vendor/anime.esm.js';
+
+      const SLOT = 16.2;              // seconds — adapter anchors Law #11
+      const { tl } = createComposition('ov-cta', { duration: SLOT });
+      const S = 1000;                   // anime.js positions/durations are ms
+
+      tl.add('#ov-cta .lt', { opacity: [0, 1], y: [28, 0], duration: 500, ease: 'out(3)' }, 0.04 * S)
+        .add('#ov-cta .free', { opacity: [0, 1], scale: [0.85, 1], duration: 420, ease: 'out(3)' }, 0.90 * S)
+        // "pair it with WhisperX..." spoken ~local 5.5
+        .add('#ov-cta .sub', { opacity: [0, 1], y: [12, 0], duration: 460, ease: 'out(3)' }, 5.30 * S)
+        // comment ask leads "tell me in the comments" (local 14.04, lead: land 13.6)
+        .add('#ov-cta .ask', { opacity: [0, 1], y: [14, 0], duration: 480, ease: 'out(3)' }, 13.60 * S)
+        // no exit — CTA holds to the end of the video (outro hold rule)
+
+    </script>
+  </body>
+</html>

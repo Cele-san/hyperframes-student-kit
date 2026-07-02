@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIDR text overlays — ov-repetition (overlay layer)</title>
+    <style>
+
+      @font-face { font-family: 'Cormorant Garamond'; font-style: italic; font-weight: 600; font-display: block; src: url(assets/fonts/CormorantGaramond-italic-600.woff2) format('woff2'); }
+      @font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/DMSans-normal-400.woff2) format('woff2'); }
+      @font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/DMSans-normal-500.woff2) format('woff2'); }
+      @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/JetBrainsMono-normal-400.woff2) format('woff2'); }
+      @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 700; font-display: block; src: url(assets/fonts/JetBrainsMono-normal-700.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      :root {
+        --cobalt: #152848; --card-fill: rgba(8, 14, 26, 0.80); --blossom: #F0A8C2;
+        --chrome: #F2F5F8; --divider: #243A60; --muted: rgba(242,245,248,0.55);
+        --hero: 'Cormorant Garamond', Georgia, serif;
+        --body: 'DM Sans', system-ui, sans-serif;
+        --mono: 'JetBrains Mono', ui-monospace, monospace;
+      }
+      html, body {
+        width: 1920px; height: 1080px; overflow: hidden;
+        /* TRANSPARENT canvas — overlay composites over AIDR-v5 in Resolve.
+           The reference proxy is the only visible bed; stripped for alpha export. */
+        background: transparent;
+        font-family: var(--body);
+        -webkit-font-smoothing: antialiased;
+      }
+      .reference-layer { position: absolute; inset: 0; z-index: 0; }
+      .reference-layer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .overlay-root { position: absolute; inset: 0; z-index: 10; }
+
+      /* ---- Tokyo Midnight glass vocabulary (alpha-safe: NO backdrop-filter) ---- */
+      .gw-edge {
+        background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 38%), var(--card-fill);
+        border: 1px solid rgba(240, 168, 194, 0.45);
+        border-radius: 16px;
+        box-shadow: 0 18px 50px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08);
+      }
+      .gw-inner {
+        background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 40%), var(--card-fill);
+        border: 1px solid var(--divider);
+        border-radius: 16px;
+        box-shadow: inset 0 0 36px rgba(120, 160, 230, 0.10), 0 14px 40px rgba(0,0,0,0.4);
+      }
+      .gw-naked { background: radial-gradient(120% 140% at 50% 50%, rgba(6,11,22,0.62) 0%, rgba(6,11,22,0) 70%); }
+
+      .eyebrow {
+        font-family: var(--mono); font-weight: 700; font-size: 17px;
+        letter-spacing: 0.2em; text-transform: uppercase; color: var(--blossom);
+        display: flex; align-items: center; gap: 12px;
+      }
+      .eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blossom); flex: none; }
+      .hero-line {
+        font-family: var(--hero); font-style: italic; font-weight: 600;
+        color: var(--chrome); line-height: 1.06; letter-spacing: 0.005em;
+      }
+      .kw { color: var(--blossom); }
+      .mono { font-family: var(--mono); }
+      .muted { color: var(--muted); }
+      .num {
+        font-family: var(--mono); font-weight: 700; color: var(--chrome);
+        font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1;
+      }
+      /* word-reveal atoms: every .w starts hidden; anime.js brings them in */
+      .w { display: inline-block; opacity: 0; will-change: transform, opacity; }
+      .pre { opacity: 0; }
+
+      /* ---- ov-repetition ---- */
+
+      /* hero lives in the EMPTY LEFT HALF — Andy holds center-right of frame */
+      #ov-repetition .stagewrap { position: absolute; left: 96px; top: 0; bottom: 0; width: 760px;
+        display: flex; flex-direction: column; justify-content: center; }
+      #ov-repetition .scrim { position: absolute; left: -320px; top: 0; bottom: 0; width: 1250px;
+        background: linear-gradient(90deg, rgba(6,11,22,0.78) 0%, rgba(6,11,22,0.62) 55%, rgba(6,11,22,0) 100%); opacity: 0; }
+      #ov-repetition .line { position: relative; font-size: 92px; text-align: left; line-height: 1.12; }
+      #ov-repetition .line .row { display: block; }
+      #ov-repetition .line .not { color: var(--muted); }
+      #ov-repetition .line .orig { color: var(--muted); text-decoration: none; position: relative; }
+      #ov-repetition .strike { position: absolute; left: 0; top: 56%; height: 5px; width: 100%;
+        background: var(--blossom); transform-origin: left center; transform: scaleX(0); border-radius: 3px; }
+
+    </style>
+  </head>
+  <body>
+    <div
+      id="ov-repetition"
+      data-composition-id="ov-repetition"
+      data-start="0"
+      data-duration="8.0"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- =================================================================
+           REFERENCE LAYER START — stripped before alpha export (gate3-strip.py).
+           Proxy only. proxy t=0 == AIDR-v5 timecode 6:20.90
+           ================================================================= -->
+      <div class="reference-layer">
+        <video id="ref-video" data-start="0" data-duration="8.0" data-track-index="0"
+          src="assets/proxy.mp4" muted playsinline></video>
+      </div>
+      <audio id="ref-audio" data-start="0" data-duration="8.0" data-track-index="1"
+        src="assets/proxy.mp4" data-volume="1.0"></audio>
+      <!-- ===================== REFERENCE LAYER END ======================= -->
+
+      <div class="overlay-root">
+        <div class="stagewrap">
+          <div class="scrim"></div>
+          <div class="line hero-line">
+            <span class="row"><span class="w">repetition,</span></span>
+            <span class="row"><span class="w not">not</span> <span class="w orig">originality<span class="strike"></span></span></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script>window.__timelines = window.__timelines || {};</script>
+    <script type="module">
+      // anime.js v4 through the hyperframes adapter — GSAP-seconds facade on
+      // window.__timelines['ov-repetition']; the stock CLI drives it per-frame.
+      import { createComposition } from './assets/vendor/hyperframes-anime-adapter.js';
+      import { stagger, svg, utils } from './assets/vendor/anime.esm.js';
+
+      const SLOT = 8.0;              // seconds — adapter anchors Law #11
+      const { tl } = createComposition('ov-repetition', { duration: SLOT });
+      const S = 1000;                   // anime.js positions/durations are ms
+
+      // the breathing beat — words land one per onset, slow letter-spacing ease on hold
+      tl.add('#ov-repetition .scrim', { opacity: [0, 1], duration: 600, ease: 'out(2)' }, 0)
+        .add('#ov-repetition .line .w', {
+          opacity: [0, 1],
+          y: [(el, i) => [40, 22, 12][i], 0],
+          scale: [0.94, 1],
+          duration: 560, ease: 'out(3)',
+        }, stagger(300, { start: 0.10 * S }))
+        // blossom strike through "originality" once the word has landed (local 1.90)
+        .add('#ov-repetition .strike', { scaleX: [0, 1], duration: 450, ease: 'out(3)' }, 1.90 * S)
+        // slow drift on hold — letter-spacing breathes open (camera never sleeps)
+        .add('#ov-repetition .line', { letterSpacing: ['0.005em', '0.03em'], scale: [1, 1.025], duration: 4600, ease: 'out(1)' }, 2.40 * S)
+        .add(['#ov-repetition .line', '#ov-repetition .scrim'], { opacity: [1, 0], duration: 550, ease: 'in(2)' }, 7.30 * S);
+
+    </script>
+  </body>
+</html>
