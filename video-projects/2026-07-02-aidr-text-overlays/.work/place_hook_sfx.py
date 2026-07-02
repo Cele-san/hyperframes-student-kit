@@ -52,10 +52,14 @@ root = mp_.GetRootFolder()
 bins = {f.GetName(): f for f in (root.GetSubFolderList() or [])}
 assert "TEXT-OVERLAYS" in bins
 mp_.SetCurrentFolder(bins["TEXT-OVERLAYS"])
-have = {c.GetName(): c for c in (bins["TEXT-OVERLAYS"].GetClipList() or [])}
+folder = mp_.GetCurrentFolder()
+assert folder and folder.GetName() == "TEXT-OVERLAYS", folder
+have = {c.GetName(): c for c in (folder.GetClipList() or [])}
 if "hook-sfx-stem.wav" not in have:
     mp_.ImportMedia([STEM])
-    have = {c.GetName(): c for c in (bins["TEXT-OVERLAYS"].GetClipList() or [])}
+    folder = mp_.GetCurrentFolder()
+assert folder and folder.GetName() == "TEXT-OVERLAYS", folder
+have = {c.GetName(): c for c in (folder.GetClipList() or [])}
 clip = have.get("hook-sfx-stem.wav")
 assert clip, "stem not in media pool"
 

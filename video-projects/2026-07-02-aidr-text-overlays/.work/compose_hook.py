@@ -64,11 +64,13 @@ root = mp_.GetRootFolder()
 bins = {f.GetName(): f for f in (root.GetSubFolderList() or [])}
 assert "TEXT-OVERLAYS" in bins
 mp_.SetCurrentFolder(bins["TEXT-OVERLAYS"])
-have = {c.GetName(): c for c in (bins["TEXT-OVERLAYS"].GetClipList() or [])}
+folder = mp_.GetCurrentFolder()
+assert folder and folder.GetName() == "TEXT-OVERLAYS", folder
+have = {c.GetName(): c for c in (folder.GetClipList() or [])}
 need = [p["path"] for p in parts if p["part"] + ".mov" not in have]
 if need:
     mp_.ImportMedia(need)
-    have = {c.GetName(): c for c in (bins["TEXT-OVERLAYS"].GetClipList() or [])}
+    have = {c.GetName(): c for c in (folder.GetClipList() or [])}
 
 infos = []
 for p in parts:
