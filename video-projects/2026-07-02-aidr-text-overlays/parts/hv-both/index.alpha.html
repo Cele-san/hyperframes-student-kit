@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIDR v6 hook — hv-both (overlay layer)</title>
+    <style>
+      @font-face { font-family: 'Cormorant Garamond'; font-style: italic; font-weight: 600; font-display: block; src: url(assets/fonts/CormorantGaramond-italic-600.woff2) format('woff2'); }
+      @font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/DMSans-normal-400.woff2) format('woff2'); }
+      @font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/DMSans-normal-500.woff2) format('woff2'); }
+      @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/JetBrainsMono-normal-400.woff2) format('woff2'); }
+      @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 700; font-display: block; src: url(assets/fonts/JetBrainsMono-normal-700.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      :root {
+        --cobalt: #152848; --card-fill: rgba(8, 14, 26, 0.80); --blossom: #F0A8C2;
+        --chrome: #F2F5F8; --divider: #243A60; --muted: rgba(242,245,248,0.55);
+        --hero: 'Cormorant Garamond', Georgia, serif;
+        --body: 'DM Sans', system-ui, sans-serif;
+        --mono: 'JetBrains Mono', ui-monospace, monospace;
+      }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: transparent;
+        font-family: var(--body); -webkit-font-smoothing: antialiased; }
+      .reference-layer { position: absolute; inset: 0; z-index: 0; }
+      .reference-layer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .overlay-root { position: absolute; inset: 0; z-index: 10; }
+      .gw-inner { background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 40%), var(--card-fill);
+        border: 1px solid var(--divider); border-radius: 12px;
+        box-shadow: inset 0 0 36px rgba(120,160,230,0.10), 0 14px 40px rgba(0,0,0,0.4); }
+      .eyebrow { font-family: var(--mono); font-weight: 700; font-size: 17px; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--blossom); display: flex; align-items: center; gap: 12px; }
+      .eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blossom); flex: none; }
+
+      /* ---- hv-both ---- */
+      #hv-both .hk { position: absolute; left: 108px; bottom: 148px; }
+      #hv-both .eyebrow { opacity: 0; margin-bottom: 22px; white-space: nowrap; }
+      #hv-both .row { display: flex; align-items: center; gap: 26px; }
+      #hv-both .card { font-family: var(--hero); font-style: italic; font-weight: 600;
+        font-size: 44px; color: var(--chrome); padding: 18px 30px; opacity: 0;
+        white-space: nowrap; will-change: transform, opacity; }
+      #hv-both .card .sub { display: block; font-family: var(--mono); font-style: normal; font-weight: 700;
+        font-size: 15px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-top: 8px; }
+      #hv-both .plus { width: 54px; height: 54px; flex: none; }
+      #hv-both .plus path { stroke: var(--blossom); stroke-width: 5; fill: none; stroke-linecap: round; }
+      #hv-both .scrim { position: absolute; left: -170px; bottom: -156px; width: 1250px; height: 480px;
+        background: radial-gradient(115% 130% at 10% 92%, rgba(6,11,22,0.72) 0%, rgba(6,11,22,0) 68%);
+        opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="hv-both" data-composition-id="hv-both" data-start="0" data-duration="8.1"
+      data-width="1920" data-height="1080">
+      <!-- reference layer stripped for alpha export -->
+
+      <div class="overlay-root">
+        <div class="scrim"></div>
+        <div class="hk">
+          <div class="eyebrow"><span class="dot"></span>best of both worlds</div>
+          <div class="row">
+            <div class="card gw-inner ed">your editor<span class="sub">you, hands on</span></div>
+            <svg class="plus" viewBox="0 0 54 54">
+              <path class="ph" d="M9 27 L45 27"/>
+              <path class="pv" d="M27 9 L27 45"/>
+            </svg>
+            <div class="card gw-inner ag">your agent<span class="sub">automated</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>window.__timelines = window.__timelines || {};</script>
+    <script type="module">
+      // anime.js v4 through the hyperframes adapter — GSAP-seconds facade on
+      // window.__timelines['hv-both']; the stock CLI drives it per-frame.
+      import { createComposition } from './assets/vendor/hyperframes-anime-adapter.js';
+      import { svg, utils } from './assets/vendor/anime.esm.js';
+
+      const SLOT = 8.1;
+      const { tl } = createComposition('hv-both', { duration: SLOT });
+      const S = 1000;
+
+      utils.set('#hv-both .plus path', { opacity: 0 });
+
+      tl.add('#hv-both .scrim',   { opacity: [0, 1], duration: 500, ease: 'out(2)' }, 0.64 * S)
+        // eyebrow on "the best of both worlds" (57.84; local 1.04, −0.2)
+        .add('#hv-both .eyebrow', { opacity: [0, 1], y: [14, 0], duration: 430, ease: 'out(3)' }, 0.84 * S)
+        // "your editor" slides in from the left on "…in your video editor" (61.30; local 4.50)
+        .add('#hv-both .ed', { opacity: [0, 1], x: [-140, 0], duration: 500, ease: 'out(3)' }, 4.30 * S)
+        // the + draws between phrases ("and also", 61.64–62.08)
+        .add('#hv-both .plus path', { opacity: [0, 1], duration: 80, ease: 'out(2)' }, 5.40 * S)
+        .add(svg.createDrawable('#hv-both .ph'), { draw: ['0 0', '0 1'], duration: 260, ease: 'out(2)' }, 5.40 * S)
+        .add(svg.createDrawable('#hv-both .pv'), { draw: ['0 0', '0 1'], duration: 260, ease: 'out(2)' }, 5.56 * S)
+        // "your agent" slides in from the right on "automated through your agent" (63.30; local 6.50)
+        .add('#hv-both .ag', { opacity: [0, 1], x: [140, 0], duration: 500, ease: 'out(3)' }, 6.30 * S)
+        // settle pulse when the pair completes
+        .add('#hv-both .row', { scale: [{ to: 1.02, duration: 200, ease: 'out(2)' }, { to: 1, duration: 220, ease: 'out(2)' }] }, 7.10 * S)
+        // fast exit — hard cut to studio A-roll at local 8.23
+        .add('#hv-both .hk',    { opacity: [1, 0], duration: 300, ease: 'in(2)' }, 7.75 * S)
+        .add('#hv-both .scrim', { opacity: 0, duration: 300, ease: 'in(2)' }, 7.75 * S);
+    </script>
+  </body>
+</html>

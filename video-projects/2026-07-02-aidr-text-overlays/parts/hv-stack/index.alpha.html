@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIDR v6 hook — hv-stack (overlay layer)</title>
+    <style>
+      @font-face { font-family: 'Cormorant Garamond'; font-style: italic; font-weight: 600; font-display: block; src: url(assets/fonts/CormorantGaramond-italic-600.woff2) format('woff2'); }
+      @font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/DMSans-normal-400.woff2) format('woff2'); }
+      @font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/DMSans-normal-500.woff2) format('woff2'); }
+      @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/JetBrainsMono-normal-400.woff2) format('woff2'); }
+      @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 700; font-display: block; src: url(assets/fonts/JetBrainsMono-normal-700.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      :root {
+        --cobalt: #152848; --card-fill: rgba(8, 14, 26, 0.80); --blossom: #F0A8C2;
+        --chrome: #F2F5F8; --divider: #243A60; --muted: rgba(242,245,248,0.55);
+        --hero: 'Cormorant Garamond', Georgia, serif;
+        --body: 'DM Sans', system-ui, sans-serif;
+        --mono: 'JetBrains Mono', ui-monospace, monospace;
+      }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: transparent;
+        font-family: var(--body); -webkit-font-smoothing: antialiased; }
+      .reference-layer { position: absolute; inset: 0; z-index: 0; }
+      .reference-layer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .overlay-root { position: absolute; inset: 0; z-index: 10; }
+      .gw-inner { background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 40%), var(--card-fill);
+        border: 1px solid var(--divider); border-radius: 12px;
+        box-shadow: inset 0 0 36px rgba(120,160,230,0.10), 0 14px 40px rgba(0,0,0,0.4); }
+      .gw-edge { background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 38%), var(--card-fill);
+        border: 1px solid rgba(240,168,194,0.45); border-radius: 12px;
+        box-shadow: 0 18px 50px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08); }
+      .eyebrow { font-family: var(--mono); font-weight: 700; font-size: 17px; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--blossom); display: flex; align-items: center; gap: 12px; }
+      .eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blossom); flex: none; }
+
+      /* ---- hv-stack ---- */
+      #hv-stack .col { position: absolute; left: 84px; top: 292px; width: 396px; }
+      #hv-stack .eyebrow { opacity: 0; margin-bottom: 22px; white-space: nowrap; }
+      #hv-stack .chip { display: flex; align-items: center; gap: 14px; margin-bottom: 14px;
+        padding: 15px 20px; font-weight: 500; font-size: 25px; color: var(--chrome); opacity: 0;
+        will-change: transform, opacity; }
+      #hv-stack .chip svg { width: 24px; height: 24px; flex: none; }
+      #hv-stack .chip svg path { stroke: var(--blossom); stroke-width: 3; fill: none;
+        stroke-linecap: round; stroke-linejoin: round; }
+      #hv-stack .chip20 { margin-top: 22px; font-family: var(--mono); font-weight: 700;
+        font-size: 24px; color: var(--blossom); opacity: 0; padding: 15px 20px; will-change: transform, opacity; }
+      #hv-stack .stamp { position: absolute; left: 214px; top: 388px; transform: rotate(-6deg);
+        font-family: var(--mono); font-weight: 700; font-size: 30px; letter-spacing: 0.14em;
+        color: var(--blossom); border: 3px solid var(--blossom); border-radius: 10px;
+        padding: 12px 22px; background: rgba(8,14,26,0.72); opacity: 0; will-change: transform, opacity; }
+      #hv-stack .scrim { position: absolute; left: -160px; top: 160px; width: 820px; height: 760px;
+        background: radial-gradient(120% 130% at 18% 45%, rgba(6,11,22,0.72) 0%, rgba(6,11,22,0) 68%);
+        opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="hv-stack" data-composition-id="hv-stack" data-start="0" data-duration="17.3"
+      data-width="1920" data-height="1080">
+      <!-- reference layer stripped for alpha export -->
+
+      <div class="overlay-root">
+        <div class="scrim"></div>
+        <div class="col">
+          <div class="eyebrow"><span class="dot"></span>the 80% — AI edited</div>
+          <div class="chip gw-inner c1"><svg viewBox="0 0 24 24"><path class="tick" d="M4 12 L10 18 L20 6"/></svg>text animation</div>
+          <div class="chip gw-inner c2"><svg viewBox="0 0 24 24"><path class="tick" d="M4 12 L10 18 L20 6"/></svg>graphic animation</div>
+          <div class="chip gw-inner c3"><svg viewBox="0 0 24 24"><path class="tick" d="M4 12 L10 18 L20 6"/></svg>b-roll overlays</div>
+          <div class="chip gw-inner c4"><svg viewBox="0 0 24 24"><path class="tick" d="M4 12 L10 18 L20 6"/></svg>the cuts themselves</div>
+          <div class="chip20 gw-edge">the 20% — mine</div>
+        </div>
+        <div class="stamp">ALL — EDITED BY AI</div>
+      </div>
+    </div>
+
+    <script>window.__timelines = window.__timelines || {};</script>
+    <script type="module">
+      // anime.js v4 through the hyperframes adapter — GSAP-seconds facade on
+      // window.__timelines['hv-stack']; the stock CLI drives it per-frame.
+      import { createComposition } from './assets/vendor/hyperframes-anime-adapter.js';
+      import { svg } from './assets/vendor/anime.esm.js';
+
+      const SLOT = 17.3;
+      const { tl } = createComposition('hv-stack', { duration: SLOT });
+      const S = 1000;
+
+      tl.add('#hv-stack .scrim',   { opacity: [0, 1], duration: 500, ease: 'out(2)' }, 0.50 * S)
+        .add('#hv-stack .eyebrow', { opacity: [0, 1], y: [14, 0], duration: 430, ease: 'out(3)' }, 0.60 * S);
+
+      // chips land on their spoken words: 12.18 / 13.52 / 15.40 / 17.46 (−0.2 lead, local −8.5)
+      const chips = [['.c1', 3.50], ['.c2', 4.84], ['.c3', 6.70], ['.c4', 8.76]];
+      for (const [sel, t] of chips) {
+        tl.add(`#hv-stack ${sel}`, { opacity: [0, 1], x: [-26, 0], duration: 420, ease: 'out(3)' }, t * S)
+          .add(svg.createDrawable(`#hv-stack ${sel} .tick`), { draw: ['0 0', '0 1'], duration: 300, ease: 'out(2)' }, (t + 0.10) * S);
+      }
+
+      // ALL — EDITED BY AI ink stamp on "…all edited by AI." (19.38–20.10)
+      tl.add('#hv-stack .stamp', { opacity: [0, 1], duration: 120, ease: 'out(2)' }, 11.40 * S)
+        .add('#hv-stack .stamp', { scale: [1.7, 1], duration: 380, ease: 'out(4)' }, 11.40 * S)
+        // flip on "what wasn't edited by AI" (22.60): the 80% recedes…
+        .add('#hv-stack .chip',  { opacity: 0.34, duration: 420, ease: 'out(2)' }, 13.90 * S)
+        .add('#hv-stack .stamp', { opacity: 0.34, duration: 420, ease: 'out(2)' }, 13.90 * S)
+        // …and the 20% takes the frame
+        .add('#hv-stack .chip20', { opacity: [0, 1], y: [22, 0], scale: [0.97, 1], duration: 440, ease: 'out(3)' }, 14.86 * S)
+        // out before "…editing with agents" pivot
+        .add('#hv-stack .col',   { opacity: [1, 0], y: [0, -24], duration: 400, ease: 'in(2)' }, 16.80 * S)
+        .add('#hv-stack .stamp', { opacity: 0, duration: 400, ease: 'in(2)' }, 16.80 * S)
+        .add('#hv-stack .scrim', { opacity: 0, duration: 400, ease: 'in(2)' }, 16.80 * S);
+    </script>
+  </body>
+</html>
