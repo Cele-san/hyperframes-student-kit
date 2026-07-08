@@ -1,0 +1,182 @@
+{
+  "base": "AIDR-v5.mp4",
+  "base_duration_s": 634.6,
+  "fps_timeline": 29.97,
+  "cues": [
+    {
+      "part": "ov-hook",
+      "start_s": 0.5,
+      "dur_s": 8.0,
+      "beat": "B0 hook",
+      "numbers": [],
+      "reserved": false
+    },
+    {
+      "part": "ov-8090",
+      "start_s": 46.2,
+      "dur_s": 5.1,
+      "beat": "B0 stat",
+      "numbers": [
+        "80",
+        "90",
+        "10",
+        "20"
+      ],
+      "reserved": false
+    },
+    {
+      "part": "ov-cutsheet",
+      "start_s": 91.2,
+      "dur_s": 6.5,
+      "beat": "B1 cut sheet",
+      "numbers": [],
+      "reserved": false
+    },
+    {
+      "part": "ov-fcpxml",
+      "start_s": 146.3,
+      "dur_s": 8.0,
+      "beat": "B2 fcpxml",
+      "numbers": [],
+      "reserved": false
+    },
+    {
+      "part": "ov-repo",
+      "start_s": 185.8,
+      "dur_s": 8.0,
+      "beat": "B2 repo static",
+      "numbers": [],
+      "reserved": false
+    },
+    {
+      "part": "ov-hours",
+      "start_s": 342.4,
+      "dur_s": 6.0,
+      "beat": "B5 hours stat",
+      "numbers": [
+        "2",
+        "4"
+      ],
+      "reserved": false
+    },
+    {
+      "part": "ov-repetition",
+      "start_s": 380.9,
+      "dur_s": 8.0,
+      "beat": "B5 hero",
+      "numbers": [],
+      "reserved": false
+    },
+    {
+      "part": "ov-permission",
+      "start_s": 571.1,
+      "dur_s": 7.0,
+      "beat": "B7 permission",
+      "numbers": [],
+      "reserved": false
+    },
+    {
+      "part": "ov-thesis",
+      "start_s": 602.5,
+      "dur_s": 7.0,
+      "beat": "B8 thesis",
+      "numbers": [],
+      "reserved": false
+    },
+    {
+      "part": "ov-cta",
+      "start_s": 617.3,
+      "dur_s": 16.2,
+      "beat": "B9 cta",
+      "numbers": [],
+      "reserved": false
+    },
+    {
+      "part": "b0-twofates",
+      "start_s": 53.4,
+      "dur_s": 12.0,
+      "beat": "RESERVED (other session)",
+      "numbers": [],
+      "reserved": true
+    },
+    {
+      "part": "b3-wordrain",
+      "start_s": 197.7,
+      "dur_s": 8.0,
+      "beat": "RESERVED (other session)",
+      "numbers": [],
+      "reserved": true
+    },
+    {
+      "part": "b3-cutter",
+      "start_s": 219.3,
+      "dur_s": 14.0,
+      "beat": "RESERVED (other session)",
+      "numbers": [],
+      "reserved": true
+    },
+    {
+      "part": "b3-tower",
+      "start_s": 234.5,
+      "dur_s": 9.0,
+      "beat": "RESERVED (other session)",
+      "numbers": [],
+      "reserved": true
+    },
+    {
+      "part": "b5-relay",
+      "start_s": 316.0,
+      "dur_s": 10.0,
+      "beat": "RESERVED (other session)",
+      "numbers": [],
+      "reserved": true
+    },
+    {
+      "part": "b7-asymptote",
+      "start_s": 445.0,
+      "dur_s": 8.0,
+      "beat": "RESERVED (other session)",
+      "numbers": [],
+      "reserved": true
+    },
+    {
+      "part": "hv-stack",
+      "start_s": 8.5,
+      "dur_s": 17.3,
+      "beat": "hook 80/20 checklist",
+      "numbers": [
+        "80",
+        "20"
+      ],
+      "reserved": false,
+      "timeline": "AIDR v6"
+    },
+    {
+      "part": "hv-loop",
+      "start_s": 28.5,
+      "dur_s": 15.1,
+      "beat": "hook doom loop",
+      "numbers": [],
+      "reserved": false,
+      "timeline": "AIDR v6"
+    },
+    {
+      "part": "hv-seesay",
+      "start_s": 46.8,
+      "dur_s": 9.2,
+      "beat": "hook can't-describe",
+      "numbers": [],
+      "reserved": false,
+      "timeline": "AIDR v6"
+    },
+    {
+      "part": "hv-both",
+      "start_s": 56.8,
+      "dur_s": 8.1,
+      "beat": "hook both worlds",
+      "numbers": [],
+      "reserved": false,
+      "timeline": "AIDR v6"
+    }
+  ]
+}

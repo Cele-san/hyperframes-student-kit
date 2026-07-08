@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>AIDR v6 hook — hv-loop (overlay layer)</title>
+    <style>
+      @font-face { font-family: 'Cormorant Garamond'; font-style: italic; font-weight: 600; font-display: block; src: url(assets/fonts/CormorantGaramond-italic-600.woff2) format('woff2'); }
+      @font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/DMSans-normal-400.woff2) format('woff2'); }
+      @font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/DMSans-normal-500.woff2) format('woff2'); }
+      @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: block; src: url(assets/fonts/JetBrainsMono-normal-400.woff2) format('woff2'); }
+      @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 700; font-display: block; src: url(assets/fonts/JetBrainsMono-normal-700.woff2) format('woff2'); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      :root {
+        --cobalt: #152848; --card-fill: rgba(8, 14, 26, 0.80); --blossom: #F0A8C2;
+        --chrome: #F2F5F8; --divider: #243A60; --muted: rgba(242,245,248,0.55);
+        --hero: 'Cormorant Garamond', Georgia, serif;
+        --body: 'DM Sans', system-ui, sans-serif;
+        --mono: 'JetBrains Mono', ui-monospace, monospace;
+      }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: transparent;
+        font-family: var(--body); -webkit-font-smoothing: antialiased; }
+      .reference-layer { position: absolute; inset: 0; z-index: 0; }
+      .reference-layer video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .overlay-root { position: absolute; inset: 0; z-index: 10; }
+      .gw-edge { background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 38%), var(--card-fill);
+        border: 1px solid rgba(240,168,194,0.45); border-radius: 12px;
+        box-shadow: 0 18px 50px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08); }
+      .eyebrow { font-family: var(--mono); font-weight: 700; font-size: 17px; letter-spacing: 0.2em;
+        text-transform: uppercase; color: var(--blossom); display: flex; align-items: center; gap: 12px; }
+      .eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blossom); flex: none; }
+
+      /* ---- hv-loop ---- */
+      #hv-loop .anchor { position: absolute; left: 108px; bottom: 132px; }
+      #hv-loop .eyebrow { opacity: 0; margin-bottom: 20px; white-space: nowrap; }
+      #hv-loop .row { display: flex; align-items: center; gap: 22px; }
+      #hv-loop .pill { font-family: var(--mono); font-weight: 700; font-size: 30px;
+        color: var(--chrome); padding: 16px 26px; opacity: 0; will-change: transform, opacity; }
+      #hv-loop .arrow { font-family: var(--mono); font-weight: 400; font-size: 34px;
+        color: var(--muted); opacity: 0; }
+      #hv-loop .cyc-box { position: relative; width: 420px; height: 64px; }
+      #hv-loop .cyc { position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+        font-family: var(--mono); font-weight: 700; font-size: 32px; color: var(--chrome);
+        opacity: 0; white-space: nowrap; will-change: transform, opacity; }
+      #hv-loop .cyc.bad { color: var(--blossom); }
+      #hv-loop .scrim { position: absolute; left: -170px; bottom: -140px; width: 1150px; height: 460px;
+        background: radial-gradient(115% 130% at 10% 92%, rgba(6,11,22,0.72) 0%, rgba(6,11,22,0) 68%);
+        opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="hv-loop" data-composition-id="hv-loop" data-start="0" data-duration="15.1"
+      data-width="1920" data-height="1080">
+      <!-- reference layer stripped for alpha export -->
+
+      <div class="overlay-root">
+        <div class="scrim"></div>
+        <div class="anchor">
+          <div class="eyebrow"><span class="dot"></span>the flat-mp4 problem</div>
+          <div class="row">
+            <div class="pill gw-edge">full MP4</div>
+            <div class="arrow">→</div>
+            <div class="cyc-box">
+              <span class="cyc k0">re-prompt</span>
+              <span class="cyc k1">re-render</span>
+              <span class="cyc k2 bad">still wrong</span>
+              <span class="cyc k3">re-prompt</span>
+              <span class="cyc k4">re-render</span>
+              <span class="cyc k5 bad">still wrong</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>window.__timelines = window.__timelines || {};</script>
+    <script type="module">
+      // anime.js v4 through the hyperframes adapter — GSAP-seconds facade on
+      // window.__timelines['hv-loop']; the stock CLI drives it per-frame.
+      import { createComposition } from './assets/vendor/hyperframes-anime-adapter.js';
+
+      const SLOT = 15.1;
+      const { tl } = createComposition('hv-loop', { duration: SLOT });
+      const S = 1000;
+
+      // pill drops on "…a full MP4" (29.66; local 1.16, −0.2 lead)
+      tl.add('#hv-loop .scrim',   { opacity: [0, 1], duration: 500, ease: 'out(2)' }, 0.60 * S)
+        .add('#hv-loop .eyebrow', { opacity: [0, 1], y: [14, 0], duration: 430, ease: 'out(3)' }, 0.70 * S)
+        .add('#hv-loop .pill',    { opacity: [0, 1], y: [30, 0], scale: [0.94, 1], duration: 420, ease: 'out(3)' }, 0.95 * S)
+        // re-pulse on "…once you have this full MP4" (33.96; local 5.46)
+        .add('#hv-loop .pill', { scale: [{ to: 1.07, duration: 140, ease: 'out(2)' }, { to: 1, duration: 220, ease: 'out(2)' }] }, 5.26 * S)
+        .add('#hv-loop .arrow', { opacity: [0, 1], duration: 300, ease: 'out(2)' }, 6.30 * S);
+
+      // the loop: each lap enters faster and holds shorter (accelerating despair)
+      // onsets 6.50 7.90 9.15 10.30 11.30 12.15 — visible ≈ gap − 0.15
+      const laps = [[6.50, 1.25], [7.90, 1.10], [9.15, 1.00], [10.30, 0.85], [11.30, 0.70], [12.15, 2.05]];
+      laps.forEach(([t, hold], i) => {
+        tl.add(`#hv-loop .k${i}`, { opacity: [0, 1], y: [18, 0], duration: 260, ease: 'out(3)' }, t * S);
+        if (i < 5) tl.add(`#hv-loop .k${i}`, { opacity: 0, y: -18, duration: 200, ease: 'in(2)' }, (t + hold) * S);
+      });
+
+      // jitter climax on "going crazy" (41.38; local 12.88) — deterministic shake, no random
+      tl.add('#hv-loop .row', {
+        x: [{ to: -6, duration: 60 }, { to: 7, duration: 60 }, { to: -8, duration: 60 },
+            { to: 9, duration: 60 }, { to: -5, duration: 60 }, { to: 0, duration: 60 }],
+        ease: 'out(2)',
+      }, 12.90 * S)
+        // snap-clear before "So this method…" (43.38)
+        .add('#hv-loop .anchor', { opacity: [1, 0], scale: [1, 0.96], duration: 300, ease: 'in(3)' }, 14.60 * S)
+        .add('#hv-loop .scrim',  { opacity: 0, duration: 300, ease: 'in(3)' }, 14.60 * S);
+    </script>
+  </body>
+</html>
