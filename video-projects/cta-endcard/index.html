@@ -1,0 +1,73 @@
+<!doctype html>
+<!--
+  cta-endcard — Beat 11 close lower-third, Quiet Register. Variant of what-you-need-card
+  (same panel/type/motion system). TRANSPARENT → .mov for Resolve over the close A-roll (~11:20–11:50).
+  Two zones split by a hairline: the four links (recap) + "Full setup in my last video ->".
+  Single blossom accent on the -> pointer (genuine landing). NO comment keyword baked —
+  a clean reserved band is left for Liz's stage-11 element. ~8s enter/hold/exit, freeze-extendable.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face { font-family:'Geist'; font-weight:400; font-display:block; src:url(assets/fonts/Geist-400.woff2) format('woff2'); }
+  @font-face { font-family:'Geist'; font-weight:500; font-display:block; src:url(assets/fonts/Geist-500.woff2) format('woff2'); }
+  @font-face { font-family:'Geist'; font-weight:600; font-display:block; src:url(assets/fonts/Geist-600.woff2) format('woff2'); }
+  @font-face { font-family:'Geist Mono'; font-weight:400; font-display:block; src:url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+  @font-face { font-family:'Geist Mono'; font-weight:500; font-display:block; src:url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1920px; height:1080px; overflow:hidden; background:transparent; font-family:'Geist',sans-serif; }
+  #stage { position:relative; width:1920px; height:1080px; }
+
+  #panel { position:absolute; left:120px; bottom:120px; width:600px; padding:32px 40px 36px;
+           background:rgba(20,36,60,0.92); border:1px solid #223A5C; border-radius:14px;
+           box-shadow:0 18px 60px rgba(0,0,0,0.45); opacity:0; }
+  .eyebrow { font-family:'Geist Mono',monospace; font-weight:500; font-size:16px;
+             letter-spacing:0.22em; text-transform:uppercase; color:#7C93B4; }
+  .links { margin-top:16px; }
+  .link { display:flex; align-items:baseline; gap:14px; margin-top:11px; opacity:0; }
+  .link .tick { flex:0 0 auto; width:16px; color:#5c6b8c; font-family:'Geist Mono',monospace; font-size:19px; line-height:1; }
+  .link .name { font-family:'Geist',sans-serif; font-weight:500; font-size:22px; color:#EAF2FF; }
+  .link .name .sub  { color:#7C93B4; font-weight:400; font-size:18px; }
+  .link .name .mono { font-family:'Geist Mono',monospace; font-weight:500; font-size:20px; color:#c7d4ea; }
+  .divider { height:1px; background:#223A5C; margin:24px 0 22px; transform-origin:left center; transform:scaleX(0); }
+  .lastvid { display:flex; align-items:baseline; gap:14px; opacity:0; }
+  .lastvid .label { font-family:'Geist',sans-serif; font-weight:600; font-size:25px; color:#EAF2FF; letter-spacing:-0.005em; }
+  .lastvid .arrow { font-family:'Geist Mono',monospace; font-weight:500; font-size:26px; color:#F0A8C2; } /* blossom = landing pointer */
+</style>
+</head>
+<body data-hf-duration="8">
+  <div id="stage" data-composition-id="cta-endcard" data-width="1920" data-height="1080" data-start="0" data-duration="8" data-track-index="1">
+    <div id="panel" class="clip" data-start="0" data-duration="8" data-track-index="2">
+      <div class="eyebrow">EVERYTHING'S LINKED BELOW</div>
+      <div class="links">
+        <div class="link"><span class="tick">→</span><span class="name">Claude Code <span class="sub">(app + subscription)</span></span></div>
+        <div class="link"><span class="tick">→</span><span class="name">DaVinci Resolve</span></div>
+        <div class="link"><span class="tick">→</span><span class="name">DaVinci Resolve MCP <span class="sub">·</span> <span class="mono">samuelgursky</span></span></div>
+        <div class="link"><span class="tick">→</span><span class="name"><span class="mono">superpowers</span></span></div>
+      </div>
+      <div class="divider"></div>
+      <div class="lastvid"><span class="label">Full setup in my last video</span><span class="arrow">→</span></div>
+      <!-- reserved clean band below for Liz's [COMMENT-KEYWORD] element, set at stage 11 -->
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.to({}, { duration: 8 }, 0); // slot anchor
+
+    tl.fromTo('#panel', { opacity:0, y:18, filter:'blur(6px)' },
+                        { opacity:1, y:0, filter:'blur(0px)', duration:0.55, ease:'power2.out' }, 0.3);
+    tl.fromTo('.link', { opacity:0, y:10, filter:'blur(4px)' },
+                       { opacity:1, y:0, filter:'blur(0px)', duration:0.4, ease:'power2.out', stagger:0.1 }, 0.65);
+    tl.fromTo('.divider', { scaleX:0 }, { scaleX:1, duration:0.5, ease:'power2.inOut' }, 1.35);
+    tl.fromTo('.lastvid', { opacity:0, y:8, filter:'blur(4px)' },
+                          { opacity:1, y:0, filter:'blur(0px)', duration:0.45, ease:'power2.out' }, 1.7);
+
+    tl.to('#panel', { opacity:0, y:-10, duration:0.8, ease:'power2.in' }, 7.0);
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines['cta-endcard'] = tl;
+  </script>
+</body>
+</html>

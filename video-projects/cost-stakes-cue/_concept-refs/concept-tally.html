@@ -1,0 +1,114 @@
+<!doctype html>
+<!--
+  cost-stakes-cue CONCEPT 1 — "the compounding tally" (accumulation).
+  Fact: 4 x $350/week ≈ $1,300/month. Four red week-chips print, then MERGE into
+  the monthly total — the weekly burn visibly becomes the monthly bill.
+  $0 coming in sits beneath, inert (ink, never red).
+  Quiet Register Form 1 · transparent · PREVIEW-ONLY: #preview-backdrop, #face-guide.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face { font-family: 'Geist Mono'; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+  @font-face { font-family: 'Geist Mono'; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1920px; height:1080px; overflow:hidden; background:transparent; font-family:'Geist Mono',monospace; }
+  #stage { position:relative; width:1920px; height:1080px; }
+
+  /* ---- PREVIEW ONLY (remove for final alpha .mov) ---- */
+  #preview-backdrop { position:absolute; inset:0;
+                      background:radial-gradient(ellipse 900px 700px at 960px 430px, #16273f 0%, #0A1628 70%); }
+  #face-guide { position:absolute; inset:0; opacity:0.5; }
+  #face-guide ellipse, #face-guide path { fill:none; stroke:#38537a; stroke-width:2; stroke-dasharray:8 8; }
+  #face-guide text { fill:#38537a; font-family:'Geist Mono',monospace; font-size:18px; letter-spacing:0.08em; }
+  /* ---------------------------------------------------- */
+
+  #cue { position:absolute; left:120px; bottom:110px; }
+  .row { display:flex; align-items:center; gap:18px; height:74px; }
+  .lead { font-weight:400; font-size:28px; letter-spacing:0.04em; color:#8995b0;
+          text-shadow:0 2px 18px rgba(0,0,0,0.65); }
+  .chip { position:relative; padding:10px 18px; border:1.5px solid rgba(239,68,68,0.55);
+          border-radius:8px; font-weight:500; font-size:28px; letter-spacing:0.04em;
+          color:#EF4444; text-shadow:0 2px 18px rgba(0,0,0,0.65); opacity:0; white-space:nowrap; }
+  .chip .per { color:#8995b0; font-weight:400; }
+  #total { position:absolute; left:0; top:0; padding:10px 20px; border:1.5px solid rgba(239,68,68,0.85);
+           border-radius:8px; font-weight:500; font-size:34px; letter-spacing:0.04em;
+           color:#EF4444; text-shadow:0 2px 18px rgba(0,0,0,0.65); opacity:0; white-space:nowrap; }
+  #total .per { color:#8995b0; font-weight:400; font-size:28px; }
+  #zero-line { margin-top:26px; font-weight:400; font-size:28px; letter-spacing:0.04em;
+               color:#8995b0; text-shadow:0 2px 18px rgba(0,0,0,0.65); opacity:0; }
+  #zero-line .zero { font-weight:500; font-size:36px; color:#e9edf6; vertical-align:-2px; }
+</style>
+</head>
+<body data-hf-duration="12">
+  <div id="stage" data-composition-id="concept-tally" data-width="1920" data-height="1080" data-start="0" data-duration="12" data-track-index="1">
+
+    <div id="preview-backdrop" class="clip" data-start="0" data-duration="12" data-track-index="2"></div>
+    <svg id="face-guide" class="clip" data-start="0" data-duration="12" data-track-index="3"
+         width="1920" height="1080" viewBox="0 0 1920 1080">
+      <ellipse cx="960" cy="430" rx="170" ry="225"/>
+      <path d="M 620 1080 C 640 800, 800 690, 960 690 C 1120 690, 1280 800, 1300 1080"/>
+      <text x="850" y="330">A-ROLL FACE AREA</text>
+      <text x="878" y="358">(preview only)</text>
+    </svg>
+
+    <div id="cue" class="clip" data-start="0" data-duration="12" data-track-index="4">
+      <div class="row" id="chip-row" style="position:relative;">
+        <span class="lead" id="lead">spending about</span>
+        <span class="chip" id="c1">$350 <span class="per">/ week</span></span>
+        <span class="chip" id="c2">$350</span>
+        <span class="chip" id="c3">$350</span>
+        <span class="chip" id="c4">$350</span>
+        <span id="total">~$1,300 <span class="per">/ month</span></span>
+      </div>
+      <div id="zero-line"><span class="zero">$0</span> coming in</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.to({}, { duration: 12 }, 0); // slot anchor
+
+    // Position the merged total where the chips live (over chip 2-3 zone)
+    const totalEl = document.getElementById('total');
+    const c1 = document.getElementById('c1');
+    const c2 = document.getElementById('c2');
+    totalEl.style.left = (c1.offsetLeft - 2) + 'px';
+    totalEl.style.top = (c1.offsetTop - 6) + 'px';
+
+    // Lead-in
+    tl.fromTo('#lead', { opacity: 0, y: 12, filter: 'blur(6px)' },
+                       { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.5, ease: 'power2.out' }, 0.5);
+
+    // Week chips print in sequence — the burn repeating, week after week
+    const chipIn = (sel, at) => tl.fromTo(sel,
+      { opacity: 0, y: 12, filter: 'blur(6px)' },
+      { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.4, ease: 'power2.out' }, at);
+    chipIn('#c1', 1.0);   // "$350 a week" spoken
+    chipIn('#c2', 2.6);
+    chipIn('#c3', 3.1);
+    chipIn('#c4', 3.6);
+
+    // THE MERGE — four weekly chips collapse into the monthly total ("roughly $1,300 a month")
+    tl.to(['#c2','#c3','#c4'], { x: (i, el) => -(el.offsetLeft - c1.offsetLeft),
+                                 opacity: 0, filter: 'blur(4px)',
+                                 duration: 0.5, ease: 'power2.inOut', stagger: 0.05 }, 4.8);
+    tl.to('#c1', { opacity: 0, filter: 'blur(4px)', duration: 0.4, ease: 'power2.inOut' }, 4.9);
+    tl.fromTo('#total', { opacity: 0, filter: 'blur(6px)' },
+                        { opacity: 1, filter: 'blur(0px)', duration: 0.5, ease: 'power2.out' }, 5.15);
+
+    // "$0 coming in" — inert, bright ink, beneath the burn
+    tl.fromTo('#zero-line', { opacity: 0, y: 12, filter: 'blur(6px)' },
+                            { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.5, ease: 'power2.out' }, 6.6);
+    tl.to('#lead', { color: '#5c6b8c', duration: 0.6, ease: 'power2.out' }, 7.1);
+
+    // Exit
+    tl.to('#cue', { opacity: 0, duration: 1.0, ease: 'power2.in' }, 10.5);
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines['concept-tally'] = tl;
+  </script>
+</body>
+</html>

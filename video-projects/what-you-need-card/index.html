@@ -1,0 +1,64 @@
+<!doctype html>
+<!--
+  what-you-need-card — Beat 3 lower-third, Quiet Register (Form-2 palette on a transparent
+  alpha canvas). TRANSPARENT → renders to .mov for Resolve over the repo screen-rec (~1:35–2:10).
+  Contained panel for legibility over bright footage. Four spelling-locked items, neutral
+  (no blossom). samuelgursky + superpowers in mono (handles). ~8s: enter / hold / exit; the
+  hold is freeze-extendable at the cut.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face { font-family:'Geist'; font-weight:400; font-display:block; src:url(assets/fonts/Geist-400.woff2) format('woff2'); }
+  @font-face { font-family:'Geist'; font-weight:500; font-display:block; src:url(assets/fonts/Geist-500.woff2) format('woff2'); }
+  @font-face { font-family:'Geist'; font-weight:600; font-display:block; src:url(assets/fonts/Geist-600.woff2) format('woff2'); }
+  @font-face { font-family:'Geist Mono'; font-weight:400; font-display:block; src:url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+  @font-face { font-family:'Geist Mono'; font-weight:500; font-display:block; src:url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1920px; height:1080px; overflow:hidden; background:transparent; font-family:'Geist',sans-serif; }
+  #stage { position:relative; width:1920px; height:1080px; }
+
+  #panel { position:absolute; left:120px; bottom:120px; width:620px; padding:36px 40px 40px;
+           background:rgba(20,36,60,0.92); border:1px solid #223A5C; border-radius:14px;
+           box-shadow:0 18px 60px rgba(0,0,0,0.45); opacity:0; }
+  .eyebrow { font-family:'Geist Mono',monospace; font-weight:500; font-size:16px;
+             letter-spacing:0.22em; text-transform:uppercase; color:#7C93B4; }
+  .heading { font-family:'Geist',sans-serif; font-weight:600; font-size:34px; letter-spacing:-0.01em;
+             color:#EAF2FF; margin-bottom:22px; }
+  .item { display:flex; align-items:baseline; gap:16px; margin-top:16px; opacity:0; }
+  .tick { flex:0 0 auto; width:18px; color:#5c6b8c; font-family:'Geist Mono',monospace;
+          font-size:22px; line-height:1; }
+  .name { font-family:'Geist',sans-serif; font-weight:500; font-size:25px; color:#EAF2FF; letter-spacing:-0.005em; }
+  .name .sub  { color:#7C93B4; font-weight:400; font-size:20px; }
+  .name .mono { font-family:'Geist Mono',monospace; font-weight:500; font-size:23px; color:#c7d4ea; }
+</style>
+</head>
+<body data-hf-duration="8">
+  <div id="stage" data-composition-id="what-you-need-card" data-width="1920" data-height="1080" data-start="0" data-duration="8" data-track-index="1">
+    <div id="panel" class="clip" data-start="0" data-duration="8" data-track-index="2">
+      <div class="heading">What you need</div>
+      <div class="item"><span class="tick">→</span><span class="name">Claude Code <span class="sub">(app + subscription)</span></span></div>
+      <div class="item"><span class="tick">→</span><span class="name">DaVinci Resolve</span></div>
+      <div class="item"><span class="tick">→</span><span class="name">DaVinci Resolve MCP <span class="sub">·</span> <span class="mono">samuelgursky</span></span></div>
+      <div class="item"><span class="tick">→</span><span class="name"><span class="mono">superpowers</span></span></div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.to({}, { duration: 8 }, 0); // slot anchor
+
+    tl.fromTo('#panel', { opacity:0, y:18, filter:'blur(6px)' },
+                        { opacity:1, y:0, filter:'blur(0px)', duration:0.55, ease:'power2.out' }, 0.3);
+    tl.fromTo('.item', { opacity:0, y:10, filter:'blur(4px)' },
+                       { opacity:1, y:0, filter:'blur(0px)', duration:0.4, ease:'power2.out', stagger:0.12 }, 0.65);
+
+    // exit (hold is the gap between ~2.0s and here; freeze-extendable at the cut)
+    tl.to('#panel', { opacity:0, y:-10, duration:0.8, ease:'power2.in' }, 7.0);
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines['what-you-need-card'] = tl;
+  </script>
+</body>
+</html>

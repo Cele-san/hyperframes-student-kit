@@ -1,0 +1,55 @@
+<!doctype html>
+<!--
+  text-cue-08-hours — Form-1 emphasis cue, Quiet Register v4. Beat 9b/10 (the time payoff).
+  TRANSPARENT alpha -> .mov for Resolve over the manual-sweep screen-rec (~16:31.1-16:37.6).
+  Weight/emphasis shift on `hours`. NO counter (Andy says "hours", not a number — a ticking figure
+  would fabricate a value). Flat ink, quiet — the honesty is what makes the payoff land. x120 y880.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face { font-family: 'Geist Mono'; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+  @font-face { font-family: 'Geist Mono'; font-weight: 500; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1920px; height:1080px; overflow:hidden; background:transparent; font-family:'Geist Mono',monospace; }
+  #stage { position:relative; width:1920px; height:1080px; }
+
+  #cue { position:absolute; left:120px; top:880px; }
+  .scrim { display:inline-block; background:rgba(8,14,24,0.82); border-radius:10px;
+           padding:28px 34px; box-shadow:0 12px 40px rgba(0,0,0,0.4); opacity:0; }
+  .line { font-size:32px; letter-spacing:0.04em; white-space:nowrap;
+          text-shadow:0 2px 18px rgba(0,0,0,0.65); }
+  .dim  { color:#8995b0; font-weight:400; }
+  #word { color:#8995b0; font-weight:500; }
+</style>
+</head>
+<body data-hf-duration="6.5">
+  <div id="stage" data-composition-id="text-cue-08-hours" data-width="1920" data-height="1080" data-start="0" data-duration="6.5" data-track-index="1">
+    <div id="cue" class="clip" data-start="0" data-duration="6.5" data-track-index="2">
+      <div class="scrim">
+        <span class="line"><span class="dim">you just saved </span><span id="word">hours</span></span>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.to({}, { duration: 6.5 }, 0); // slot anchor
+
+    // Entrance — line fades in dim (Law-10 blur clears).
+    tl.fromTo('.scrim', { opacity: 0, filter: 'blur(6px)' },
+                        { opacity: 1, filter: 'blur(0px)', duration: 0.8, ease: 'power2.out' }, 0.4);
+
+    // `hours` brightens dim -> ink (weight/emphasis shift, held).
+    tl.to('#word', { color: '#e9edf6', duration: 0.4, ease: 'power2.out' }, 2.6);
+
+    // Exit — whole-cue opacity fade.
+    tl.to('.scrim', { opacity: 0, duration: 1.0, ease: 'power2.in' }, 5.5);
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines['text-cue-08-hours'] = tl;
+  </script>
+</body>
+</html>
