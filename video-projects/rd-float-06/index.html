@@ -1,0 +1,68 @@
+<!doctype html>
+<!--
+  rd-float-06 — FLOATING LABEL reference (word-synced editorial redesign, cue-06 junior editor).
+  The quietest of the three forms — naked dim type, per-line slide+blur in, the operative
+  phrase "with the first cut?" brightens dim->ink on its VO beat. No scrim. Keeps dynamics so
+  the BIG TYPE form still hits. Alpha over the Resolve dark panel ~12:58.2-13:14.7.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face { font-family:'Geist Mono'; font-weight:400; font-display:block; src:url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+  @font-face { font-family:'Geist Mono'; font-weight:500; font-display:block; src:url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1920px; height:1080px; overflow:hidden; background:transparent; font-family:'Geist Mono',monospace; }
+  #stage { position:relative; width:1920px; height:1080px; }
+
+  /* text backglow — soft radial dark pool directly under the text so it pops off footage */
+  #vig { position:absolute; left:-240px; top:-170px; width:1300px; height:480px; opacity:0;
+         background:radial-gradient(ellipse 60% 54% at 42% 48%, rgba(5,9,17,0.64) 0%, rgba(5,9,17,0.4) 52%, rgba(5,9,17,0) 76%); }
+
+  #cue { position:absolute; left:120px; top:820px; }
+  .line { font-size:34px; letter-spacing:0.03em; white-space:nowrap; font-weight:400;
+          text-shadow:0 2px 12px rgba(0,0,0,0.92), 0 0 44px rgba(0,0,0,0.6); opacity:0; }
+  #l1 { color:#8995b0; }
+  #l2 { margin-top:16px; color:#8995b0; font-weight:500; }
+</style>
+</head>
+<body data-hf-duration="16.5">
+  <div id="stage" data-composition-id="rd-float-06" data-width="1920" data-height="1080" data-start="0" data-duration="16.5" data-track-index="1">
+    <div id="cue" class="clip" data-start="0" data-duration="16.5" data-track-index="2">
+      <div id="vig"></div>
+      <div id="txt">
+        <div class="line" id="l1">would you trust a junior editor</div>
+        <div class="line" id="l2">with the first cut?</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.to({}, { duration: 16.5 }, 0);
+
+    // vignette breathes in ahead of the text, out with the exit
+    tl.to('#vig', { opacity: 1, duration: 0.9, ease: 'power2.out' }, 0.3);
+    tl.to('#vig', { opacity: 0, duration: 0.6, ease: 'power2.in' }, 15.4);
+
+    // slow hold-drift — 12px over the long hold so the frame never freezes
+    tl.fromTo('#txt', { x: 0 }, { x: 12, duration: 15.2, ease: 'none' }, 0.6);
+
+    // L1 slide + blur in (soft, dim) — on the VO "junior editor" beat
+    tl.fromTo('#l1', { opacity:0, x:-24, filter:'blur(5px)' },
+                     { opacity:1, x:0, filter:'blur(0px)', duration:0.25, ease:'power2.out' }, 0.6);
+
+    // L2 slide + blur in, then brighten to ink on "first cut?"
+    tl.fromTo('#l2', { opacity:0, x:-24, filter:'blur(5px)' },
+                     { opacity:1, x:0, filter:'blur(0px)', duration:0.25, ease:'power2.out' }, 4.5);
+    tl.to('#l2', { color:'#e9edf6', duration:0.4, ease:'power2.out' }, 5.0);
+
+    // exit fade
+    tl.to('#cue', { opacity:0, duration:0.6, ease:'power2.in' }, 15.6);
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines['rd-float-06'] = tl;
+  </script>
+</body>
+</html>

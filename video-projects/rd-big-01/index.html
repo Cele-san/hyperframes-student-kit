@@ -1,0 +1,72 @@
+<!doctype html>
+<!--
+  rd-big-01 — BIG TYPE reference (word-synced editorial redesign, cue-01 "all been codified").
+  No scrim. Word-by-word pop (opacity snap + 1.06->1.0 scale punch + y-settle), payoff word
+  "codified" stacked huge and flips blossom on its beat. Soft left gradient wash for legibility
+  over the busy GitHub frame. Alpha 1920x1080 over the repo hold ~1:48.8-1:54.3.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face { font-family:'Geist Mono'; font-weight:400; font-display:block; src:url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+  @font-face { font-family:'Geist Mono'; font-weight:500; font-display:block; src:url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1920px; height:1080px; overflow:hidden; background:transparent; font-family:'Geist Mono',monospace; }
+  #stage { position:relative; width:1920px; height:1080px; }
+
+  /* legibility wash — soft left-anchored gradient, never a box */
+  #wash { position:absolute; left:0; top:640px; width:1150px; height:380px;
+          background:linear-gradient(90deg, rgba(8,14,24,0.72) 0%, rgba(8,14,24,0.5) 40%, rgba(8,14,24,0) 100%);
+          opacity:0; }
+
+  #cue { position:absolute; left:140px; top:700px; }
+  .kicker { display:flex; gap:22px; }
+  .w { display:inline-block; font-weight:500; font-size:52px; letter-spacing:0.02em; color:#8995b0;
+       opacity:0; transform-origin:left bottom;
+       text-shadow:0 2px 10px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.55); }
+  #pay { display:block; margin-top:10px; font-weight:500; font-size:118px; letter-spacing:-0.01em;
+         color:#e9edf6; opacity:0; transform-origin:left bottom;
+         text-shadow:0 3px 14px rgba(0,0,0,0.92), 0 0 60px rgba(0,0,0,0.6); }
+</style>
+</head>
+<body data-hf-duration="5.5">
+  <div id="stage" data-composition-id="rd-big-01" data-width="1920" data-height="1080" data-start="0" data-duration="5.5" data-track-index="1">
+    <div id="cue" class="clip" data-start="0" data-duration="5.5" data-track-index="2">
+      <div id="wash"></div>
+      <div class="kicker">
+        <span class="w" id="w1">all</span>
+        <span class="w" id="w2">been</span>
+      </div>
+      <span id="pay">codified</span>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.to({}, { duration: 5.5 }, 0);
+
+    tl.to('#wash', { opacity: 1, duration: 0.5, ease: 'power2.out' }, 0.3);
+
+    const pop = (sel, at) => tl.fromTo(sel,
+      { opacity:0, scale:1.06, y:6, filter:'blur(3px)' },
+      { opacity:1, scale:1, y:0, filter:'blur(0px)', duration:0.12, ease:'power3.out' }, at);
+
+    pop('#w1', 0.40);
+    pop('#w2', 0.62);
+    pop('#pay', 0.95);
+    // payoff word flips blossom on its beat
+    tl.to('#pay', { color:'#F0A8C2', duration:0.35, ease:'power2.out' }, 1.30);
+
+    // slow hold-drift so the held frame never freezes
+    tl.fromTo('#cue', { x: 0 }, { x: 8, duration: 4.8, ease: 'none' }, 0.4);
+
+    // hard cut-on-beat exit — text just GONE as the next VO sentence starts
+    tl.to('#cue', { opacity: 0, duration: 0.04, ease: 'none' }, 5.25);
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines['rd-big-01'] = tl;
+  </script>
+</body>
+</html>

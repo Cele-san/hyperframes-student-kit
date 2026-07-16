@@ -1,0 +1,53 @@
+<!doctype html>
+<!-- rd-big-08 — BIG TYPE, cue-08-hours (6.5s, x120 y750). "you just saved" dim pops, then
+     "hours" GIANT ink-bright on its spoken beat (VO ~993.3, IN 990.9 -> local 2.4). NO counter
+     (binding — would fabricate a number). Hard cut exit. -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face { font-family:'Geist Mono'; font-weight:400; font-display:block; src:url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+  @font-face { font-family:'Geist Mono'; font-weight:500; font-display:block; src:url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1920px; height:1080px; overflow:hidden; background:transparent; font-family:'Geist Mono',monospace; }
+  #stage { position:relative; width:1920px; height:1080px; }
+  #wash { position:absolute; left:-280px; top:-140px; width:1350px; height:600px; opacity:0;
+          background:radial-gradient(ellipse 58% 52% at 40% 50%, rgba(5,9,17,0.64) 0%, rgba(5,9,17,0.42) 52%, rgba(5,9,17,0) 76%); }
+  #cue { position:absolute; left:120px; top:750px; }
+  .kicker { display:flex; gap:20px; }
+  .w { display:inline-block; font-weight:500; font-size:44px; letter-spacing:0.02em; color:#8995b0;
+       opacity:0; transform-origin:left bottom; text-shadow:0 2px 10px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.55); }
+  #pay { display:block; margin-top:8px; font-weight:500; font-size:130px; letter-spacing:-0.01em;
+         color:#e9edf6; opacity:0; transform-origin:left bottom;
+         text-shadow:0 3px 14px rgba(0,0,0,0.92), 0 0 60px rgba(0,0,0,0.6); }
+</style>
+</head>
+<body data-hf-duration="6.5">
+  <div id="stage" data-composition-id="rd-big-08" data-width="1920" data-height="1080" data-start="0" data-duration="6.5" data-track-index="1">
+    <div id="cue" class="clip" data-start="0" data-duration="6.5" data-track-index="2">
+      <div id="wash"></div>
+      <div class="kicker">
+        <span class="w" id="w1">you</span>
+        <span class="w" id="w2">just</span>
+        <span class="w" id="w3">saved</span>
+      </div>
+      <span id="pay">hours</span>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.to({}, { duration: 6.5 }, 0);
+    tl.to('#wash', { opacity: 1, duration: 0.5, ease: 'power2.out' }, 0.25);
+    const pop = (sel, at) => tl.fromTo(sel, { opacity:0, scale:1.06, y:6, filter:'blur(3px)' },
+      { opacity:1, scale:1, y:0, filter:'blur(0px)', duration:0.12, ease:'power3.out' }, at);
+    pop('#w1', 0.40); pop('#w2', 0.60); pop('#w3', 0.80);
+    // "hours" lands on the spoken beat — giant, ink-bright, no color flip needed
+    pop('#pay', 2.40);
+    tl.fromTo('#cue', { x: 0 }, { x: 8, duration: 5.2, ease: 'none' }, 0.4);
+    tl.to('#cue', { opacity: 0, duration: 0.04, ease: 'none' }, 5.85);
+    window.__timelines = window.__timelines || {};
+    window.__timelines['rd-big-08'] = tl;
+  </script>
+</body>
+</html>
