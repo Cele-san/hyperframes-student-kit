@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Hook Is the Video — Audience Retention</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg0:#07090D; --bg1:#111823;
+    --ink:#F2F6F9; --mut:#8D97A3; --dim:#57616C;
+    --red:#FF3B3B; --red-hot:#FF2B2B;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;background:var(--bg0);overflow:hidden}
+  body{font-family:'Inter Tight',-apple-system,'Helvetica Neue',Arial,sans-serif;color:var(--ink)}
+
+  #stage{
+    position:absolute;left:50%;top:50%;width:1920px;height:1080px;
+    transform:translate(-50%,-50%);transform-origin:center;overflow:hidden;
+    background:
+      radial-gradient(1400px 900px at 50% 34%, var(--bg1) 0%, var(--bg0) 72%);
+  }
+  #shake{position:absolute;inset:0}
+
+  /* ---------- chart chrome ---------- */
+  svg#chart{position:absolute;inset:0;display:block}
+  .gline{stroke:rgba(255,255,255,.07);stroke-width:1}
+  .gline.half{stroke:rgba(255,255,255,.17);stroke-dasharray:7 8}
+  .ylab{fill:var(--dim);font-size:21px;font-weight:600;letter-spacing:.04em}
+  .ylab.half{fill:#7E8994}
+
+  /* ---------- kicker / headline strip ---------- */
+  #kicker{position:absolute;left:180px;top:88px}
+  #kicker .k1{font-size:27px;font-weight:700;letter-spacing:.17em;color:#C9D1DA}
+  #kicker .k1::before{content:'';display:inline-block;width:14px;height:14px;border-radius:4px;
+    background:var(--red);margin-right:16px;transform:translateY(-1px)}
+  #kicker .k2{font-size:23px;font-weight:500;letter-spacing:.02em;color:#77828E;margin:12px 0 0 30px}
+
+  #headline{position:absolute;left:180px;top:78px;width:1140px}
+  #headline .mask{overflow:hidden}
+  #headline h1{font-size:76px;font-weight:900;letter-spacing:-.015em;line-height:1.04;color:var(--ink)}
+  #headline h1 em{font-style:normal;color:var(--red)}
+  #headline p{font-size:32px;font-weight:500;line-height:1.35;color:#97A2AE;margin-top:14px;max-width:1120px}
+  #headline p strong{color:#D9E0E7;font-weight:700}
+
+  /* ---------- counter ---------- */
+  #counter{position:absolute;right:180px;top:70px;text-align:right}
+  #cRow{font-size:168px;font-weight:900;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+  #cRow .pct{font-size:.44em;font-weight:800;margin-left:6px;color:#B9C2CC}
+  #cLabel{font-size:27px;font-weight:600;color:var(--mut);margin-top:8px;letter-spacing:.01em}
+
+  /* ---------- stamp ---------- */
+  #stamp{
+    position:absolute;left:426px;top:332px;transform:rotate(-3deg);
+    background:var(--red-hot);border-radius:18px;padding:30px 48px 34px;text-align:center;
+    box-shadow:0 30px 90px rgba(255,43,43,.38), 0 10px 28px rgba(0,0,0,.55);
+  }
+  #stamp .num{font-size:148px;font-weight:900;letter-spacing:-.02em;line-height:.95;color:#fff}
+  #stamp .sub{font-size:27px;font-weight:800;letter-spacing:.13em;color:rgba(255,255,255,.92);margin-top:12px}
+
+  /* ---------- bracket label ---------- */
+  #brLabel{position:absolute;left:960px;top:312px;width:780px;text-align:center;
+    font-size:26px;font-weight:600;color:#95A0AC;letter-spacing:.01em}
+  #brLabel strong{color:var(--ink);font-weight:800}
+
+  /* ---------- progress bar / axis ---------- */
+  #playGlyph{position:absolute;left:132px;top:869px;width:0;height:0;
+    border-left:24px solid rgba(255,255,255,.75);border-top:14px solid transparent;border-bottom:14px solid transparent}
+  #track{position:absolute;left:180px;top:878px;width:1560px;height:8px;border-radius:4px;background:#242B35}
+  #fill{position:absolute;left:180px;top:878px;width:1560px;height:8px;border-radius:4px;
+    background:linear-gradient(90deg,#E62E2E,#FF3B3B);box-shadow:0 0 22px rgba(255,59,59,.45)}
+  #scrub{position:absolute;left:1729px;top:871px;width:22px;height:22px;border-radius:50%;
+    background:var(--red);box-shadow:0 0 0 5px rgba(255,59,59,.22), 0 4px 14px rgba(0,0,0,.6)}
+  #posLabel{position:absolute;left:180px;top:843px;transform:translateX(-50%);
+    font-size:21px;font-weight:700;letter-spacing:.1em;color:#98A3AF;white-space:nowrap}
+  .xlab{position:absolute;top:908px;transform:translateX(-50%);font-size:24px;font-weight:600;color:var(--dim)}
+  #tick10{position:absolute;left:335px;top:872px;width:3px;height:20px;background:var(--red);border-radius:1px}
+  #tick10lab{position:absolute;left:336px;top:908px;transform:translateX(-50%);
+    font-size:24px;font-weight:800;color:var(--red)}
+  #xTitle{position:absolute;left:0;top:952px;width:1920px;text-align:center;
+    font-size:20px;font-weight:700;letter-spacing:.28em;color:#4C5560}
+  #footer{position:absolute;left:180px;top:1014px;font-size:20px;font-weight:500;color:#525C67}
+
+  /* SVG text */
+  .svgt{font-family:'Inter Tight',-apple-system,'Helvetica Neue',Arial,sans-serif}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="shake">
+
+    <svg id="chart" width="1920" height="1080" viewBox="0 0 1920 1080">
+      <defs>
+        <clipPath id="revealClip"><rect id="revealRect" x="180" y="0" width="1560" height="1080"/></clipPath>
+        <linearGradient id="areaGrad" x1="0" y1="280" x2="0" y2="840" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#FF4444" stop-opacity=".20"/>
+          <stop offset="1" stop-color="#FF4444" stop-opacity=".02"/>
+        </linearGradient>
+        <filter id="glo" x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#FF3B3B" flood-opacity=".55"/>
+        </filter>
+      </defs>
+
+      <g id="chrome1" class="svgt">
+        <line class="gline" x1="180" y1="280" x2="1740" y2="280"/>
+        <line class="gline" x1="180" y1="420" x2="1740" y2="420"/>
+        <line class="gline half" x1="180" y1="560" x2="1740" y2="560"/>
+        <line class="gline" x1="180" y1="700" x2="1740" y2="700"/>
+        <line class="gline" x1="180" y1="840" x2="1740" y2="840"/>
+        <text class="ylab" x="160" y="287" text-anchor="end">100</text>
+        <text class="ylab" x="160" y="427" text-anchor="end">75</text>
+        <text class="ylab half" x="160" y="567" text-anchor="end">50</text>
+        <text class="ylab" x="160" y="707" text-anchor="end">25</text>
+      </g>
+
+      <rect id="band" x="180" y="280" width="156" height="560" fill="#FF3B3B" opacity=".11"/>
+      <line id="bandEdge" x1="336" y1="280" x2="336" y2="840" stroke="#FF3B3B" stroke-width="2" opacity=".7"/>
+
+      <g id="areaG" clip-path="url(#revealClip)"><path id="areaP" fill="url(#areaGrad)"/></g>
+      <g id="dotsG"></g>
+      <g id="lineG" clip-path="url(#revealClip)">
+        <path id="lineP" fill="none" stroke="#FF4444" stroke-width="5" stroke-linecap="round" filter="url(#glo)"/>
+      </g>
+
+      <line id="playhead" x1="180" y1="280" x2="180" y2="872" stroke="#FFFFFF" stroke-width="2" opacity=".3"/>
+      <circle id="head" cx="180" cy="280" r="9" fill="#FFF1F1" filter="url(#glo)"/>
+      <g id="pings"></g>
+
+      <line id="brLine" x1="352" y1="300" x2="1740" y2="300" stroke="#66707B" stroke-width="2"/>
+      <line id="brT1" x1="352" y1="300" x2="352" y2="314" stroke="#66707B" stroke-width="2"/>
+      <line id="brT2" x1="1740" y1="300" x2="1740" y2="314" stroke="#66707B" stroke-width="2"/>
+
+      <circle id="endDot" cx="1740" cy="733.6" r="9" fill="#FF3B3B" stroke="#fff" stroke-width="3"/>
+    </svg>
+
+    <div id="kicker">
+      <div class="k1">AUDIENCE RETENTION</div>
+      <div class="k2">A typical small-channel YouTube video &mdash; illustrative data</div>
+    </div>
+
+    <div id="headline">
+      <div class="mask"><h1 id="h1i">ALMOST HALF ARE GONE <em>BY 10%.</em></h1></div>
+      <div class="mask"><p id="h2i">The first 10% costs you more viewers than the other 90% combined. <strong>The hook is the video.</strong></p></div>
+    </div>
+
+    <div id="counter">
+      <div id="cRow"><span id="cNum">100</span><span class="pct">%</span></div>
+      <div id="cLabel">of viewers still watching</div>
+    </div>
+
+    <div id="stamp">
+      <div class="num">&minus;42%</div>
+      <div class="sub">GONE IN THE FIRST 10%</div>
+    </div>
+
+    <div id="brLabel">&hellip;then only <strong>&minus;39%</strong> across the other 90%</div>
+
+    <div id="playGlyph"></div>
+    <div id="track"></div><div id="fill"></div><div id="scrub"></div>
+    <div id="posLabel">10% OF VIDEO</div>
+    <div class="xlab" style="left:180px">0%</div>
+    <div class="xlab" style="left:570px">25%</div>
+    <div class="xlab" style="left:960px">50%</div>
+    <div class="xlab" style="left:1350px">75%</div>
+    <div class="xlab" style="left:1740px">100%</div>
+    <div id="tick10"></div><div id="tick10lab">10%</div>
+    <div id="xTitle">VIDEO POSITION</div>
+    <div id="footer">Viewers remaining vs. video position &middot; illustrative retention curve</div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+(function(){
+  'use strict';
+  /* ---------- fit 1920x1080 to window ---------- */
+  var stage=document.getElementById('stage');
+  function fit(){
+    var s=Math.min(window.innerWidth/1920, window.innerHeight/1080);
+    stage.style.transform='translate(-50%,-50%) scale('+s+')';
+  }
+  window.addEventListener('resize',fit); fit();
+
+  /* ---------- geometry + data ---------- */
+  var PL=180, PR=1740, PT=280, PB=840, W=PR-PL, H=PB-PT;
+  var xs=[0,10,20,30,40,50,60,70,80,90,100];
+  var ys=[100,58,46,40,36,33,30,27,24,21,19];
+
+  // monotone cubic (harmonic-mean tangents -> no overshoot on the cliff)
+  var d=[], m=[], i, j;
+  for(i=0;i<10;i++) d[i]=(ys[i+1]-ys[i])/10;
+  m[0]=d[0]; m[10]=d[9];
+  for(i=1;i<10;i++) m[i]=(d[i-1]*d[i]<=0)?0:(2*d[i-1]*d[i])/(d[i-1]+d[i]);
+  function ret(x){
+    x=Math.max(0,Math.min(100,x));
+    var k=Math.min(Math.floor(x/10),9), t=(x-xs[k])/10, t2=t*t, t3=t2*t;
+    return (2*t3-3*t2+1)*ys[k]+(t3-2*t2+t)*10*m[k]+(-2*t3+3*t2)*ys[k+1]+(t3-t2)*10*m[k+1];
+  }
+  var S=[]; for(i=0;i<=1000;i++) S.push(ret(i/10));
+  function qFor(v){ // video position where retention first drops to v
+    if(v>=100) return 0;
+    if(v<=S[1000]) return 101; // never
+    var lo=0, hi=1000, mid;
+    while(lo<hi){ mid=(lo+hi)>>1; if(S[mid]>v) lo=mid+1; else hi=mid; }
+    var a=S[lo-1], b=S[lo], t=(a-v)/(a-b);
+    return (lo-1+t)/10;
+  }
+  function X(p){ return PL+p/100*W; }
+  function Yv(v){ return PB-v/100*H; }
+
+  /* ---------- curve paths ---------- */
+  var pts=[], x;
+  for(x=PL;x<PR;x+=6) pts.push([x,Yv(ret((x-PL)/W*100))]);
+  pts.push([PR,Yv(19)]);
+  var lineD='M'+pts.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join('L');
+  document.getElementById('lineP').setAttribute('d',lineD);
+  document.getElementById('areaP').setAttribute('d',lineD+'L'+PR+','+PB+'L'+PL+','+PB+'Z');
+
+  /* ---------- the audience field ---------- */
+  var seed=0xA11CE;
+  function rnd(){ seed|=0; seed=seed+0x6D2B79F5|0; var t=Math.imul(seed^seed>>>15,1|seed);
+    t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }
+
+  var NS='http://www.w3.org/2000/svg';
+  var dotsG=document.getElementById('dotsG');
+  var rows=[], cols=[], allDots=[], fallDots=[];
+  for(j=0;j<52;j++) cols.push({pos:((195+j*30)-PL)/W*100, keeps:[]});
+  for(i=0;i<20;i++){
+    var p=(19.5-i)*5, cy=294+i*28, q=qFor(p), row={p:p,q:q,falls:[]};
+    for(j=0;j<52;j++){
+      var cx=195+j*30, pos=cols[j].pos;
+      var c=document.createElementNS(NS,'circle');
+      c.setAttribute('cx',cx); c.setAttribute('cy',cy); c.setAttribute('r',5.5);
+      c.setAttribute('fill','#A7B1BC'); c.setAttribute('opacity','.7');
+      dotsG.appendChild(c); allDots.push(c);
+      if(p>ret(pos)){ row.falls.push(c); fallDots.push(c); }
+      else cols[j].keeps.push(c);
+    }
+    if(row.falls.length) rows.push(row);
+  }
+  rows.sort(function(a,b){return a.q-b.q;});
+
+  var $=function(id){return document.getElementById(id);};
+  var cNum=$('cNum'), fillEl=$('fill'), scrub=$('scrub'), posLabel=$('posLabel'),
+      playheadEl=$('playhead'), headEl=$('head'), revealRect=$('revealRect');
+
+  /* ---------- static final pose (no GSAP / reduced motion) ---------- */
+  function finalPose(){
+    fallDots.forEach(function(e){e.remove();});
+    cols.forEach(function(c){c.keeps.forEach(function(e){
+      e.setAttribute('fill','#EFF3F6'); e.setAttribute('opacity','.95');});});
+    cNum.textContent='19'; cNum.style.color='#FF4A4A';
+    $('cLabel').textContent='of viewers make it to the end';
+    $('kicker').style.display='none';
+    $('playGlyph').style.display='none'; playheadEl.style.display='none';
+    headEl.style.display='none'; posLabel.style.display='none';
+  }
+
+  if(!window.gsap || window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    finalPose(); return;
+  }
+
+  /* ---------- pre-animation state ---------- */
+  gsap.set('#kicker',{autoAlpha:0,y:-14});
+  gsap.set(['#chrome1','#track','.xlab','#xTitle','#footer'],{autoAlpha:0});
+  gsap.set('#counter',{autoAlpha:0});
+  gsap.set(allDots,{attr:{r:0}});
+  gsap.set('#band',{opacity:0});
+  gsap.set(['#bandEdge','#tick10','#tick10lab'],{autoAlpha:0});
+  gsap.set(revealRect,{attr:{width:0}});
+  gsap.set(fillEl,{width:0});
+  gsap.set('#scrub',{left:169,scale:0,autoAlpha:0});
+  gsap.set(['#playGlyph','#posLabel','#playhead','#head'],{autoAlpha:0});
+  gsap.set('#stamp',{autoAlpha:0});
+  gsap.set(['#brLine','#brT1','#brT2'],{autoAlpha:0});
+  gsap.set('#brLine',{attr:{x2:352}});
+  gsap.set('#brLabel',{autoAlpha:0,y:12});
+  gsap.set('#endDot',{autoAlpha:0,scale:0,transformOrigin:'50% 50%'});
+  gsap.set(['#h1i','#h2i'],{yPercent:112});
+  posLabel.textContent='0% OF VIDEO';
+
+  /* ---------- helpers ---------- */
+  var pingsG=$('pings');
+  function ping(px,py,big){
+    var c=document.createElementNS(NS,'circle');
+    c.setAttribute('cx',px); c.setAttribute('cy',py); c.setAttribute('r',3);
+    c.setAttribute('fill','none'); c.setAttribute('stroke','#FFFFFF');
+    c.setAttribute('stroke-width', big?3:2); c.setAttribute('opacity','.9');
+    pingsG.appendChild(c);
+    gsap.to(c,{attr:{r:big?30:17},opacity:0,duration:big?.6:.45,ease:'power2.out',
+      onComplete:function(){c.remove();}});
+  }
+  function launchRow(row){
+    ping(X(Math.min(row.q,100)),Yv(row.p));
+    row.falls.forEach(function(el,k){
+      var del=k*0.013+rnd()*0.04;
+      gsap.to(el,{y:'+='+(560+rnd()*260),x:'+='+(rnd()*64-32),
+        duration:.9+rnd()*.35,delay:del,ease:'power2.in'});
+      gsap.to(el,{attr:{fill:'#49525C'},duration:.3,delay:del});
+      gsap.to(el,{opacity:0,duration:.5,delay:del+.1,ease:'power1.in'});
+    });
+  }
+  function brightenCol(col){
+    if(col.keeps.length)
+      gsap.to(col.keeps,{attr:{fill:'#EFF3F6'},opacity:.95,duration:.35,ease:'power1.out'});
+  }
+
+  /* ---------- the single driver: playhead position in % ---------- */
+  var obj={p:0}, rowIdx=0, colIdx=0;
+  function update(){
+    var p=obj.p, v=ret(p), px=X(p);
+    playheadEl.setAttribute('x1',px); playheadEl.setAttribute('x2',px);
+    revealRect.setAttribute('width',Math.max(0,px-PL));
+    fillEl.style.width=(px-PL)+'px';
+    scrub.style.left=(px-11)+'px';
+    posLabel.style.left=px+'px';
+    posLabel.textContent=Math.round(p)+'% OF VIDEO';
+    headEl.setAttribute('cx',px); headEl.setAttribute('cy',Yv(v));
+    cNum.textContent=Math.round(v);
+    while(rowIdx<rows.length && rows[rowIdx].q<=p) launchRow(rows[rowIdx++]);
+    while(colIdx<52 && cols[colIdx].pos<=p) brightenCol(cols[colIdx++]);
+  }
+
+  /* ---------- choreography ---------- */
+  var tl=gsap.timeline({defaults:{ease:'power3.out'}});
+
+  // 0.0-1.6  setup: the full house
+  tl.to('#footer',{autoAlpha:.65,duration:.5},.15)
+    .to('#kicker',{autoAlpha:1,y:0,duration:.55},.08)
+    .to(['#chrome1','#track','#xTitle'],{autoAlpha:1,duration:.6},.2)
+    .to('.xlab',{autoAlpha:1,duration:.5,stagger:.05},.25)
+    .to(allDots,{attr:{r:5.5},duration:.5,ease:'back.out(2.4)',
+        stagger:{each:.0008,from:'random'}},.3)
+    .fromTo('#counter',{autoAlpha:0,scale:1.28,transformOrigin:'right top'},
+        {autoAlpha:1,scale:1,duration:.55,ease:'back.out(1.6)'},1.0)
+
+  // 1.5-2.0  press play
+    .fromTo('#playGlyph',{scale:0},{autoAlpha:.9,scale:1,duration:.4,ease:'back.out(3)'},1.5)
+    .to('#playhead',{autoAlpha:.3,duration:.25},1.78)
+    .to('#scrub',{scale:1,autoAlpha:1,duration:.3,ease:'back.out(2)'},1.82)
+    .to(['#posLabel','#head'],{autoAlpha:1,duration:.25},1.9)
+
+  // 2.05-3.8  THE CLIFF — sweep to 10%, ceiling collapses
+    .to(obj,{p:10,duration:1.75,ease:'power1.in',onUpdate:update},2.05)
+
+  // 3.82  impact
+    .add('impact',3.82)
+    .fromTo('#band',{opacity:0},{opacity:.44,duration:.09,ease:'power4.out'},'impact')
+    .to('#band',{opacity:.11,duration:.65,ease:'power2.out'},'impact+=.13')
+    .to('#bandEdge',{autoAlpha:.7,duration:.2},'impact')
+    .to('#tick10',{autoAlpha:1,duration:.2},'impact')
+    .fromTo('#tick10lab',{autoAlpha:0,y:-8},{autoAlpha:1,y:0,duration:.35},'impact+=.08')
+    .to('#shake',{keyframes:[{x:-8,y:5},{x:7,y:-4},{x:-4,y:2},{x:2,y:-1},{x:0,y:0}],
+        duration:.45,ease:'power2.out'},'impact')
+    .to(cNum,{color:'#FF4A4A',duration:.12},'impact')
+    .fromTo('#counter',{scale:1},{scale:1.07,duration:.11,yoyo:true,repeat:1,
+        transformOrigin:'right top',ease:'power2.out'},'impact')
+    .to(cNum,{color:'#F2F6F9',duration:.5},'impact+=.6')
+
+  // 4.3  the stamp
+    .fromTo('#stamp',{autoAlpha:0,scale:2.05,rotation:5},
+        {autoAlpha:1,scale:1,rotation:-3,duration:.5,ease:'back.out(1.5)'},4.3)
+    .to('#shake',{keyframes:[{x:4,y:-3},{x:-3,y:2},{x:0,y:0}],duration:.28},4.72)
+    .to('#playhead',{autoAlpha:.55,duration:.42,yoyo:true,repeat:1},5.0)
+
+  // 5.85-9.55  the long trickle — the other 90%
+    .to(obj,{p:100,duration:3.7,ease:'none',onUpdate:update},5.85)
+
+  // 9.6  the end of the video
+    .add('end',9.6)
+    .to('#head',{autoAlpha:0,duration:.3},'end')
+    .to('#endDot',{autoAlpha:1,scale:1,duration:.4,ease:'back.out(2.6)'},'end')
+    .call(function(){ping(1740,733.6,true);},null,'end+=.05')
+    .to(cNum,{color:'#FF4A4A',duration:.3},'end')
+    .to('#cLabel',{autoAlpha:0,duration:.18,onComplete:function(){
+        $('cLabel').textContent='of viewers make it to the end';}},'end')
+    .to('#cLabel',{autoAlpha:1,duration:.3},'end+=.24')
+
+  // 10.0  the comparison: -42 vs -39
+    .to(['#brLine','#brT1'],{autoAlpha:.85,duration:.2},'end+=.35')
+    .to('#brLine',{attr:{x2:1740},duration:.6,ease:'power2.inOut'},'end+=.4')
+    .to('#brT2',{autoAlpha:.85,duration:.2},'end+=.95')
+    .to('#brLabel',{autoAlpha:1,y:0,duration:.45},'end+=1.0')
+
+  // 10.9  the takeaway
+    .to('#kicker',{autoAlpha:0,y:-10,duration:.35},'end+=1.2')
+    .to('#h1i',{yPercent:0,duration:.7,ease:'power4.out'},'end+=1.4')
+    .to('#h2i',{yPercent:0,duration:.65,ease:'power4.out'},'end+=1.58')
+    .to('#stamp',{scale:1.04,duration:.35,yoyo:true,repeat:1,ease:'power1.inOut'},'end+=1.5')
+
+  // hold the poster
+    .to({},{duration:1.2},'end+=2.3');
+})();
+</script>
+</body>
+</html>
