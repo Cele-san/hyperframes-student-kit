@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Bake-off Register Starter Templates — R1 / R2 / R3</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <!--
+      REGISTER STARTER TEMPLATES (locked 2026-07-17 bake-off winners, house-conformed)
+
+      Three seekable HyperFrames compositions, one per set-piece register:
+        r1-countdown-kinetic   (10.4s)  kinetic-text hook       — Fable 5 winner
+        r2-topology-argument   (13.6s)  abstract-concept beat   — Opus 4.8 winner
+        r3-live-chart-story    (13.5s)  data-viz proof beat     — Fable 5 winner
+
+      This index chains them back-to-back for a quick full review. In real use you
+      COPY one compositions/<register>.html into your video project, rewrite every
+      EDIT-ME block (beat map first, then copy/data), and render that comp alone.
+
+      Docs (read before editing):
+        DESIGN.bakeoff-registers.md                       (this repo, main branch)
+        OperatorOS/_shared/motion/bakeoff-winner-registers.md   (recipes + conform tables)
+        OperatorOS/_shared/motion/house-style.md          (Quiet Register house style)
+      Style ground truth (verbatim winning one-shots — NOT renderable comps):
+        References/Bakeoff-2026-07-17/r{1,2,3}-*.html
+
+      Rules the templates already obey — keep them true when you edit:
+      - One paused master timeline per comp on window.__timelines[<comp-id>], honest
+        single linear driver, everything derived (no rAF state, no Date.now(), no
+        unseeded Math.random(), no CSS animations, nothing accumulated in onUpdate).
+      - Beat map comment at the top, written BEFORE the code.
+      - Held poster frame at the end (the final frame works as a still).
+      - Self-hosted Geist/Geist Mono (assets/fonts/), Tier-3 palette, no grain/vignette.
+        Red #EF4444 stays ONLY while the story is loss/cost/burn (the placeholder
+        stories in R1/R3 are retention loss); otherwise blossom/cyan per the tables.
+      - Prototype-then-pick (hard): build the set-piece against the real cut and get
+        Andy's pick before rolling it across a video. Budget 1-3 set-pieces per video.
+    -->
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1920px; height: 1080px; overflow: hidden;
+        background: #0A1628;
+      }
+      .reg-layer {
+        position: absolute; top: 0; left: 0;
+        width: 1920px; height: 1080px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="register-templates"
+      data-start="0"
+      data-duration="37.5"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- R1 — Countdown Kinetic (0–10.4s) -->
+      <div class="reg-layer" id="slot-r1"
+        data-composition-id="r1-countdown-kinetic"
+        data-composition-src="compositions/r1-countdown-kinetic.html"
+        data-start="0" data-duration="10.4" data-track-index="0"
+        data-width="1920" data-height="1080"></div>
+
+      <!-- R2 — Topology Argument (10.4–24s) -->
+      <div class="reg-layer" id="slot-r2"
+        data-composition-id="r2-topology-argument"
+        data-composition-src="compositions/r2-topology-argument.html"
+        data-start="10.4" data-duration="13.6" data-track-index="0"
+        data-width="1920" data-height="1080"></div>
+
+      <!-- R3 — Live-Chart Story (24–37.5s) -->
+      <div class="reg-layer" id="slot-r3"
+        data-composition-id="r3-live-chart-story"
+        data-composition-src="compositions/r3-live-chart-story.html"
+        data-start="24" data-duration="13.5" data-track-index="0"
+        data-width="1920" data-height="1080"></div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      // Root anchor — 37.5s slot. Sub-composition timelines auto-link.
+      tl.to({}, { duration: 37.5 }, 0);
+      window.__timelines["register-templates"] = tl;
+    </script>
+  </body>
+</html>

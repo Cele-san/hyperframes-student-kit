@@ -1,0 +1,434 @@
+<template id="r1-countdown-kinetic-template">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+
+  <!--
+    R1 — COUNTDOWN KINETIC (starter template)
+    Register source: References/Bakeoff-2026-07-17/r1-kinetic-text-fable5.html (Fable 5, verbatim winner)
+    Recipe doc: OperatorOS/_shared/motion/bakeoff-winner-registers.md §R1
+    House conform: Geist/Geist Mono self-hosted, Tier-3 palette, grain+vignette dropped.
+    Red #EF4444 is legal here because the PLACEHOLDER story is retention LOSS.
+    For a non-loss story: blossom #F0A8C2 takes the accent slot, cyan #5BA8D8 the data readout.
+
+    THE LAW: the composition IS the argument. The placeholder sentence is
+    "nobody watches past the first ten seconds" -> the comp IS ten honest seconds:
+    a real clock + progress bar + bleeding retention readout run under everything,
+    and the words bail like viewers.
+
+    BEAT MAP (write yours BEFORE touching the code — EDIT-ME):
+     0.00  HUD in — timer, retention %, sparkline, progress bar start
+     0.55  WORD 1  "NOBODY"    (clip-rise slam, chromatic split, micro-shake)
+     1.45  WORD 2  "WATCHES"   (hard cut, skew settle)
+     2.25  WORD 3  "PAST"      (squash pop — SANCTIONED back.out, max ONE per comp)
+     2.62  WORD 4  "THE"       (blink — throwaway word, deliberately small/dim)
+     2.95  WORD 5  "FIRST"     (scale slam + shake)
+     3.62  THE HIT "TEN"       (flash frame + giant ghost-outline numeral + big shake)
+     4.35  "SECONDS."          (two-line lockup, timer pulses on each second tick)
+     5.48  Full sentence assembles (blur-stagger)
+     6.50  The drain — words exit one by one, retention cliff-dives
+     7.92  Subject word re-centers, alone, audience 0%
+     9.20  HARD CUT at clock-zero — black
+     9.45  Typed payoff tag "still watching?" + blinking cursor (SANCTIONED typewriter,
+           post-hard-cut payoff ONLY). End hold to 10.4s — final frame works as a still.
+
+    SEEKABILITY: one master paused timeline registered on window.__timelines.
+    The HUD (timer / retention / sparkline / blinks / tick-pulses) is derived as a
+    PURE FUNCTION of the single linear driver `state.t` — nothing accumulates,
+    no side tweens spawned from onUpdate, no CSS animations, no Date.now().
+  -->
+
+  <div
+    data-composition-id="r1-countdown-kinetic"
+    data-start="0"
+    data-duration="10.4"
+    data-width="1920"
+    data-height="1080"
+  >
+    <div class="r1-stage">
+      <div id="r1-shake">
+        <div id="r1-glow"></div>
+
+        <!-- EDIT-ME: the staccato carousel — one full-frame word per beat.
+             Keep one signature entrance per word; never the same move twice in a row. -->
+        <div id="r1-words">
+          <div class="r1-word" id="r1-s-w1"><span class="r1-kt" style="font-size:300px">NOBODY</span></div>
+          <div class="r1-word" id="r1-s-w2"><span class="r1-kt" style="font-size:280px">WATCHES</span></div>
+          <div class="r1-word" id="r1-s-w3"><span class="r1-kt" style="font-size:260px">PAST</span></div>
+          <div class="r1-word" id="r1-s-w4"><span class="r1-kt r1-throwaway" style="font-size:130px">THE</span></div>
+          <div class="r1-word" id="r1-s-w5"><span class="r1-kt" style="font-size:330px">FIRST</span></div>
+        </div>
+
+        <!-- EDIT-ME: the hit — the number that becomes the clock -->
+        <div id="r1-tenLock">
+          <div class="r1-layer" id="r1-g10"><span>10</span></div>
+          <div class="r1-layer" id="r1-tenWord"><span class="r1-kt">TEN</span></div>
+          <div class="r1-layer" id="r1-secWord"><span class="r1-kt">SECONDS.</span></div>
+        </div>
+
+        <!-- EDIT-ME: the assembled sentence (meaning order drives the drain below) -->
+        <div id="r1-lockup">
+          <div class="r1-lline"><span class="r1-lw" id="r1-w-subj">NOBODY</span><span class="r1-lw" id="r1-w-b">WATCHES</span></div>
+          <div class="r1-lline"><span class="r1-lw" id="r1-w-c">PAST</span><span class="r1-lw" id="r1-w-d">THE</span><span class="r1-lw" id="r1-w-e">FIRST</span></div>
+          <div class="r1-lline r1-red"><span class="r1-lw" id="r1-w-f">TEN</span><span class="r1-lw" id="r1-w-g">SECONDS.</span></div>
+        </div>
+
+        <!-- the honest clock: never lies, never pauses -->
+        <div id="r1-hud">
+          <!-- EDIT-ME: HUD labels -->
+          <div id="r1-live"><span class="r1-ldot"></span>LIVE · AVG. VIEWER RETENTION</div>
+          <div id="r1-timer"><span id="r1-tcur">0:00.0</span><span class="r1-tmax"> / 0:10.0</span></div>
+          <div id="r1-sparkwrap">
+            <div id="r1-retwrap">AUDIENCE&nbsp;&nbsp;<span id="r1-ret">100%</span></div>
+            <svg id="r1-spark" width="300" height="64" viewBox="0 0 300 64">
+              <line x1="0" y1="62" x2="300" y2="62" stroke="rgba(255,255,255,.14)" stroke-width="1"/>
+              <polyline id="r1-sline" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points=""/>
+              <circle id="r1-sdot" r="3.5" fill="#EF4444" cx="0" cy="8"/>
+            </svg>
+          </div>
+        </div>
+
+        <div id="r1-bar">
+          <div id="r1-barFill"></div>
+          <div id="r1-barDot"></div>
+        </div>
+      </div>
+
+      <div id="r1-flash"></div>
+
+      <!-- EDIT-ME: payoff tag copy lives in the script (R1.TAG) -->
+      <div id="r1-tag"><span id="r1-cursor"></span></div>
+    </div>
+
+    <style>
+      /* Self-hosted Geist (style gate: never the Google Fonts CDN).
+         NOTE: heaviest woff2 in the workspace library is Geist 600 — it is registered
+         across 600–900 so `font-weight:900` resolves to it without faux-bold synthesis.
+         EDIT-ME: drop real Geist-800/900 woff2 files into assets/fonts/ and split the
+         declarations when heavier cuts land in the library. */
+      @font-face { font-family: 'Geist'; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-weight: 600 900; font-display: block; src: url(assets/fonts/Geist-600.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-weight: 500 700; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+
+      [data-composition-id="r1-countdown-kinetic"]{
+        --r1-bg:#0A1628;          /* house dark navy (exemplar's near-black lifted) */
+        --r1-ink:#EAF2FF;
+        --r1-red:#EF4444;         /* loss/cost/burn ONLY. Non-loss story: #F0A8C2 blossom accent, #5BA8D8 cyan data */
+        --r1-dim:#7C93B4;
+        position:absolute;inset:0;overflow:hidden;background:var(--r1-bg);
+        -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+      }
+      [data-composition-id="r1-countdown-kinetic"] .r1-stage{position:absolute;inset:0;overflow:hidden}
+      #r1-shake{position:absolute;inset:0;will-change:transform}
+      #r1-glow{
+        position:absolute;inset:0;pointer-events:none;
+        background:radial-gradient(ellipse 980px 620px at 50% 46%,rgba(210,226,255,.05),transparent 70%);
+      }
+      /* NOTE (house conform): the exemplar's grain + vignette layers are DROPPED — banned atmosphere.
+         The dark stage + radial glow is enough. */
+
+      [data-composition-id="r1-countdown-kinetic"] .r1-slam{font-family:'Geist',sans-serif;font-weight:900;color:var(--r1-ink);line-height:.92;letter-spacing:-.01em}
+      #r1-words,#r1-tenLock,#r1-lockup{font-family:'Geist',sans-serif;font-weight:900;color:var(--r1-ink);line-height:.92;letter-spacing:-.01em}
+
+      #r1-words{position:absolute;inset:0;z-index:3}
+      [data-composition-id="r1-countdown-kinetic"] .r1-word{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden}
+      [data-composition-id="r1-countdown-kinetic"] .r1-word span{display:block;will-change:transform,opacity,filter}
+      [data-composition-id="r1-countdown-kinetic"] .r1-throwaway{color:#7C93B4}
+
+      /* chromatic split on entrances only — GSAP drives --ab to 0 (red/cyan on the house axis) */
+      [data-composition-id="r1-countdown-kinetic"] .r1-kt{
+        --ab:0;
+        text-shadow:
+          calc(var(--ab)*1px) 0 rgba(239,68,68,.85),
+          calc(var(--ab)*-1px) 0 rgba(91,168,216,.55);
+      }
+
+      #r1-tenLock{position:absolute;inset:0;z-index:3;opacity:0;visibility:hidden}
+      [data-composition-id="r1-countdown-kinetic"] .r1-layer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+      #r1-g10 span{
+        font-size:950px;line-height:.9;
+        color:rgba(239,68,68,.04);
+        -webkit-text-stroke:3px rgba(239,68,68,.55);
+        opacity:0;visibility:hidden;
+        will-change:transform,opacity;
+      }
+      #r1-tenWord span{font-size:360px}
+      #r1-secWord span{font-size:135px;letter-spacing:.05em;color:var(--r1-red)}
+
+      #r1-lockup{
+        position:absolute;inset:0;z-index:4;
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        gap:14px;
+        opacity:0;visibility:hidden;
+      }
+      [data-composition-id="r1-countdown-kinetic"] .r1-lline{font-size:150px;line-height:1.02;text-align:center;white-space:nowrap}
+      [data-composition-id="r1-countdown-kinetic"] .r1-lline .r1-lw{display:inline-block;margin:0 22px;will-change:transform,opacity,filter}
+      [data-composition-id="r1-countdown-kinetic"] .r1-lline.r1-red .r1-lw{color:var(--r1-red)}
+
+      #r1-hud{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;visibility:hidden;font-weight:400}
+      #r1-live{
+        position:absolute;top:64px;left:70px;
+        font-family:'Geist Mono',monospace;font-size:21px;font-weight:500;
+        letter-spacing:.18em;color:var(--r1-dim);
+        display:flex;align-items:center;gap:14px;
+      }
+      [data-composition-id="r1-countdown-kinetic"] .r1-ldot{width:11px;height:11px;border-radius:50%;background:var(--r1-red)}
+      #r1-timer{
+        position:absolute;top:54px;right:70px;
+        font-family:'Geist Mono',monospace;font-size:46px;font-weight:700;
+        color:#E4EBF7;letter-spacing:.02em;
+        will-change:transform;
+        font-variant-numeric:tabular-nums;
+      }
+      #r1-timer .r1-tmax{font-size:30px;font-weight:400;color:#4C5F80}
+      #r1-sparkwrap{position:absolute;left:70px;bottom:46px}
+      #r1-retwrap{font-family:'Geist Mono',monospace;font-size:20px;font-weight:500;letter-spacing:.14em;color:var(--r1-dim);margin-bottom:10px}
+      #r1-ret{color:#D3DCEA;font-weight:700}
+      #r1-spark{display:block;opacity:.9}
+
+      #r1-bar{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(255,255,255,.08);z-index:6}
+      #r1-barFill{position:absolute;inset:0;background:var(--r1-red);transform:scaleX(0);transform-origin:left center;will-change:transform}
+      #r1-barDot{
+        position:absolute;bottom:-4px;left:-7px;width:14px;height:14px;border-radius:50%;
+        background:var(--r1-red);box-shadow:0 0 14px rgba(239,68,68,.85);will-change:transform;
+      }
+
+      #r1-flash{position:absolute;inset:0;background:#fff;opacity:0;visibility:hidden;z-index:7;pointer-events:none}
+
+      #r1-tag{
+        position:absolute;inset:0;z-index:8;
+        display:flex;align-items:center;justify-content:center;
+        font-family:'Geist Mono',monospace;font-size:44px;font-weight:400;
+        letter-spacing:.08em;color:#A9B6CE;
+        opacity:0;visibility:hidden;
+      }
+      #r1-tag .r1-ch{opacity:0}
+      #r1-cursor{
+        display:inline-block;width:.62em;height:1.15em;margin-left:.18em;
+        background:#A9B6CE;vertical-align:text-bottom;
+      }
+    </style>
+
+    <script>
+      (function () {
+        'use strict';
+
+        var DUR = 10.4;                        /* composition length (matches data-duration) */
+        var CLOCK_END = 9.2;                   /* real seconds the on-screen 10s clock runs */
+        var TAG = 'still watching?';           /* EDIT-ME: payoff tag copy */
+
+        var root = document.querySelector('[data-composition-id="r1-countdown-kinetic"]');
+        var $ = function (sel) { return root.querySelector(sel); };
+
+        /* payoff tag: build character spans */
+        var tagEl = $('#r1-tag'), cursor = $('#r1-cursor');
+        TAG.split('').forEach(function (c) {
+          var s = document.createElement('span');
+          s.className = 'r1-ch';
+          s.textContent = (c === ' ') ? ' ' : c;
+          tagEl.insertBefore(s, cursor);
+        });
+
+        /* EDIT-ME: the retention curve — slow bleed, then the cliff.
+           rt = real seconds 0..9.2. Pure function (seek-safe). */
+        function retention(rt) {
+          var r;
+          if      (rt < 3.6) r = 100 - 12 * (rt / 3.6);            /* 100 -> 88 */
+          else if (rt < 6.5) r = 88  - 17 * ((rt - 3.6) / 2.9);    /*  88 -> 71 */
+          else if (rt < 8.0) r = 71  - 65 * ((rt - 6.5) / 1.5);    /*  cliff -> 6 */
+          else               r = 6   - 6  * ((rt - 8.0) / 1.2);    /*   6 -> 0  */
+          var wob = Math.sin(rt * 6.1) * Math.min(1.1, r * 0.02);
+          return Math.max(0, Math.min(100, r + wob));
+        }
+
+        function fmtTimer(t) {
+          t = Math.min(10, Math.max(0, t));
+          var s = Math.floor(t);
+          var d = Math.floor((t - s) * 10);
+          return '0:' + (s < 10 ? '0' + s : s) + '.' + d;
+        }
+
+        var tcur = $('#r1-tcur'), retEl = $('#r1-ret'), sline = $('#r1-sline'),
+            sdot = $('#r1-sdot'), timerEl = $('#r1-timer'), g10s = $('#r1-g10 span'),
+            ldot = root.querySelector('.r1-ldot'), cursorEl = $('#r1-cursor');
+        gsap.set(timerEl, { transformOrigin: 'right center' });
+
+        /* ---------------- SEEK-SAFE HUD ----------------
+           One linear driver owns the spine. EVERYTHING below is a pure function of
+           state.t — the sparkline is rebuilt from scratch each update (no accumulated
+           points), tick-pulses are computed as decay-since-tick, blinks are derived
+           with floor(t/period). Scrubbing out of order is always correct. */
+        var state = { t: 0 };
+
+        function updateHUD() {
+          var t  = state.t;
+          var rt = Math.min(t, CLOCK_END);          /* real clock seconds */
+          var ct = Math.min(10, rt / 0.92);         /* displayed timer 0..10 */
+          tcur.textContent = fmtTimer(ct);
+
+          /* timer tick pulse — pure decay since the last whole second */
+          var tick = Math.floor(rt / 0.92);
+          var since = rt - tick * 0.92;
+          var pulse = (tick >= 1 && tick <= 9 && t < CLOCK_END) ? Math.max(0, 1 - since / 0.28) : 0;
+          gsap.set(timerEl, { scale: 1 + 0.12 * pulse * pulse });
+
+          /* ghost-numeral echo pulse while the hit is up */
+          var gp = (rt > 4.25 && rt < 5.25) ? Math.max(0, 1 - since / 0.3) : 0;
+          gsap.set(g10s, { scale: 1 + 0.05 * gp * gp });
+
+          /* retention readout */
+          var r = retention(rt);
+          retEl.textContent = Math.max(0, Math.round(r)) + '%';
+          retEl.style.color = (r < 35) ? '#EF4444' : '#D3DCEA';
+
+          /* sparkline — rebuilt whole every update, never accumulated */
+          var x = rt / CLOCK_END * 300;
+          var pts = [];
+          for (var px = 0; px <= x; px += 1.5) {
+            var pr = retention(px / 300 * CLOCK_END);
+            pts.push(px.toFixed(1) + ',' + (62 - (pr / 100) * 54).toFixed(1));
+          }
+          var y = 62 - (r / 100) * 54;
+          pts.push(x.toFixed(1) + ',' + y.toFixed(1));
+          sline.setAttribute('points', pts.join(' '));
+          sdot.setAttribute('cx', x.toFixed(1));
+          sdot.setAttribute('cy', y.toFixed(1));
+
+          /* LIVE dot + payoff cursor blinks — derived, not CSS animations */
+          ldot.style.opacity = (Math.floor(t / 0.55) % 2) ? 0.25 : 1;
+          cursorEl.style.opacity = (t < 9.45 || Math.floor((t - 9.45) / 0.53) % 2 === 0) ? 1 : 0;
+        }
+
+        var tl = gsap.timeline({ paused: true, defaults: { ease: 'power4.out' } });
+
+        function shakeAt(at, mag, times) {
+          var kf = [];
+          for (var i = 0; i < times; i++) {
+            var d = mag * (1 - i / times);
+            kf.push({ x: (i % 2 ? d : -d) * 0.9, y: (i % 2 ? -d : d) * 0.55, duration: 0.032 });
+          }
+          kf.push({ x: 0, y: 0, duration: 0.05 });
+          tl.to('#r1-shake', { keyframes: kf }, at);
+        }
+
+        /* ---------- the honest clock: timer, bar, retention, sparkline ---------- */
+        tl.to(state, { t: DUR, duration: DUR, ease: 'none', onUpdate: updateHUD }, 0);
+        tl.fromTo('#r1-barFill', { scaleX: 0 }, { scaleX: 1, duration: CLOCK_END, ease: 'none' }, 0);
+        tl.fromTo('#r1-barDot',  { x: 0 },     { x: 1920,  duration: CLOCK_END, ease: 'none' }, 0);
+        tl.fromTo('#r1-hud', { autoAlpha: 0 }, { autoAlpha: 1, duration: .5, ease: 'power2.out' }, 0.12);
+
+        /* ---------- staccato carousel: one word at a time, hard set in/out ----------
+           EDIT-ME: retime beats to your copy; keep the signature-entrance variety. */
+
+        /* WORD 1 — clip-rise slam */
+        tl.set('#r1-s-w1', { autoAlpha: 1 }, 0.55);
+        tl.fromTo('#r1-s-w1 span',
+          { clipPath: 'inset(100% 0% 0% 0%)', y: 60, scale: 1.18, '--ab': 14 },
+          { clipPath: 'inset(0% 0% 0% 0%)',   y: 0,  scale: 1,    '--ab': 0, duration: .5, ease: 'power4.out' }, 0.55);
+        shakeAt(0.62, 8, 4);
+        tl.set('#r1-s-w1', { autoAlpha: 0 }, 1.45);
+
+        /* WORD 2 — hard cut, skew settle */
+        tl.set('#r1-s-w2', { autoAlpha: 1 }, 1.45);
+        tl.fromTo('#r1-s-w2 span',
+          { scaleX: 1.35, skewX: -10, '--ab': 10 },
+          { scaleX: 1,    skewX: 0,   '--ab': 0, duration: .34, ease: 'power3.out' }, 1.45);
+        tl.set('#r1-s-w2', { autoAlpha: 0 }, 2.25);
+
+        /* WORD 3 — squash pop (the ONE sanctioned back.out in this register) */
+        tl.set('#r1-s-w3', { autoAlpha: 1 }, 2.25);
+        tl.fromTo('#r1-s-w3 span',
+          { scaleY: .25, scaleX: 1.5 },
+          { scaleY: 1,   scaleX: 1, duration: .3, ease: 'back.out(2.2)' }, 2.25);
+        tl.set('#r1-s-w3', { autoAlpha: 0 }, 2.62);
+
+        /* WORD 4 — blink, small and dim (throwaway beat before the hit) */
+        tl.set('#r1-s-w4', { autoAlpha: 1 }, 2.62);
+        tl.fromTo('#r1-s-w4 span', { opacity: 0 }, { opacity: 1, duration: .14, ease: 'steps(2)' }, 2.62);
+        tl.set('#r1-s-w4', { autoAlpha: 0 }, 2.95);
+
+        /* WORD 5 — scale slam */
+        tl.set('#r1-s-w5', { autoAlpha: 1 }, 2.95);
+        tl.fromTo('#r1-s-w5 span',
+          { scale: 1.9, opacity: 0, '--ab': 18 },
+          { scale: 1,   opacity: 1, '--ab': 0, duration: .38, ease: 'power4.out' }, 2.95);
+        shakeAt(3.0, 11, 5);
+        tl.set('#r1-s-w5', { autoAlpha: 0 }, 3.62);
+
+        /* ---------- THE HIT — triple layer: flash + ghost numeral + shake ---------- */
+        tl.set('#r1-tenLock', { autoAlpha: 1 }, 3.62);
+        /* immediateRender:false — without it this fromTo's from-state (white at 80%)
+           applies at build time and washes every frame before 3.62s */
+        tl.fromTo('#r1-flash', { autoAlpha: .8 }, { autoAlpha: 0, duration: .18, ease: 'power2.out', immediateRender: false }, 3.62);
+        tl.fromTo('#r1-g10 span',
+          { scale: 1.35, autoAlpha: 0 },
+          { scale: 1,    autoAlpha: .85, duration: .55, ease: 'power3.out' }, 3.62);
+        tl.fromTo('#r1-tenWord span',
+          { scale: 2, autoAlpha: 0, '--ab': 22 },
+          { scale: 1, autoAlpha: 1, '--ab': 0, duration: .42, ease: 'power4.out' }, 3.62);
+        shakeAt(3.64, 16, 6);
+
+        tl.to('#r1-tenWord span', { y: -120, duration: .5, ease: 'power3.inOut' }, 4.32);
+        tl.fromTo('#r1-secWord span',
+          { y: 210, autoAlpha: 0, '--ab': 12 },
+          { y: 122, autoAlpha: 1, '--ab': 0, duration: .45, ease: 'power4.out' }, 4.42);
+        shakeAt(4.5, 7, 4);
+
+        tl.to('#r1-tenLock', { autoAlpha: 0, scale: 1.05, duration: .22, ease: 'power2.in' }, 5.32);
+
+        /* ---------- the whole line assembles (blur-stagger) ---------- */
+        tl.set('#r1-lockup', { autoAlpha: 1 }, 5.48);
+        tl.fromTo('.r1-lline .r1-lw',
+          { y: 36, autoAlpha: 0, filter: 'blur(14px)' },
+          { y: 0,  autoAlpha: 1, filter: 'blur(0px)', duration: .42, ease: 'power3.out', stagger: .05 }, 5.48);
+
+        /* ---------- the drain: words leave like viewers (meaning order) ----------
+           EDIT-ME: exit order = least meaningful word first, subject word NEVER. */
+        var drain = [
+          ['#r1-w-d', 6.50, -6],
+          ['#r1-w-c', 6.78,  5],
+          ['#r1-w-e', 7.04, -4],
+          ['#r1-w-b', 7.27,  6],
+          ['#r1-w-g', 7.47, -5],
+          ['#r1-w-f', 7.65,  4]
+        ];
+        drain.forEach(function (d) {
+          tl.to(d[0], { y: 90, rotation: d[2], autoAlpha: 0, duration: .34, ease: 'power2.in' }, d[1]);
+        });
+
+        /* subject word alone re-centers and scales up.
+           Function-based values: measured at first render (fonts loaded by then);
+           offsetLeft/Top are layout values, untouched by transforms — seek-safe. */
+        var subj = $('#r1-w-subj');
+        tl.to(subj, {
+          x: function () { return 960 - (subj.offsetLeft + subj.offsetWidth  / 2); },
+          y: function () { return 540 - (subj.offsetTop  + subj.offsetHeight / 2); },
+          scale: 1.45, duration: .65, ease: 'power3.inOut'
+        }, 7.92);
+
+        /* signal dying */
+        tl.to(subj, { keyframes: [
+          { opacity: .3,  duration: .05 },
+          { opacity: 1,   duration: .06 },
+          { opacity: .15, duration: .05 },
+          { opacity: .75, duration: .06 },
+          { opacity: .3,  duration: .06 },
+          { opacity: .85, duration: .07 }
+        ] }, 8.72);
+
+        /* ---------- clock-zero — hard cut ---------- */
+        tl.set(['#r1-hud', '#r1-words', '#r1-tenLock', '#r1-lockup', '#r1-glow', '#r1-bar'], { autoAlpha: 0 }, 9.2);
+
+        /* ---------- payoff: typed tag (sanctioned post-hard-cut typewriter) ---------- */
+        tl.set('#r1-tag', { autoAlpha: 1 }, 9.45);
+        tl.fromTo('#r1-tag .r1-ch', { opacity: 0 }, { opacity: 1, duration: .02, stagger: .04, ease: 'none' }, 9.45);
+
+        /* hold the poster frame — the final frame must work as a still */
+        tl.set({}, {}, DUR);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines['r1-countdown-kinetic'] = tl;
+      })();
+    </script>
+  </div>
+</template>

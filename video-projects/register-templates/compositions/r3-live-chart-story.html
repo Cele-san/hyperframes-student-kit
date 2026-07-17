@@ -1,0 +1,466 @@
+<template id="r3-live-chart-story-template">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+
+  <!--
+    R3 — LIVE-CHART STORY (starter template)
+    Register source: References/Bakeoff-2026-07-17/r3-data-viz-fable5.html (Fable 5, verbatim winner)
+    Recipe doc: OperatorOS/_shared/motion/bakeoff-winner-registers.md §R3
+    House conform: Geist headline/counter + Geist Mono axis/eyebrows/readouts (self-hosted),
+    charcoal lifted to house #0A1628 family, panel/track grays re-keyed #14243C/#223A5C,
+    grain/vignette N/A. Red #EF4444 is legal AS-IS because the PLACEHOLDER story is
+    retention LOSS. For positive/neutral data: line+accents go cyan #5BA8D8, the ONE
+    emphasis moment (stamp, end dot) goes blossom #F0A8C2.
+    Sanctioned back.out: the impact accents ONLY (stamp + end dot). The dot-grid
+    entrance is a bed, not an accent — it enters power2.out with random stagger.
+
+    THE LAW: the chart plays itself in the medium the data is about. Placeholder data
+    is YouTube retention -> the chart wears a play glyph, a red progress/scrub bar,
+    a playhead, and a live position label. EDIT-ME: find the equivalent skin for
+    YOUR data's native medium before re-purposing this.
+
+    BEAT MAP:
+      0.00  setup: the full house — chart chrome, 20x52 audience dot grid, counter at 100%
+      1.50  press play — glyph, playhead, scrub handle appear
+      2.05  THE CLIFF — playhead sweeps 0 -> 10%, rows of viewers physically FALL
+      3.82  impact at the thesis threshold — band flash, tick label, camera shake,
+            counter color-snap + scale pulse
+      4.30  the stamp lands (rotated, back.out — sanctioned accent)
+      5.85  the slow honest second act — ease:'none' trickle across the other 90%
+      9.60  end of the video — head fades, end dot + big ping, counter relabels
+     10.00  measured comparison bracket draws (-42 vs -39)
+     11.00  headline SWAP (masked yPercent slide) — the takeaway
+     13.50  hold the poster. Final frame works as a still.
+
+    SEEKABILITY: one master paused timeline registered on window.__timelines.
+    A single driver {p:0->100} derives playhead / clip reveal / fill / scrub /
+    counter as a PURE FUNCTION in onUpdate. Every threshold event (rows falling,
+    survivor columns brightening, pings) is PRE-SCHEDULED onto the master timeline
+    at timeFor(q) — the exemplar spawned side tweens from onUpdate with index
+    accumulators, which breaks under out-of-order seeking; this template does not.
+    Randomness is seeded (mul32) at build time. Monotone-cubic interpolation keeps
+    the curve honest (no overshoot on cliffs).
+  -->
+
+  <div
+    data-composition-id="r3-live-chart-story"
+    data-start="0"
+    data-duration="13.5"
+    data-width="1920"
+    data-height="1080"
+  >
+    <div class="r3-stage">
+      <div id="r3-shake">
+
+        <svg id="r3-chart" width="1920" height="1080" viewBox="0 0 1920 1080">
+          <defs>
+            <clipPath id="r3-revealClip"><rect id="r3-revealRect" x="180" y="0" width="1560" height="1080"/></clipPath>
+            <linearGradient id="r3-areaGrad" x1="0" y1="280" x2="0" y2="840" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#EF4444" stop-opacity=".20"/>
+              <stop offset="1" stop-color="#EF4444" stop-opacity=".02"/>
+            </linearGradient>
+            <filter id="r3-glo" x="-40%" y="-40%" width="180%" height="180%">
+              <feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#EF4444" flood-opacity=".55"/>
+            </filter>
+          </defs>
+
+          <g id="r3-chrome1" class="r3-svgt">
+            <line class="r3-gline" x1="180" y1="280" x2="1740" y2="280"/>
+            <line class="r3-gline" x1="180" y1="420" x2="1740" y2="420"/>
+            <line class="r3-gline r3-half" x1="180" y1="560" x2="1740" y2="560"/>
+            <line class="r3-gline" x1="180" y1="700" x2="1740" y2="700"/>
+            <line class="r3-gline" x1="180" y1="840" x2="1740" y2="840"/>
+            <text class="r3-ylab" x="160" y="287" text-anchor="end">100</text>
+            <text class="r3-ylab" x="160" y="427" text-anchor="end">75</text>
+            <text class="r3-ylab r3-halft" x="160" y="567" text-anchor="end">50</text>
+            <text class="r3-ylab" x="160" y="707" text-anchor="end">25</text>
+          </g>
+
+          <rect id="r3-band" x="180" y="280" width="156" height="560" fill="#EF4444" opacity=".11"/>
+          <line id="r3-bandEdge" x1="336" y1="280" x2="336" y2="840" stroke="#EF4444" stroke-width="2" opacity=".7"/>
+
+          <g id="r3-areaG" clip-path="url(#r3-revealClip)"><path id="r3-areaP" fill="url(#r3-areaGrad)"/></g>
+          <g id="r3-dotsG"></g>
+          <g id="r3-lineG" clip-path="url(#r3-revealClip)">
+            <path id="r3-lineP" fill="none" stroke="#EF4444" stroke-width="5" stroke-linecap="round" filter="url(#r3-glo)"/>
+          </g>
+
+          <line id="r3-playhead" x1="180" y1="280" x2="180" y2="872" stroke="#FFFFFF" stroke-width="2" opacity=".3"/>
+          <circle id="r3-head" cx="180" cy="280" r="9" fill="#FFF1F1" filter="url(#r3-glo)"/>
+          <g id="r3-pings"></g>
+
+          <line id="r3-brLine" x1="352" y1="300" x2="1740" y2="300" stroke="#5E7398" stroke-width="2"/>
+          <line id="r3-brT1" x1="352" y1="300" x2="352" y2="314" stroke="#5E7398" stroke-width="2"/>
+          <line id="r3-brT2" x1="1740" y1="300" x2="1740" y2="314" stroke="#5E7398" stroke-width="2"/>
+
+          <circle id="r3-endDot" cx="1740" cy="733.6" r="9" fill="#EF4444" stroke="#fff" stroke-width="3"/>
+        </svg>
+
+        <!-- EDIT-ME: eyebrow copy (small uppercase mono — Form-2 rule) -->
+        <div id="r3-kicker">
+          <div class="r3-k1">AUDIENCE RETENTION</div>
+          <div class="r3-k2">A typical small-channel YouTube video &mdash; illustrative data</div>
+        </div>
+
+        <!-- EDIT-ME: the takeaway headline that swaps in at the end -->
+        <div id="r3-headline">
+          <div class="r3-mask"><h1 id="r3-h1i">ALMOST HALF ARE GONE <em>BY 10%.</em></h1></div>
+          <div class="r3-mask"><p id="r3-h2i">The first 10% costs you more viewers than the other 90% combined. <strong>The hook is the video.</strong></p></div>
+        </div>
+
+        <!-- EDIT-ME: live counter + its two labels (before / after relabel) -->
+        <div id="r3-counter">
+          <div id="r3-cRow"><span id="r3-cNum">100</span><span class="r3-pct">%</span></div>
+          <div class="r3-cLabelWrap">
+            <div class="r3-cLabel" id="r3-cLabelA">of viewers still watching</div>
+            <div class="r3-cLabel" id="r3-cLabelB">of viewers make it to the end</div>
+          </div>
+        </div>
+
+        <!-- EDIT-ME: the stamp — the headline number (sanctioned back.out accent) -->
+        <div id="r3-stamp">
+          <div class="r3-num">&minus;42%</div>
+          <div class="r3-sub">GONE IN THE FIRST 10%</div>
+        </div>
+
+        <!-- EDIT-ME: the measured comparison -->
+        <div id="r3-brLabel">&hellip;then only <strong>&minus;39%</strong> across the other 90%</div>
+
+        <div id="r3-playGlyph"></div>
+        <div id="r3-track"></div><div id="r3-fill"></div><div id="r3-scrub"></div>
+        <div id="r3-posLabel">0% OF VIDEO</div>
+        <div class="r3-xlab" style="left:180px">0%</div>
+        <div class="r3-xlab" style="left:570px">25%</div>
+        <div class="r3-xlab" style="left:960px">50%</div>
+        <div class="r3-xlab" style="left:1350px">75%</div>
+        <div class="r3-xlab" style="left:1740px">100%</div>
+        <div id="r3-tick10"></div><div id="r3-tick10lab">10%</div>
+        <div id="r3-xTitle">VIDEO POSITION</div>
+        <div id="r3-footer">Viewers remaining vs. video position &middot; illustrative retention curve</div>
+
+      </div>
+    </div>
+
+    <style>
+      /* Self-hosted Geist (style gate: never the Google Fonts CDN).
+         Geist 600 registered across 600–900 — see r1 template note. EDIT-ME when
+         real 800/900 cuts land in the font library. */
+      @font-face { font-family: 'Geist'; font-weight: 400; font-display: block; src: url(assets/fonts/Geist-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-weight: 500; font-display: block; src: url(assets/fonts/Geist-500.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist'; font-weight: 600 900; font-display: block; src: url(assets/fonts/Geist-600.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-weight: 400; font-display: block; src: url(assets/fonts/GeistMono-400.woff2) format('woff2'); }
+      @font-face { font-family: 'Geist Mono'; font-weight: 500 800; font-display: block; src: url(assets/fonts/GeistMono-500.woff2) format('woff2'); }
+
+      [data-composition-id="r3-live-chart-story"]{
+        --r3-bg0:#0A1628; --r3-bg1:#14243C;              /* house navy family */
+        --r3-ink:#EAF2FF; --r3-mut:#7C93B4; --r3-dim:#4C5F80;
+        --r3-red:#EF4444; --r3-red-hot:#E23B3B;          /* loss story only — see header */
+        position:absolute;inset:0;overflow:hidden;
+        background:radial-gradient(1400px 900px at 50% 34%, var(--r3-bg1) 0%, var(--r3-bg0) 72%);
+        font-family:'Geist',-apple-system,'Helvetica Neue',Arial,sans-serif;color:var(--r3-ink);
+      }
+      [data-composition-id="r3-live-chart-story"] .r3-stage{position:absolute;inset:0;overflow:hidden}
+      #r3-shake{position:absolute;inset:0}
+
+      /* ---------- chart chrome ---------- */
+      #r3-chart{position:absolute;inset:0;display:block}
+      [data-composition-id="r3-live-chart-story"] .r3-gline{stroke:rgba(234,242,255,.07);stroke-width:1}
+      [data-composition-id="r3-live-chart-story"] .r3-gline.r3-half{stroke:rgba(234,242,255,.17);stroke-dasharray:7 8}
+      [data-composition-id="r3-live-chart-story"] .r3-ylab{fill:var(--r3-dim);font-family:'Geist Mono',monospace;font-size:21px;font-weight:500;letter-spacing:.04em}
+      [data-composition-id="r3-live-chart-story"] .r3-ylab.r3-halft{fill:#7C93B4}
+      [data-composition-id="r3-live-chart-story"] .r3-svgt{font-family:'Geist Mono',monospace}
+
+      /* ---------- kicker / headline strip ---------- */
+      #r3-kicker{position:absolute;left:180px;top:88px}
+      #r3-kicker .r3-k1{font-family:'Geist Mono',monospace;font-size:25px;font-weight:500;letter-spacing:.17em;color:#C9D5E4}
+      #r3-kicker .r3-k1::before{content:'';display:inline-block;width:14px;height:14px;border-radius:4px;
+        background:var(--r3-red);margin-right:16px;transform:translateY(-1px)}
+      #r3-kicker .r3-k2{font-family:'Geist Mono',monospace;font-size:20px;font-weight:400;letter-spacing:.02em;color:#7C93B4;margin:12px 0 0 30px}
+
+      #r3-headline{position:absolute;left:180px;top:78px;width:1140px}
+      #r3-headline .r3-mask{overflow:hidden}
+      #r3-headline h1{font-size:76px;font-weight:900;letter-spacing:-.015em;line-height:1.04;color:var(--r3-ink)}
+      #r3-headline h1 em{font-style:normal;color:var(--r3-red)}
+      #r3-headline p{font-size:32px;font-weight:500;line-height:1.35;color:#97A6BC;margin-top:14px;max-width:1120px}
+      #r3-headline p strong{color:#D9E3F0;font-weight:700}
+
+      /* ---------- counter ---------- */
+      #r3-counter{position:absolute;right:180px;top:70px;text-align:right}
+      #r3-cRow{font-size:168px;font-weight:900;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+      #r3-cRow .r3-pct{font-size:.44em;font-weight:800;margin-left:6px;color:#B9C6D8}
+      [data-composition-id="r3-live-chart-story"] .r3-cLabelWrap{position:relative;height:36px;margin-top:8px}
+      [data-composition-id="r3-live-chart-story"] .r3-cLabel{position:absolute;right:0;top:0;white-space:nowrap;
+        font-size:27px;font-weight:600;color:var(--r3-mut);letter-spacing:.01em}
+
+      /* ---------- stamp ---------- */
+      #r3-stamp{
+        position:absolute;left:426px;top:332px;transform:rotate(-3deg);
+        background:var(--r3-red-hot);border-radius:18px;padding:30px 48px 34px;text-align:center;
+        box-shadow:0 30px 90px rgba(239,68,68,.38), 0 10px 28px rgba(0,0,0,.55);
+      }
+      #r3-stamp .r3-num{font-size:148px;font-weight:900;letter-spacing:-.02em;line-height:.95;color:#fff}
+      #r3-stamp .r3-sub{font-family:'Geist Mono',monospace;font-size:24px;font-weight:500;letter-spacing:.13em;color:rgba(255,255,255,.92);margin-top:12px}
+
+      /* ---------- bracket label ---------- */
+      #r3-brLabel{position:absolute;left:960px;top:312px;width:780px;text-align:center;
+        font-size:26px;font-weight:600;color:#95A4BA;letter-spacing:.01em}
+      #r3-brLabel strong{color:var(--r3-ink);font-weight:800}
+
+      /* ---------- progress bar / axis (the medium skin: a video player) ---------- */
+      #r3-playGlyph{position:absolute;left:132px;top:869px;width:0;height:0;
+        border-left:24px solid rgba(255,255,255,.75);border-top:14px solid transparent;border-bottom:14px solid transparent}
+      #r3-track{position:absolute;left:180px;top:878px;width:1560px;height:8px;border-radius:4px;background:#223A5C}
+      #r3-fill{position:absolute;left:180px;top:878px;width:1560px;height:8px;border-radius:4px;
+        background:linear-gradient(90deg,#DC3333,#EF4444);box-shadow:0 0 22px rgba(239,68,68,.45)}
+      #r3-scrub{position:absolute;left:1729px;top:871px;width:22px;height:22px;border-radius:50%;
+        background:var(--r3-red);box-shadow:0 0 0 5px rgba(239,68,68,.22), 0 4px 14px rgba(0,0,0,.6)}
+      #r3-posLabel{position:absolute;left:180px;top:843px;transform:translateX(-50%);
+        font-family:'Geist Mono',monospace;font-size:20px;font-weight:500;letter-spacing:.1em;color:#98A9C2;white-space:nowrap}
+      [data-composition-id="r3-live-chart-story"] .r3-xlab{position:absolute;top:908px;transform:translateX(-50%);
+        font-family:'Geist Mono',monospace;font-size:22px;font-weight:500;color:var(--r3-dim)}
+      #r3-tick10{position:absolute;left:335px;top:872px;width:3px;height:20px;background:var(--r3-red);border-radius:1px}
+      #r3-tick10lab{position:absolute;left:336px;top:908px;transform:translateX(-50%);
+        font-family:'Geist Mono',monospace;font-size:22px;font-weight:800;color:var(--r3-red)}
+      #r3-xTitle{position:absolute;left:0;top:952px;width:1920px;text-align:center;
+        font-family:'Geist Mono',monospace;font-size:19px;font-weight:500;letter-spacing:.28em;color:#4C5F80}
+      #r3-footer{position:absolute;left:180px;top:1014px;font-family:'Geist Mono',monospace;
+        font-size:18px;font-weight:400;color:#52627E}
+    </style>
+
+    <script>
+      (function () {
+        'use strict';
+
+        var DUR = 13.5;
+
+        var root = document.querySelector('[data-composition-id="r3-live-chart-story"]');
+        var $id = function (id) { return root.querySelector('#' + id); };
+
+        /* ---------- geometry + data ---------- */
+        var PL = 180, PR = 1740, PT = 280, PB = 840, W = PR - PL, H = PB - PT;
+        /* EDIT-ME: the data. xs = position (%), ys = value at that position.
+           Placeholder: an illustrative small-channel retention curve. */
+        var xs = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+        var ys = [100, 58, 46, 40, 36, 33, 30, 27, 24, 21, 19];
+        /* EDIT-ME: the thesis threshold (the impact beat fires when the playhead crosses it) */
+        var THRESH = 10;
+
+        /* monotone cubic (harmonic-mean tangents -> no overshoot on the cliff) */
+        var d = [], m = [], i, j;
+        for (i = 0; i < 10; i++) d[i] = (ys[i + 1] - ys[i]) / 10;
+        m[0] = d[0]; m[10] = d[9];
+        for (i = 1; i < 10; i++) m[i] = (d[i - 1] * d[i] <= 0) ? 0 : (2 * d[i - 1] * d[i]) / (d[i - 1] + d[i]);
+        function ret(x) {
+          x = Math.max(0, Math.min(100, x));
+          var k = Math.min(Math.floor(x / 10), 9), t = (x - xs[k]) / 10, t2 = t * t, t3 = t2 * t;
+          return (2 * t3 - 3 * t2 + 1) * ys[k] + (t3 - 2 * t2 + t) * 10 * m[k] + (-2 * t3 + 3 * t2) * ys[k + 1] + (t3 - t2) * 10 * m[k + 1];
+        }
+        var S = []; for (i = 0; i <= 1000; i++) S.push(ret(i / 10));
+        function qFor(v) { /* video position where the value first drops to v */
+          if (v >= 100) return 0;
+          if (v <= S[1000]) return 101; /* never */
+          var lo = 0, hi = 1000, mid;
+          while (lo < hi) { mid = (lo + hi) >> 1; if (S[mid] > v) lo = mid + 1; else hi = mid; }
+          var a = S[lo - 1], b = S[lo], t = (a - v) / (a - b);
+          return (lo - 1 + t) / 10;
+        }
+        function X(p) { return PL + p / 100 * W; }
+        function Yv(v) { return PB - v / 100 * H; }
+
+        /* ---------- curve paths ---------- */
+        var pts = [], x;
+        for (x = PL; x < PR; x += 6) pts.push([x, Yv(ret((x - PL) / W * 100))]);
+        pts.push([PR, Yv(ys[10])]);
+        var lineD = 'M' + pts.map(function (p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join('L');
+        $id('r3-lineP').setAttribute('d', lineD);
+        $id('r3-areaP').setAttribute('d', lineD + 'L' + PR + ',' + PB + 'L' + PL + ',' + PB + 'Z');
+        $id('r3-endDot').setAttribute('cy', Yv(ys[10]).toFixed(1));   /* end dot follows the data */
+
+        /* ---------- seeded RNG (build-time only — deterministic renders) ---------- */
+        var seed = 0xA11CE;
+        function rnd() { seed |= 0; seed = seed + 0x6D2B79F5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+          t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }
+
+        /* ---------- the audience field: individuals, not an area ---------- */
+        var NS = 'http://www.w3.org/2000/svg';
+        var dotsG = $id('r3-dotsG');
+        var rows = [], cols = [], allDots = [];
+        for (j = 0; j < 52; j++) cols.push({ pos: ((195 + j * 30) - PL) / W * 100, keeps: [] });
+        for (i = 0; i < 20; i++) {
+          var p = (19.5 - i) * 5, cy = 294 + i * 28, q = qFor(p), row = { p: p, q: q, falls: [] };
+          for (j = 0; j < 52; j++) {
+            var cx = 195 + j * 30, pos = cols[j].pos;
+            var c = document.createElementNS(NS, 'circle');
+            c.setAttribute('cx', cx); c.setAttribute('cy', cy); c.setAttribute('r', 5.5);
+            c.setAttribute('fill', '#93A5C0'); c.setAttribute('opacity', '.7');
+            dotsG.appendChild(c); allDots.push(c);
+            if (p > ret(pos)) row.falls.push(c);
+            else cols[j].keeps.push(c);
+          }
+          if (row.falls.length) rows.push(row);
+        }
+        rows.sort(function (a, b) { return a.q - b.q; });
+
+        var cNum = $id('r3-cNum'), fillEl = $id('r3-fill'), scrub = $id('r3-scrub'),
+            posLabel = $id('r3-posLabel'), playheadEl = $id('r3-playhead'),
+            headEl = $id('r3-head'), revealRect = $id('r3-revealRect');
+
+        /* no-GSAP fallback: the final poster frame */
+        if (!window.gsap) {
+          cNum.textContent = String(Math.round(ys[10])); cNum.style.color = '#EF4444';
+          return;
+        }
+
+        /* ---------- pre-animation state ---------- */
+        gsap.set('#r3-kicker', { autoAlpha: 0, y: -14 });
+        gsap.set(['#r3-chrome1', '#r3-track', '.r3-xlab', '#r3-xTitle', '#r3-footer'], { autoAlpha: 0 });
+        gsap.set('#r3-counter', { autoAlpha: 0 });
+        gsap.set(allDots, { attr: { r: 0 } });
+        gsap.set('#r3-band', { opacity: 0 });
+        gsap.set(['#r3-bandEdge', '#r3-tick10', '#r3-tick10lab'], { autoAlpha: 0 });
+        gsap.set(revealRect, { attr: { width: 0 } });
+        gsap.set(fillEl, { width: 0 });
+        gsap.set('#r3-scrub', { left: 169, scale: 0, autoAlpha: 0 });
+        gsap.set(['#r3-playGlyph', '#r3-posLabel', '#r3-playhead', '#r3-head'], { autoAlpha: 0 });
+        gsap.set('#r3-stamp', { autoAlpha: 0 });
+        gsap.set(['#r3-brLine', '#r3-brT1', '#r3-brT2'], { autoAlpha: 0 });
+        gsap.set('#r3-brLine', { attr: { x2: 352 } });
+        gsap.set('#r3-brLabel', { autoAlpha: 0, y: 12 });
+        gsap.set('#r3-endDot', { autoAlpha: 0, scale: 0, transformOrigin: '50% 50%' });
+        gsap.set(['#r3-h1i', '#r3-h2i'], { yPercent: 112 });
+        gsap.set('#r3-cLabelB', { autoAlpha: 0 });
+
+        /* ============================================================
+           DRIVER SCHEDULE — the spine and its inverse.
+           The playhead {p} runs 0->THRESH over [T_SWEEP0,T_SWEEP1] (power1.in)
+           then THRESH->100 over [T_TRICKLE0,T_TRICKLE1] (ease:none).
+           timeFor(q) inverts that mapping so every data-threshold event can be
+           PLACED on the master timeline at build time (fully seekable).
+           EDIT-ME: retime the sweep windows with the constants only.
+        ============================================================ */
+        var T_SWEEP0 = 2.05, T_SWEEP1 = 3.80, T_TRICKLE0 = 5.85, T_TRICKLE1 = 9.55;
+        function timeFor(q) {
+          if (q <= THRESH) return T_SWEEP0 + (T_SWEEP1 - T_SWEEP0) * Math.sqrt(q / THRESH); /* invert power1.in */
+          return T_TRICKLE0 + (T_TRICKLE1 - T_TRICKLE0) * (q - THRESH) / (100 - THRESH);
+        }
+
+        /* ---------- the single driver: playhead position in % (pure derive) ---------- */
+        var obj = { p: 0 };
+        function update() {
+          var p = obj.p, v = ret(p), px = X(p);
+          playheadEl.setAttribute('x1', px); playheadEl.setAttribute('x2', px);
+          revealRect.setAttribute('width', Math.max(0, px - PL));
+          fillEl.style.width = (px - PL) + 'px';
+          scrub.style.left = (px - 11) + 'px';
+          posLabel.style.left = px + 'px';
+          posLabel.textContent = Math.round(p) + '% OF VIDEO';
+          headEl.setAttribute('cx', px); headEl.setAttribute('cy', Yv(v));
+          cNum.textContent = Math.round(v);
+        }
+
+        var tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+
+        /* ---------- pre-scheduled threshold events (seek-safe fan of tweens) ---------- */
+        var pingsG = $id('r3-pings');
+        function schedulePing(at, px, py, big) {
+          var c = document.createElementNS(NS, 'circle');
+          c.setAttribute('cx', px); c.setAttribute('cy', py); c.setAttribute('r', 3);
+          c.setAttribute('fill', 'none'); c.setAttribute('stroke', '#FFFFFF');
+          c.setAttribute('stroke-width', big ? 3 : 2); c.setAttribute('opacity', '0');
+          pingsG.appendChild(c);
+          tl.fromTo(c, { attr: { r: 3 }, opacity: .9 },
+            { attr: { r: big ? 30 : 17 }, opacity: 0, duration: big ? .6 : .45, ease: 'power2.out', immediateRender: false }, at);
+        }
+        rows.forEach(function (row) {
+          var at = timeFor(row.q);
+          schedulePing(at, X(Math.min(row.q, 100)), Yv(row.p), false);
+          row.falls.forEach(function (el, k) {
+            var del = k * 0.013 + rnd() * 0.04;
+            tl.to(el, { y: 560 + rnd() * 260, x: rnd() * 64 - 32,
+              duration: .9 + rnd() * .35, ease: 'power2.in' }, at + del);
+            tl.to(el, { attr: { fill: '#3A4A63' }, duration: .3 }, at + del);
+            tl.to(el, { opacity: 0, duration: .5, ease: 'power1.in' }, at + del + .1);
+          });
+        });
+        cols.forEach(function (col) {
+          if (!col.keeps.length) return;
+          tl.to(col.keeps, { attr: { fill: '#EFF5FC' }, opacity: .95, duration: .35, ease: 'power1.out' }, timeFor(col.pos));
+        });
+
+        /* ---------- choreography ---------- */
+
+        // 0.0-1.6  setup: the full house
+        tl.to('#r3-footer', { autoAlpha: .65, duration: .5 }, .15)
+          .to('#r3-kicker', { autoAlpha: 1, y: 0, duration: .55 }, .08)
+          .to(['#r3-chrome1', '#r3-track', '#r3-xTitle'], { autoAlpha: 1, duration: .6 }, .2)
+          .to('.r3-xlab', { autoAlpha: 1, duration: .5, stagger: .05 }, .25)
+          /* dot-grid entrance: a bed, not an accent — power2.out + random stagger (house conform) */
+          .to(allDots, { attr: { r: 5.5 }, duration: .5, ease: 'power2.out',
+              stagger: { each: .0008, from: 'random' } }, .3)
+          .fromTo('#r3-counter', { autoAlpha: 0, scale: 1.28, transformOrigin: 'right top' },
+              { autoAlpha: 1, scale: 1, duration: .55, ease: 'power2.out' }, 1.0)
+
+        // 1.5-2.0  press play
+          .fromTo('#r3-playGlyph', { scale: 0 }, { autoAlpha: .9, scale: 1, duration: .4, ease: 'back.out(3)' }, 1.5)
+          .to('#r3-playhead', { autoAlpha: .3, duration: .25 }, 1.78)
+          .to('#r3-scrub', { scale: 1, autoAlpha: 1, duration: .3, ease: 'back.out(2)' }, 1.82)
+          .to(['#r3-posLabel', '#r3-head'], { autoAlpha: 1, duration: .25 }, 1.9)
+
+        // 2.05-3.8  THE CLIFF — sweep to the threshold, ceiling collapses
+          .to(obj, { p: THRESH, duration: T_SWEEP1 - T_SWEEP0, ease: 'power1.in', onUpdate: update }, T_SWEEP0)
+
+        // 3.82  impact
+          .add('impact', 3.82)
+          .fromTo('#r3-band', { opacity: 0 }, { opacity: .44, duration: .09, ease: 'power4.out' }, 'impact')
+          .to('#r3-band', { opacity: .11, duration: .65, ease: 'power2.out' }, 'impact+=.13')
+          .to('#r3-bandEdge', { autoAlpha: .7, duration: .2 }, 'impact')
+          .to('#r3-tick10', { autoAlpha: 1, duration: .2 }, 'impact')
+          .fromTo('#r3-tick10lab', { autoAlpha: 0, y: -8 }, { autoAlpha: 1, y: 0, duration: .35 }, 'impact+=.08')
+          .to('#r3-shake', { keyframes: [{ x: -8, y: 5 }, { x: 7, y: -4 }, { x: -4, y: 2 }, { x: 2, y: -1 }, { x: 0, y: 0 }],
+              duration: .45, ease: 'power2.out' }, 'impact')
+          .to(cNum, { color: '#EF4444', duration: .12 }, 'impact')
+          .fromTo('#r3-counter', { scale: 1 }, { scale: 1.07, duration: .11, yoyo: true, repeat: 1,
+              transformOrigin: 'right top', ease: 'power2.out' }, 'impact')
+          .to(cNum, { color: '#EAF2FF', duration: .5 }, 'impact+=.6')
+
+        // 4.3  the stamp (sanctioned back.out impact accent)
+          .fromTo('#r3-stamp', { autoAlpha: 0, scale: 2.05, rotation: 5 },
+              { autoAlpha: 1, scale: 1, rotation: -3, duration: .5, ease: 'back.out(1.5)' }, 4.3)
+          .to('#r3-shake', { keyframes: [{ x: 4, y: -3 }, { x: -3, y: 2 }, { x: 0, y: 0 }], duration: .28 }, 4.72)
+          .to('#r3-playhead', { autoAlpha: .55, duration: .42, yoyo: true, repeat: 1 }, 5.0)
+
+        // 5.85-9.55  the long trickle — honest ease:'none' across the other 90%
+          .to(obj, { p: 100, duration: T_TRICKLE1 - T_TRICKLE0, ease: 'none', onUpdate: update }, T_TRICKLE0)
+
+        // 9.6  the end of the video
+          .add('end', 9.6)
+          .to('#r3-head', { autoAlpha: 0, duration: .3 }, 'end')
+          .to('#r3-endDot', { autoAlpha: 1, scale: 1, duration: .4, ease: 'back.out(2.6)' }, 'end')
+          .to(cNum, { color: '#EF4444', duration: .3 }, 'end')
+          /* counter relabel — two stacked labels crossfade (no text-swap callback; seek-safe) */
+          .to('#r3-cLabelA', { autoAlpha: 0, duration: .18 }, 'end')
+          .to('#r3-cLabelB', { autoAlpha: 1, duration: .3 }, 'end+=.24')
+
+        // 10.0  the comparison: the cliff vs the rest, measured
+          .to(['#r3-brLine', '#r3-brT1'], { autoAlpha: .85, duration: .2 }, 'end+=.35')
+          .to('#r3-brLine', { attr: { x2: 1740 }, duration: .6, ease: 'power2.inOut' }, 'end+=.4')
+          .to('#r3-brT2', { autoAlpha: .85, duration: .2 }, 'end+=.95')
+          .to('#r3-brLabel', { autoAlpha: 1, y: 0, duration: .45 }, 'end+=1.0')
+
+        // 10.9  the takeaway — headline swap (masked yPercent slide)
+          .to('#r3-kicker', { autoAlpha: 0, y: -10, duration: .35 }, 'end+=1.2')
+          .to('#r3-h1i', { yPercent: 0, duration: .7, ease: 'power4.out' }, 'end+=1.4')
+          .to('#r3-h2i', { yPercent: 0, duration: .65, ease: 'power4.out' }, 'end+=1.58')
+          .to('#r3-stamp', { scale: 1.04, duration: .35, yoyo: true, repeat: 1, ease: 'power1.inOut' }, 'end+=1.5');
+
+        /* end-of-video ping (pre-created, scheduled — not a .call side effect) */
+        schedulePing(9.65, 1740, Yv(ys[10]), true);
+
+        /* hold the poster — the final frame must work as a still */
+        tl.set({}, {}, DUR);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines['r3-live-chart-story'] = tl;
+      })();
+    </script>
+  </div>
+</template>

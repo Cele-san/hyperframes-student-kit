@@ -1,0 +1,687 @@
+<template id="r2-topology-argument-template">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+
+  <!--
+    R2 — TOPOLOGY ARGUMENT (starter template)
+    Register source: References/Bakeoff-2026-07-17/r2-abstract-concept-opus48.html (Opus 4.8, verbatim winner)
+    Recipe doc: OperatorOS/_shared/motion/bakeoff-winner-registers.md §R2
+    House conform: actor hues re-keyed to cool desaturated cyan cousins; work/product color
+    = blossom #F0A8C2 (the subject slot; use amber if the beat is about cost); canvas lifted
+    to the house #0A1628 navy family; grain + vignette DROPPED; dual-canvas bloom KEPT
+    (emphasis, not texture). No text in the canvas — a caption comes from a separate
+    Quiet-Register cue layered in the edit.
+
+    EDIT-ME · THE SHAPE-PICKING FACT (run `give-the-idea-a-shape` FIRST — do not build
+    until this block is rewritten for your beat):
+      Placeholder fact: 6 people = 15 peer-to-peer links. 1 system = 0 links. Same job.
+      So the argument is made by *topology* and *evenness*, not by volume.
+      The job is a ring of 72 bricks; bricks flash in the hue of whoever laid them,
+      then settle to ONE product color (the product is uniform — only the origin changes).
+
+    BEAT MAP (three acts with a void — the punch is subtraction):
+      0.10  polar grid breathes in
+      0.45  ACT 1 — six nodes arrive, each breathing at its own rate (nobody in sync)
+      1.15  the tangle: 15 chords bundle toward the middle, chatter blips run the wires
+      1.98  work begins — 20 bricks land bursty-with-stalls (28% of the ring, ragged)
+      6.00  THE TURN — the team dissolves; chords unweave; in-flight work dies and sags
+      6.85  ~0.9s of near-black void. The void IS the beat.
+      7.75  ACT 3 — one core ignites, wearing all six hues at once
+      8.45  52 bricks land metronomically (72% in less time), one rotating wave
+            cycles all six roles in perfect order; camera settles and leans in
+     11.72  CLOSE — one lap of light around the finished ring, soft swell
+     13.60  hold. Final frame works as a still.
+
+    SEEKABILITY — the GSAP proxy-driver wrap (DESIGN.bakeoff-registers.md §2):
+    render(t) is a PURE FUNCTION — it draws the complete frame for time t from scratch.
+    Every scalar is a composition of eased windows seg(t,a,b,ease); all randomness is
+    seeded (mul32) at build time; organic jitter is band-limited noise nz(t,seed), never
+    per-frame random. One tween drives {t} linearly and calls render — the CLI seeks it
+    frame-perfectly in any order. No rAF loop, no Date.now(), no Math.random().
+  -->
+
+  <div
+    data-composition-id="r2-topology-argument"
+    data-start="0"
+    data-duration="13.6"
+    data-width="1920"
+    data-height="1080"
+  >
+    <div class="r2-stage">
+      <canvas id="r2-c" width="1920" height="1080"></canvas>
+    </div>
+
+    <style>
+      [data-composition-id="r2-topology-argument"]{
+        position:absolute;inset:0;overflow:hidden;background:#0A1628;
+      }
+      [data-composition-id="r2-topology-argument"] .r2-stage{position:absolute;inset:0}
+      #r2-c{position:absolute;inset:0;width:1920px;height:1080px;display:block}
+    </style>
+
+    <script>
+      (function () {
+        'use strict';
+
+        const W = 1920, H = 1080, CX = 960, CY = 540, TAU = Math.PI * 2;
+
+        const R_NODE = 300;   // where the team stands / where the roles live
+        const R_RING = 436;   // the work
+        const TILES  = 72;    // EDIT-ME: the countable ledger — the viewer can COUNT the argument
+
+        // ---- timeline (seconds) — EDIT-ME: retime acts to your beat ----
+        const T_GRID_IN   = 0.10;
+        const T_NODES_IN  = 0.45;
+        const T_CHORDS_IN = 1.15;
+        const A1_START    = 1.98;   // first brick
+        const A1_END      = 5.92;   // 20th brick
+        const T_DISSOLVE  = 6.00;
+        const T_HOLD      = 6.85;   // the void
+        const T_CORE      = 7.75;
+        const A3_START    = 8.45;   // 21st brick
+        const A3_END      = 11.72;  // 72nd brick
+        const T_CLOSE     = 11.72;
+        const END         = 13.60;
+
+        // ---- palette (HOUSE-CONFORMED) ------------------------------
+        // Six actors = cool desaturated cousins of cyan #5BA8D8 — distinct but one family.
+        // The core later wears all six at once, which is the whole point.
+        const HUES = [
+          [ 91, 168, 216],  // cyan     #5BA8D8 (the axis)
+          [126, 164, 216],  // steel    #7EA4D8
+          [ 96, 196, 210],  // teal-cyan
+          [140, 156, 224],  // periwinkle
+          [110, 200, 236],  // sky
+          [ 84, 140, 196],  // deep steel
+        ];
+        // EDIT-ME: the work/product color. Blossom = the subject slot (house).
+        // If the beat is about COST, swap both to amber [245,158,11] / hot [255,236,200].
+        const WORK     = [240, 168, 194];  // blossom #F0A8C2
+        const WORK_HOT = [255, 232, 242];  // blossom-white flash
+        const WHITE    = [255, 255, 255];
+        const TRACK    = [ 96, 132, 168];
+
+        // ---- math (the craft kit — keep intact) ---------------------
+        const cl  = (x, a, b) => x < a ? a : x > b ? b : x;
+        const c01 = x => cl(x, 0, 1);
+        const lerp = (a, b, t) => a + (b - a) * t;
+        const mix = (a, b, t) => [lerp(a[0],b[0],t), lerp(a[1],b[1],t), lerp(a[2],b[2],t)];
+        const rgba = (c, a) => `rgba(${c[0]|0},${c[1]|0},${c[2]|0},${a<0?0:a>1?1:a})`;
+
+        const eOutCubic  = x => 1 - Math.pow(1 - x, 3);
+        const eOutQuart  = x => 1 - Math.pow(1 - x, 4);
+        const eOutExpo   = x => x >= 1 ? 1 : 1 - Math.pow(2, -10 * x);
+        const eOutSine   = x => Math.sin(x * Math.PI / 2);
+        const eInCubic   = x => x * x * x;
+        const eInOutCubic= x => x < 0.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2, 3)/2;
+        const eInOutSine = x => -(Math.cos(Math.PI * x) - 1) / 2;
+        const eInBack    = x => 2.10*x*x*x - 1.10*x*x;
+
+        // eased window: 0 before a, 1 after b
+        const seg = (t, a, b, f) => { const u = c01((t - a) / (b - a)); return f ? f(u) : u; };
+
+        // deterministic seeded RNG — build-time only, repeatable renders
+        function mul32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0;
+          let t = Math.imul(a ^ a >>> 15, 1 | a);
+          t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+          return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+        // deterministic band-limited noise, roughly [-1,1]
+        const nz = (t, s) => Math.sin(t*1.9 + s*1.7)*0.55 + Math.sin(t*4.3 + s*3.1)*0.30 + Math.sin(t*9.1 + s*5.9)*0.15;
+
+        // ---- canvases (dual-canvas emissive/bloom pipeline — keep) ----
+        const cv  = document.getElementById('r2-c');
+        const ctx = cv.getContext('2d', { alpha: false });
+
+        const sc = document.createElement('canvas'); sc.width = W; sc.height = H;
+        const g  = sc.getContext('2d');                 // emissive layer only
+
+        const B1W = 480, B1H = 270, B2W = 192, B2H = 108;
+        const b1 = document.createElement('canvas'); b1.width = B1W; b1.height = B1H;
+        const b1c = b1.getContext('2d');
+        const b2 = document.createElement('canvas'); b2.width = B2W; b2.height = B2H;
+        const b2c = b2.getContext('2d');
+
+        // static paints — house navy family (lifted from the exemplar's near-black)
+        const BG = ctx.createRadialGradient(CX, CY, 60, CX, CY, 1150);
+        BG.addColorStop(0.00, '#0e2036');
+        BG.addColorStop(0.42, '#0A1628');
+        BG.addColorStop(1.00, '#07121c');
+        // NOTE (house conform): the exemplar's grain plates + vignette are DROPPED — banned atmosphere.
+
+        // ---- the team ----------------------------------------------
+        const NODES = [];
+        for (let k = 0; k < 6; k++) {
+          const a = -Math.PI/2 + k * (TAU/6);
+          const r = mul32(101 + k * 37);
+          NODES.push({
+            i: k, ang: a,
+            bx: CX + Math.cos(a) * R_NODE,
+            by: CY + Math.sin(a) * R_NODE,
+            hue: HUES[k],
+            seed: r() * 40,
+            freq: 4.4 + r() * 3.6,       // everyone breathes at their own rate —
+            phase: r() * TAU,            // nobody is in sync. that is the tell.
+            x: 0, y: 0, live: 0, out: 0,
+          });
+        }
+
+        // 15 chords: every pair. bundled toward the middle.
+        const CHORDS = [];
+        {
+          const r = mul32(555);
+          for (let i = 0; i < 6; i++) for (let j = i + 1; j < 6; j++) {
+            const blips = [];
+            const n = 1 + Math.floor(r() * 2.4);
+            for (let b = 0; b < n; b++) blips.push({ ph: r(), sp: (0.42 + r()*0.72) * (r() < 0.5 ? -1 : 1) });
+            CHORDS.push({
+              a: i, b: j, blips,
+              ffreq: 3.2 + r() * 5.4, fphase: r() * TAU,   // occasional message flare
+              order: r(),
+            });
+          }
+          CHORDS.sort((p, q) => p.order - q.order);
+          CHORDS.forEach((c, i) => { c.idx = i; });
+        }
+
+        // ---- the schedule ------------------------------------------
+        // Act 1 arrivals are generated bursty-with-stalls, then normalised
+        // onto the window so the marks are guaranteed. Act 3 is a metronome.
+        const arrivals = [];
+        {
+          const r = mul32(20260717);
+          const raw = []; let tt = 0;
+          while (raw.length < 20) {
+            const n = 2 + Math.floor(r() * 3);
+            for (let i = 0; i < n && raw.length < 20; i++) { raw.push(tt); tt += 0.065 + r() * 0.055; }
+            tt += 0.30 + r() * 0.55;                       // the stall
+          }
+          const lo = raw[0], hi = raw[raw.length - 1];
+          for (let i = 0; i < 20; i++)
+            arrivals.push({ t: A1_START + (raw[i]-lo)/(hi-lo) * (A1_END-A1_START), src: 1, node: Math.floor(r()*6) });
+          for (let i = 0; i < 52; i++)
+            arrivals.push({ t: A3_START + i * (A3_END - A3_START) / 51, src: 3 });
+        }
+
+        const tileAngle = i => -Math.PI/2 + (i + 0.5) * (TAU / TILES);
+
+        const PACKETS = [];
+        const TILE = [];
+        {
+          const r = mul32(31337);
+          arrivals.forEach((a, i) => {
+            const ang = tileAngle(i);
+            const tx = CX + Math.cos(ang) * R_RING, ty = CY + Math.sin(ang) * R_RING;
+            if (a.src === 1) {
+              const n = NODES[a.node];
+              const flight = 0.44 + r() * 0.22;
+              const mx = (n.bx + tx)/2, my = (n.by + ty)/2;
+              const dx = tx - n.bx, dy = ty - n.by, L = Math.hypot(dx, dy) || 1;
+              const off = (38 + r()*100) * (r() < 0.5 ? 1 : -1);
+              PACKETS.push({ tile: i, t0: a.t - flight, t1: a.t, src: 1, node: a.node,
+                             hue: HUES[a.node], cx: mx - dy/L*off, cy: my + dx/L*off, tx, ty });
+              TILE.push({ laid: a.t, hue: HUES[a.node] });
+            } else {
+              // the packet is tinted by whichever role it passes through
+              const st = ((Math.round((ang + Math.PI/2) / (Math.PI/3)) % 6) + 6) % 6;
+              PACKETS.push({ tile: i, t0: a.t - 0.46, t1: a.t, src: 3, station: st, hue: HUES[st], tx, ty });
+              TILE.push({ laid: a.t, hue: HUES[st] });
+            }
+          });
+        }
+
+        // work that was in flight when the team went away, and never landed
+        const DOOMED = [];
+        {
+          const r = mul32(8191);
+          for (let k = 0; k < 4; k++) {
+            const node = Math.floor(r() * 6), n = NODES[node];
+            const ang = tileAngle(20 + k * 2);
+            const tx = CX + Math.cos(ang)*R_RING, ty = CY + Math.sin(ang)*R_RING;
+            const mx = (n.bx+tx)/2, my = (n.by+ty)/2;
+            const dx = tx-n.bx, dy = ty-n.by, L = Math.hypot(dx,dy)||1;
+            const off = (40 + r()*90) * (r()<0.5?1:-1);
+            DOOMED.push({ t0: 5.70 + r()*0.24, t1: 6.34 + r()*0.22, node, hue: HUES[node],
+                          cx: mx - dy/L*off, cy: my + dx/L*off, tx, ty });
+          }
+        }
+
+        // dust released by each dissolving node
+        const DUST = [];
+        {
+          const r = mul32(4242);
+          NODES.forEach((n, k) => {
+            const born = T_DISSOLVE + 0.06 + k * 0.078;
+            for (let i = 0; i < 16; i++) {
+              const a = r() * TAU, sp = 14 + r() * 46;
+              DUST.push({ born, x: n.bx, y: n.by, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp,
+                          hue: n.hue, life: 1.1 + r()*0.9, sz: 0.8 + r()*1.6 });
+            }
+          });
+        }
+
+        // ============================================================
+        //  DRAW HELPERS
+        // ============================================================
+        function glowDot(x, y, rad, col, a) {
+          const grd = g.createRadialGradient(x, y, 0, x, y, rad);
+          grd.addColorStop(0.0, rgba(col, a));
+          grd.addColorStop(0.35, rgba(col, a * 0.28));
+          grd.addColorStop(1.0, rgba(col, 0));
+          g.fillStyle = grd;
+          g.beginPath(); g.arc(x, y, rad, 0, TAU); g.fill();
+        }
+        const quadPt = (p0, pc, p1, u) => {
+          const m = 1 - u;
+          return { x: m*m*p0.x + 2*m*u*pc.x + u*u*p1.x, y: m*m*p0.y + 2*m*u*pc.y + u*u*p1.y };
+        };
+        function strokeQuadRange(p0, pc, p1, a, b, steps) {
+          g.beginPath();
+          for (let i = 0; i <= steps; i++) {
+            const u = a + (b - a) * i / steps;
+            const p = quadPt(p0, pc, p1, u);
+            i ? g.lineTo(p.x, p.y) : g.moveTo(p.x, p.y);
+          }
+          g.stroke();
+        }
+
+        // ============================================================
+        //  SCENE
+        // ============================================================
+        function polarGrid(x, alpha) {
+          if (alpha <= 0.002) return;
+          x.save();
+          x.lineWidth = 1;
+          for (let r = 80; r <= 760; r += 80) {
+            const em = (r === 240 || r === 320) ? 1.6 : 1;
+            x.strokeStyle = `rgba(124,178,222,${0.042 * alpha * em})`;
+            x.beginPath(); x.arc(CX, CY, r, 0, TAU); x.stroke();
+          }
+          x.strokeStyle = `rgba(124,178,222,${0.030 * alpha})`;
+          for (let i = 0; i < 24; i++) {
+            const a = i * (TAU / 24);
+            x.beginPath();
+            x.moveTo(CX + Math.cos(a)*82, CY + Math.sin(a)*82);
+            x.lineTo(CX + Math.cos(a)*762, CY + Math.sin(a)*762);
+            x.stroke();
+          }
+          x.restore();
+        }
+
+        function drawTiles(t, ringA, trackA) {
+          const step = TAU / TILES;
+          g.lineCap = 'butt';
+          for (let i = 0; i < TILES; i++) {
+            const a0 = tileAngle(i) - step * 0.39;
+            const a1 = a0 + step * 0.78;
+            const tl = TILE[i];
+            if (t < tl.laid) {
+              if (trackA > 0.003) {
+                g.strokeStyle = rgba(TRACK, 0.115 * trackA);
+                g.lineWidth = 13;
+                g.beginPath(); g.arc(CX, CY, R_RING, a0, a1); g.stroke();
+              }
+            } else {
+              const f = Math.pow(1 - c01((t - tl.laid) / 0.46), 2.2);   // laid-in flash
+              const col = mix(mix(WORK, tl.hue, f * 0.82), WORK_HOT, f * 0.5);
+              g.strokeStyle = rgba(col, (0.74 + 0.26 * f) * ringA);
+              g.lineWidth = 14 + 10 * f;
+              g.beginPath(); g.arc(CX, CY, R_RING, a0, a1); g.stroke();
+              if (f > 0.02) {
+                g.strokeStyle = rgba(mix(tl.hue, WORK_HOT, 0.35), 0.26 * f * ringA);
+                g.lineWidth = 30 + 26 * f;
+                g.beginPath(); g.arc(CX, CY, R_RING, a0, a1); g.stroke();
+              }
+            }
+          }
+          g.lineCap = 'round';
+        }
+
+        function frontIndex(t) {
+          let n = 0;
+          for (let i = 0; i < TILES; i++) if (t >= TILE[i].laid) n = i + 1; else break;
+          return n;
+        }
+
+        // ============================================================
+        //  FRAME — render(t) draws the COMPLETE frame for time t.
+        //  Pure function: no accumulated state, seeking-safe in any order.
+        //  (The exemplar's free-running `real` breathing param is t-driven here.)
+        // ============================================================
+        function render(t) {
+
+          // ---------- scalars ----------
+          const gridIn   = seg(t, T_GRID_IN, 1.05, eOutCubic);
+          const holdDim  = seg(t, 6.02, 7.05, eInOutCubic) * (1 - seg(t, 7.80, 8.45, eOutCubic));
+          const gridA    = gridIn * (1 - 0.62 * holdDim) * (1 - 0.42 * seg(t, 12.5, END, eInOutSine));
+          const ringA    = 1 - 0.60 * holdDim;
+          const trackA   = seg(t, 1.30, 2.30, eOutCubic) * (1 - 0.55 * holdDim);
+          const holdDark = seg(t, 6.05, 7.10, eInOutCubic) * (1 - seg(t, 7.78, 8.30, eOutCubic));
+          const ignite   = seg(t, T_CORE, 8.05, eOutQuart) * (1 - seg(t, 8.15, 8.75, eOutCubic));
+
+          // camera: drifts in with the team, exhales into the void, leans back in
+          const camS = 1.004
+            + 0.030 * seg(t, 0.0, 6.0, eOutSine)
+            - 0.028 * seg(t, 6.0, 7.45, eInOutCubic)
+            + 0.042 * seg(t, 7.75, 13.2, eOutCubic);
+          // high-frequency unease — present only while the team is
+          const shakeAmt = seg(t, 1.6, 3.2) * 1.5 * (1 + 0.6 * seg(t, 5.6, 6.05)) * (1 - seg(t, 6.05, 6.70, eOutCubic));
+          const shx = nz(t * 7.1, 3.3) * shakeAmt;
+          const shy = nz(t * 6.3, 9.7) * shakeAmt;
+          const M = [camS, 0, 0, camS, CX - CX*camS + shx, CY - CY*camS + shy];
+
+          // ---------- background (non-emissive) ----------
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.globalCompositeOperation = 'source-over';
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H);
+          if (holdDark > 0.002) { ctx.fillStyle = `rgba(0,0,0,${0.42 * holdDark})`; ctx.fillRect(0, 0, W, H); }
+          if (ignite > 0.002)   { ctx.fillStyle = `rgba(26,74,108,${0.15 * ignite})`; ctx.fillRect(0, 0, W, H); }
+          ctx.setTransform(...M);
+          polarGrid(ctx, gridA);
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+          // ---------- emissive layer ----------
+          g.setTransform(1, 0, 0, 1, 0, 0);
+          g.globalCompositeOperation = 'source-over';
+          g.clearRect(0, 0, W, H);
+          g.setTransform(...M);
+          g.globalCompositeOperation = 'lighter';
+          g.lineCap = 'round'; g.lineJoin = 'round';
+
+          // live node positions (jitter only while the team exists)
+          const jit = seg(t, 1.2, 2.4) * (1 - seg(t, 6.0, 6.4));
+          NODES.forEach(n => {
+            n.x = n.bx + nz(t * 1.5, n.seed) * 3.4 * jit;
+            n.y = n.by + nz(t * 1.5, n.seed + 11) * 3.4 * jit;
+            const inn  = seg(t, T_NODES_IN + n.i * 0.13, T_NODES_IN + n.i * 0.13 + 0.70, eOutCubic);
+            const out  = seg(t, T_DISSOLVE + 0.06 + n.i * 0.078, T_DISSOLVE + 0.06 + n.i * 0.078 + 0.36, eInCubic);
+            n.live = inn * (1 - out);
+            n.out = out;
+          });
+
+          // ---- THE TANGLE : 15 links of coordination overhead --------
+          CHORDS.forEach(ch => {
+            const A = NODES[ch.a], B = NODES[ch.b];
+            if (A.live <= 0.001 && B.live <= 0.001 && t > T_DISSOLVE + 1.2) return;
+            const inn = seg(t, T_CHORDS_IN + ch.idx * 0.055, T_CHORDS_IN + ch.idx * 0.055 + 0.55, eOutCubic);
+            if (inn <= 0.001) return;
+            // unweave: retract from the near end
+            const ret = seg(t, T_DISSOLVE + ch.idx * 0.021, T_DISSOLVE + ch.idx * 0.021 + 0.30, eInCubic);
+            const u0 = ret, u1 = inn;
+            if (u1 - u0 <= 0.004) return;
+
+            const p0 = { x: A.x, y: A.y }, p1 = { x: B.x, y: B.y };
+            const pc = { x: lerp((p0.x + p1.x)/2, CX, 0.60), y: lerp((p0.y + p1.y)/2, CY, 0.60) };
+
+            const flare = Math.pow(0.5 + 0.5*Math.sin(t * ch.ffreq + ch.fphase), 9);
+            const base  = (0.20 + 0.55 * flare) * (1 - ret) * inn;
+
+            const grd = g.createLinearGradient(p0.x, p0.y, p1.x, p1.y);
+            grd.addColorStop(0, rgba(A.hue, base));
+            grd.addColorStop(0.5, rgba(mix(A.hue, B.hue, 0.5), base * 0.62));
+            grd.addColorStop(1, rgba(B.hue, base));
+            g.strokeStyle = grd;
+            g.lineWidth = 1.15 + 1.5 * flare;
+            strokeQuadRange(p0, pc, p1, u0, u1, 26);
+
+            // chatter: blips running the wires. this is the *noise*.
+            if (inn > 0.98 && ret < 0.02) {
+              ch.blips.forEach(bl => {
+                let u = (bl.ph + t * bl.sp) % 1; if (u < 0) u += 1;
+                if (u < u0 || u > u1) return;
+                const c = mix(A.hue, B.hue, u);
+                for (let k = 0; k < 4; k++) {
+                  const uu = u - Math.sign(bl.sp) * k * 0.017;
+                  if (uu < 0 || uu > 1) continue;
+                  const p = quadPt(p0, pc, p1, uu);
+                  g.fillStyle = rgba(mix(c, WHITE, 0.4), (0.62 - k * 0.14) * 0.85);
+                  g.beginPath(); g.arc(p.x, p.y, 2.0 - k * 0.35, 0, TAU); g.fill();
+                }
+              });
+            }
+          });
+
+          // ---- THE TEAM ----------------------------------------------
+          NODES.forEach(n => {
+            if (n.live <= 0.003) return;
+            // everyone on their own beat — never together
+            const pulse = Math.pow(0.5 + 0.5 * Math.sin(t * n.freq + n.phase), 3);
+            const glow = 0.55 + 0.85 * pulse;
+            const sq = 1 - eInBack(c01(n.out / 1));         // fold inward, don't explode
+            const s = n.live * cl(sq, 0, 1.2);
+            if (s <= 0.003) return;
+            glowDot(n.x, n.y, 46 * (0.8 + 0.35 * pulse), n.hue, 0.42 * glow * s);
+            g.fillStyle = rgba(mix(n.hue, WHITE, 0.55), 0.95 * s);
+            g.beginPath(); g.arc(n.x, n.y, 6.6 * s, 0, TAU); g.fill();
+            g.strokeStyle = rgba(n.hue, 0.85 * s * (0.5 + 0.5*pulse));
+            g.lineWidth = 1.6;
+            g.beginPath(); g.arc(n.x, n.y, (15 + 5 * pulse) * s, 0, TAU); g.stroke();
+          });
+
+          // ---- dust of the departed ----------------------------------
+          DUST.forEach(d => {
+            const age = t - d.born;
+            if (age < 0 || age > d.life) return;
+            const k = age / d.life;
+            const damp = (1 - Math.exp(-age * 2.4)) / 2.4;
+            const x = d.x + d.vx * damp, y = d.y + d.vy * damp;
+            g.fillStyle = rgba(d.hue, 0.55 * Math.pow(1 - k, 2.0));
+            g.beginPath(); g.arc(x, y, d.sz, 0, TAU); g.fill();
+          });
+
+          // ---- THE ROLE SHELL (act 3) --------------------------------
+          const shellA = seg(t, 8.20, 8.90, eOutCubic);
+          if (shellA > 0.004) {
+            g.strokeStyle = `rgba(150,196,232,${0.075 * shellA})`;
+            g.lineWidth = 1.2;
+            g.beginPath(); g.arc(CX, CY, R_NODE, 0, TAU); g.stroke();
+          }
+
+          // ---- THE CORE + SIX SPOKES ---------------------------------
+          const coreA = seg(t, T_CORE, T_CORE + 0.34, eOutExpo);
+          if (coreA > 0.004) {
+            // rotating wave: one mind, cycling every role, in perfect order
+            const spokeA = seg(t, 8.02, 8.42, eOutCubic);
+            const wavePh = t * 0.45;
+
+            for (let k = 0; k < 6; k++) {
+              const n = NODES[k];
+              const hue = HUES[k];
+              let w = (wavePh - k / 6) % 1; if (w < 0) w += 1;
+              const arrive = Math.pow(w, 14);
+
+              if (spokeA > 0.004) {
+                // the wire
+                const gr = g.createLinearGradient(CX, CY, n.bx, n.by);
+                gr.addColorStop(0, rgba(mix(hue, WHITE, 0.5), 0.30 * spokeA));
+                gr.addColorStop(1, rgba(hue, 0.16 * spokeA));
+                g.strokeStyle = gr; g.lineWidth = 1.5;
+                g.beginPath(); g.moveTo(CX, CY);
+                g.lineTo(CX + (n.bx-CX) * spokeA, CY + (n.by-CY) * spokeA); g.stroke();
+
+                // light running down the wire
+                if (spokeA > 0.97) {
+                  for (let s2 = 0; s2 < 5; s2++) {
+                    const ww = w - s2 * 0.022; if (ww < 0) continue;
+                    const px = lerp(CX, n.bx, ww), py = lerp(CY, n.by, ww);
+                    g.fillStyle = rgba(mix(hue, WHITE, 0.35), (0.55 - s2*0.11) * 0.9);
+                    g.beginPath(); g.arc(px, py, 2.6 - s2*0.4, 0, TAU); g.fill();
+                  }
+                }
+              }
+
+              // the station: the role, held open, nobody standing in it
+              const ign = seg(t, 7.90, 8.26, eOutCubic);
+              const stA = Math.max(ign * 0.55, spokeA);
+              if (stA > 0.004) {
+                const br = 0.26 + 0.74 * arrive + 0.9 * (ign * (1 - seg(t, 8.15, 8.7)));
+                glowDot(n.bx, n.by, 40 * (0.7 + 0.5 * arrive), hue, 0.30 * br * stA);
+                g.strokeStyle = rgba(hue, (0.30 + 0.62 * arrive) * stA);
+                g.lineWidth = 1.5 + 1.6 * arrive;
+                g.beginPath(); g.arc(n.bx, n.by, 13 + 5 * arrive, 0, TAU); g.stroke();
+                g.fillStyle = rgba(mix(hue, WHITE, 0.5), (0.18 + 0.7 * arrive) * stA);
+                g.beginPath(); g.arc(n.bx, n.by, 3.4 + 1.6 * arrive, 0, TAU); g.fill();
+              }
+            }
+
+            // the core itself — breathing, wearing all six hues at once
+            // (exemplar tied this to real wall-clock time; here it breathes on t — seek-safe)
+            const breath = 0.5 + 0.5 * Math.sin(t * 2.4);
+            const hi = (t * 0.22 % 1) * 6;
+            const ci = Math.floor(hi), cf = hi - ci;
+            const halo = mix(HUES[ci % 6], HUES[(ci + 1) % 6], cf);
+            glowDot(CX, CY, (86 + 14 * breath) * coreA, halo, 0.30 * coreA);
+            glowDot(CX, CY, (34 + 6 * breath) * coreA, mix(halo, WHITE, 0.6), 0.62 * coreA);
+            g.fillStyle = rgba(WHITE, 0.98 * coreA);
+            g.beginPath(); g.arc(CX, CY, (7.2 + 1.0 * breath) * coreA, 0, TAU); g.fill();
+            g.strokeStyle = rgba(halo, 0.5 * coreA);
+            g.lineWidth = 1.4;
+            g.beginPath(); g.arc(CX, CY, (19 + 3 * breath) * coreA, 0, TAU); g.stroke();
+          }
+
+          // ---- ignition wave: reaches every role at the same instant --
+          {
+            const w = seg(t, T_CORE + 0.10, T_CORE + 0.70, eOutQuart);
+            if (w > 0.001 && w < 1) {
+              g.strokeStyle = rgba([190, 230, 255], 0.42 * (1 - w));
+              g.lineWidth = 3.2 * (1 - w) + 0.6;
+              g.beginPath(); g.arc(CX, CY, w * 560, 0, TAU); g.stroke();
+            }
+          }
+
+          // ---- THE WORK ----------------------------------------------
+          drawTiles(t, ringA, trackA);
+
+          // the advancing front
+          {
+            const n = frontIndex(t);
+            const fa = n === 0 ? -Math.PI/2 : tileAngle(n - 1);
+            const fx = CX + Math.cos(fa) * R_RING, fy = CY + Math.sin(fa) * R_RING;
+            let br;
+            if (n === 0) br = 0.12;
+            else {
+              const f = Math.pow(1 - c01((t - TILE[n-1].laid) / 0.46), 2.0);
+              br = 0.30 + 0.70 * f;
+            }
+            if (t > 6.7 && t < 8.3) br = 0.14 + 0.24 * Math.pow(0.5 + 0.5*Math.sin(t * 7.3), 6);  // barely alive
+            if (trackA > 0.02) {
+              glowDot(fx, fy, 52 * (0.6 + 0.5*br), WORK_HOT, 0.40 * br * ringA);
+              g.fillStyle = rgba(WORK_HOT, 0.9 * br * ringA);
+              g.beginPath(); g.arc(fx, fy, 3.4 + 2.0 * br, 0, TAU); g.fill();
+            }
+          }
+
+          // ---- PACKETS -----------------------------------------------
+          PACKETS.forEach(p => {
+            if (t < p.t0 || t > p.t1) return;
+            const u = c01((t - p.t0) / (p.t1 - p.t0));
+            if (p.src === 1) {
+              const n = NODES[p.node];
+              const p0 = { x: n.x, y: n.y }, p1 = { x: p.tx, y: p.ty };
+              const pc = { x: p.cx, y: p.cy };
+              const ue = Math.pow(u, 1.35);
+              for (let k = 0; k < 6; k++) {
+                const uu = ue - k * 0.030; if (uu < 0) continue;
+                const q = quadPt(p0, pc, p1, uu);
+                g.fillStyle = rgba(mix(p.hue, WHITE, 0.5 - k*0.06), (0.85 - k * 0.14) * 0.9);
+                g.beginPath(); g.arc(q.x, q.y, 3.1 - k * 0.42, 0, TAU); g.fill();
+              }
+              const q = quadPt(p0, pc, p1, ue);
+              glowDot(q.x, q.y, 22, p.hue, 0.34);
+            } else {
+              // straight out of the one core. the emission angle rotates with
+              // the front, so the stream draws a slow calm spiral.
+              const crossed = u > 0.688;
+              const col = crossed ? p.hue : mix(WHITE, p.hue, 0.25);
+              for (let k = 0; k < 6; k++) {
+                const uu = u - k * 0.028; if (uu < 0) continue;
+                const cc = uu > 0.688 ? p.hue : mix(WHITE, p.hue, 0.2);
+                const x = lerp(CX, p.tx, uu), y = lerp(CY, p.ty, uu);
+                g.fillStyle = rgba(mix(cc, WHITE, 0.35 - k*0.05), (0.82 - k * 0.13) * 0.9);
+                g.beginPath(); g.arc(x, y, 3.0 - k * 0.40, 0, TAU); g.fill();
+              }
+              const x = lerp(CX, p.tx, u), y = lerp(CY, p.ty, u);
+              glowDot(x, y, 20, col, 0.30);
+              if (Math.abs(u - 0.688) < 0.05) glowDot(x, y, 30, p.hue, 0.30);   // crossing the role shell
+            }
+          });
+
+          // ---- work that died in flight ------------------------------
+          DOOMED.forEach(p => {
+            if (t < p.t0) return;
+            const u = c01((t - p.t0) / (p.t1 - p.t0));
+            if (u >= 1) return;
+            const kill = 1 - seg(t, T_DISSOLVE + 0.02, T_DISSOLVE + 0.42, eOutCubic);
+            if (kill <= 0.004) return;
+            const n = NODES[p.node];
+            const p0 = { x: n.bx, y: n.by }, p1 = { x: p.tx, y: p.ty }, pc = { x: p.cx, y: p.cy };
+            const q = quadPt(p0, pc, p1, Math.pow(u, 1.35));
+            const sag = (1 - kill) * 26;
+            for (let k = 0; k < 4; k++) {
+              const uu = Math.pow(u, 1.35) - k * 0.03; if (uu < 0) continue;
+              const r2 = quadPt(p0, pc, p1, uu);
+              g.fillStyle = rgba(p.hue, (0.7 - k*0.16) * kill * 0.8);
+              g.beginPath(); g.arc(r2.x, r2.y + sag, 2.6 - k*0.4, 0, TAU); g.fill();
+            }
+            glowDot(q.x, q.y + sag, 18, p.hue, 0.22 * kill);
+          });
+
+          // ---- CLOSE: one lap of light, then a soft swell ------------
+          {
+            const lap = seg(t, T_CLOSE + 0.04, T_CLOSE + 0.56, eInOutSine);
+            if (lap > 0.001 && lap < 1) {
+              const la = -Math.PI/2 + lap * TAU;
+              const lx = CX + Math.cos(la) * R_RING, ly = CY + Math.sin(la) * R_RING;
+              g.strokeStyle = rgba(WORK_HOT, 0.55 * Math.sin(lap * Math.PI));
+              g.lineWidth = 17;
+              g.beginPath(); g.arc(CX, CY, R_RING, la - 0.30, la); g.stroke();
+              glowDot(lx, ly, 70, WORK_HOT, 0.42 * Math.sin(lap * Math.PI));
+            }
+            const done = seg(t, T_CLOSE + 0.5, END, eOutCubic);
+            if (done > 0.002) {                                   // the finished job, glowing
+              g.strokeStyle = rgba(WORK, 0.16 * done);
+              g.lineWidth = 34;
+              g.beginPath(); g.arc(CX, CY, R_RING, 0, TAU); g.stroke();
+            }
+            const sw = seg(t, T_CLOSE + 0.10, T_CLOSE + 1.30, eOutQuart);
+            if (sw > 0.001 && sw < 1) {
+              g.strokeStyle = rgba([210, 236, 255], 0.26 * (1 - sw));
+              g.lineWidth = 3.4 * (1 - sw) + 0.5;
+              g.beginPath(); g.arc(CX, CY, sw * 940, 0, TAU); g.stroke();
+            }
+          }
+
+          // ============================================================
+          //  BLOOM + COMPOSITE (kept — emphasis, not texture)
+          // ============================================================
+          g.setTransform(1, 0, 0, 1, 0, 0);
+          g.globalCompositeOperation = 'source-over';
+
+          b1c.setTransform(1,0,0,1,0,0); b1c.clearRect(0,0,B1W,B1H);
+          b1c.filter = 'blur(3px)'; b1c.drawImage(sc, 0, 0, B1W, B1H); b1c.filter = 'none';
+          b2c.clearRect(0,0,B2W,B2H);
+          b2c.filter = 'blur(4px)'; b2c.drawImage(b1, 0, 0, B2W, B2H); b2c.filter = 'none';
+
+          ctx.globalCompositeOperation = 'lighter';
+          ctx.globalAlpha = 1.0;  ctx.drawImage(sc, 0, 0);
+          ctx.globalAlpha = 0.52; ctx.drawImage(b1, 0, 0, W, H);
+          ctx.globalAlpha = 0.40; ctx.drawImage(b2, 0, 0, W, H);
+          ctx.globalAlpha = 1;
+          ctx.globalCompositeOperation = 'source-over';
+          // (exemplar's grain overlay + vignette composite removed — banned atmosphere)
+        }
+
+        // ============================================================
+        //  GSAP PROXY DRIVER — the seekable wrap around pure render(t)
+        // ============================================================
+        const D = { t: 0 };
+        const tl = gsap.timeline({ paused: true });
+        tl.to(D, { t: END, duration: END, ease: 'none', onUpdate: () => render(D.t) }, 0);
+        render(0);   // paint frame zero so the first seek always has a valid canvas
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines['r2-topology-argument'] = tl;
+      })();
+    </script>
+  </div>
+</template>
