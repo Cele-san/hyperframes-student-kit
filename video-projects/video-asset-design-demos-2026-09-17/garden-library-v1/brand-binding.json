@@ -1,0 +1,20 @@
+{
+  "surface": "fullscreen",
+  "reference_path": "shared/reference.jpg",
+  "template_id": "G04 topology adaptation + V5 fullscreen material",
+  "token_sha256": "168c35b879b8b527e10f548ef7c0f3d6786fcfca2bdd59f405cdae859ed2bee1",
+  "font_roles": {
+    "body": "Inter",
+    "display": "Cormorant"
+  },
+  "material_selector": ".glass",
+  "alternate_brief": null,
+  "reference": "shared/reference.jpg",
+  "token_file": "shared/glass-editorial.css",
+  "roles": {
+    "body": "Inter",
+    "display": "Cormorant"
+  },
+  "adaptation": "Andy selected smooth botanical garden-to-library transformation. Same leaf identities persist; semantic growth and rotation serve the metaphor. Original V5 pane, fonts and shared backdrop retained; glass does not cover individual leaves.",
+  "reference_provenance": "OperatorOS approved fullscreen-glass-v5 reference, copied from the original garden demo."
+}

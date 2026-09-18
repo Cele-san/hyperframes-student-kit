@@ -1,0 +1,10 @@
+**/snapshots*/
+**/iterations/
+**/caption-assets/
+**/check*.json
+**/render.log
+**/encoded-contact*.jpg
+**/camera-midpoint.jpg
+**/copy-check.jpg
+**/timing-check.jpg
+**/__pycache__/

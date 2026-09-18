@@ -1,0 +1,127 @@
+/* =============================================================================
+   Glass Editorial — canonical motion tokens
+   _shared/motion/tokens/glass-editorial.css
+
+   THE single token source for both motion registers on the diepandy channel:
+     · text cues over A-roll   → motion-grammar-v3.md  + text-library-v3.json
+     · full-frame motion gfx   → mg-templates/motion-graphics-grammar-v1.md
+
+   Palette is Arc4 V3 "Tokyo Midnight" (Andy's brand lock, 2026-06-03), reconciled
+   with the Quiet Register v4 Form-2 canvas values that shipped in four videos.
+
+   HOW TO USE IT IN A RENDER
+   A HyperFrames composition must be self-contained, so per-video builds COPY this
+   file (and ./fonts/) into <video>/05-motion-assets/src/_tokens.css rather than
+   linking to it. Copy, never edit: an edit here is a register change and goes
+   through a creative-calibration round. Before this file existed the copies were
+   the only source and drifted (the --dim-cue correction below lived in four video
+   folders for three weeks without reaching house-style.md).
+
+   FONTS are self-hosted from ./fonts/ — never fonts.googleapis. The mechanical
+   style gate greps for that string, and a render that waits on a network font
+   silently falls back to a system face mid-render.
+   Paths below are relative to THIS file; a per-video copy sits at src/_tokens.css
+   with fonts at src/assets/fonts/, so re-point the url() when you stamp a copy.
+   ============================================================================= */
+
+/* ---------- faces ---------------------------------------------------------- */
+/* Cormorant + JetBrains ship as variable woff2 saved under weight-specific names:
+   italic-500 and italic-600 are the same bytes, as are all three JetBrains files.
+   Declaring them separately is intentional — it keeps the @font-face table honest
+   about which weights the grammar actually calls for. */
+@font-face { font-family:'Cormorant Garamond'; font-style:italic; font-weight:500; font-display:block;
+  src:url(./fonts/CormorantGaramond-italic-500.woff2) format('woff2'); }
+@font-face { font-family:'Cormorant Garamond'; font-style:italic; font-weight:600; font-display:block;
+  src:url(./fonts/CormorantGaramond-italic-600.woff2) format('woff2'); }
+@font-face { font-family:'Cormorant Garamond'; font-style:normal; font-weight:500; font-display:block;
+  src:url(./fonts/CormorantGaramond-normal-500.woff2) format('woff2'); }
+@font-face { font-family:'Cormorant Garamond'; font-style:normal; font-weight:600; font-display:block;
+  src:url(./fonts/CormorantGaramond-normal-600.woff2) format('woff2'); }
+
+/* Inter ships as TTF here — that is the set the 2026-08-22 Glass Editorial renders
+   used, kept byte-identical so a render conforms to what Andy graded. */
+@font-face { font-family:'Inter'; font-style:normal; font-weight:400; font-display:block;
+  src:url(./fonts/Inter-Regular.ttf) format('truetype'); }
+@font-face { font-family:'Inter'; font-style:normal; font-weight:500; font-display:block;
+  src:url(./fonts/Inter-Medium.ttf) format('truetype'); }
+@font-face { font-family:'Inter'; font-style:normal; font-weight:600; font-display:block;
+  src:url(./fonts/Inter-SemiBold.ttf) format('truetype'); }
+@font-face { font-family:'Inter'; font-style:normal; font-weight:700; font-display:block;
+  src:url(./fonts/Inter-Bold.ttf) format('truetype'); }
+
+@font-face { font-family:'JetBrains Mono'; font-style:normal; font-weight:400; font-display:block;
+  src:url(./fonts/JetBrainsMono-normal-400.woff2) format('woff2'); }
+@font-face { font-family:'JetBrains Mono'; font-style:normal; font-weight:500; font-display:block;
+  src:url(./fonts/JetBrainsMono-normal-500.woff2) format('woff2'); }
+@font-face { font-family:'JetBrains Mono'; font-style:normal; font-weight:600; font-display:block;
+  src:url(./fonts/JetBrainsMono-normal-700.woff2) format('woff2'); }
+@font-face { font-family:'JetBrains Mono'; font-style:normal; font-weight:700; font-display:block;
+  src:url(./fonts/JetBrainsMono-normal-700.woff2) format('woff2'); }
+
+/* Geist is the RETIRED Quiet Register face. It stays declared so the four videos
+   already built against it still render from a stamped copy of this file; new work
+   uses Cormorant / Inter / JetBrains Mono. Remove once those videos are archived. */
+@font-face { font-family:'Geist'; font-weight:400; font-display:block; src:url(./fonts/Geist-400.woff2) format('woff2'); }
+@font-face { font-family:'Geist'; font-weight:500; font-display:block; src:url(./fonts/Geist-500.woff2) format('woff2'); }
+@font-face { font-family:'Geist'; font-weight:600; font-display:block; src:url(./fonts/Geist-600.woff2) format('woff2'); }
+@font-face { font-family:'Geist Mono'; font-weight:400; font-display:block; src:url(./fonts/GeistMono-400.woff2) format('woff2'); }
+@font-face { font-family:'Geist Mono'; font-weight:500; font-display:block; src:url(./fonts/GeistMono-500.woff2) format('woff2'); }
+
+:root{
+  /* ---------- type stacks ------------------------------------------------- */
+  --f-display:'Cormorant Garamond', Georgia, serif;   /* hero lines, giant numerals — always italic */
+  --f-body:'Inter', system-ui, sans-serif;            /* rows, notes, sub-lines */
+  --f-mono:'JetBrains Mono', ui-monospace, monospace; /* eyebrows, verdicts, figures, labels — always uppercase */
+
+  /* ---------- ground ------------------------------------------------------ */
+  /* --cobalt is the Tokyo Midnight ground the text register bakes its glass against.
+     --navy is the Form-2 full-frame canvas the four shipped videos used. They are
+     close but not equal, and both are load-bearing: the full-frame grammar paints
+     --navy, the glass fills are tuned against --cobalt. Keep both; do not merge. */
+  --cobalt:#152848;
+  --cobalt-deep:#0A1626;
+  --cobalt-divider:#243a60;
+  --navy:#0A1628;          /* full-frame canvas */
+  --navy-2:#0d1b30;        /* the barely-there radial partner for --navy */
+  --panel:#14243C;         /* full-frame panel fill */
+  --hair:#223A5C;          /* full-frame 1px hairline */
+
+  /* ---------- ink --------------------------------------------------------- */
+  --chrome:#f2f5f8;        /* Glass Editorial ink */
+  --ink:#EAF2FF;           /* Form-2 heading ink */
+  --ink-cue:#e9edf6;       /* Quiet Register cue ink (retired register) */
+  --ink-mute:rgba(242,245,248,.66);
+  --ink-dim:rgba(242,245,248,.42);
+  --dim:#7C93B4;           /* Form-2 de-emphasized */
+  /* --dim-cue was #8995b0 (nominal luminance 148, rendering to a ~137 glyph mean).
+     Raised on Andy's call re Brandon QC #10: at 400px — a phone — the old value sat
+     at the edge of readable, so only the bright words landed. #99A8C2 is nominal 167,
+     rendering to a ~155 mean; bright stays at full --ink-cue (237), so the emphasis
+     delta is still ~70 points and the dim/bright mechanic is unchanged. */
+  --dim-cue:#99A8C2;
+
+  /* ---------- reserved colors — one meaning per color, every video --------- */
+  --blossom:#f0a8c2;                          /* THE subject / emphasis / landing point */
+  --blossom-glow:rgba(240,168,194,.55);
+  --cyan:#5BA8D8;                             /* secondary actor / data */
+  --cyan-path:#7ea4d8;                        /* drawn connector paths */
+  --success:#28c840;                          /* shipped / validated ONLY */
+  --warn:#febc2e;                             /* soft caution; cost totals, the weak row */
+  --red:#EF4444;                              /* cost / burn / loss — solid fills, bars, blocks */
+  /* The same meaning as --red, lifted for LEGIBILITY as type or a small mark on the dark
+     canvas: #EF4444 vibrates at row-text size over --navy. Andy, round 1 (G01): "negative is
+     usually associated with red — just make sure that the red is able to be seen over the
+     overlay." Use --neg for text and dots, --red for areas. */
+  --neg:#FF6B6B;
+  --amber:#F59E0B;                            /* the "careful" that is not a failure */
+
+  /* ---------- motion ------------------------------------------------------ */
+  /* Durations the two grammars share. Easing lives in the registries as GSAP-shaped
+     names because the catalogs drive Web Animations directly; these are for hand-authored CSS. */
+  --t-enter:400ms;         /* container entrance — grammar §1 allows 300–500 */
+  --t-step:320ms;          /* a row / element landing on speech cadence */
+  --t-exit:300ms;          /* always faster than the entrance */
+  --e-enter:cubic-bezier(.215,.61,.355,1);    /* power3.out */
+  --e-step:cubic-bezier(.25,.46,.45,.94);     /* power2.out */
+  --e-exit:cubic-bezier(.55,.085,.68,.53);    /* power2.in */
+}

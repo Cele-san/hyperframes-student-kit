@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Garden — a living library</title>
+<script src="shared/gsap.min.js"></script><link rel="stylesheet" href="shared/glass-editorial.css">
+<style>
+@font-face{font-family:Inter;src:url(shared/Inter-Regular.ttf)}@font-face{font-family:Cormorant;src:url(shared/CormorantGaramond-italic-500.woff2);font-style:italic}@font-face{font-family:Mono;src:url(shared/JetBrainsMono-normal-400.woff2)}
+*{box-sizing:border-box}html,body{margin:0;width:1920px;height:1080px;overflow:hidden}
+#main{position:relative;width:1920px;height:1080px;color:#edf3fc}
+#scene{position:absolute;inset:0}.backdrop{position:absolute;inset:0;background:#0a1628 url(shared/background.png) center/cover}
+.glass{position:absolute;left:84px;right:84px;top:164px;bottom:116px;border:1.5px solid #ffffff33;border-radius:39px;background:rgba(220,232,255,.08);backdrop-filter:blur(20px);box-shadow:inset 0 2px 0 #ffffff22}
+.eyebrow{position:absolute;top:74px;left:132px;font:22px Mono;letter-spacing:5px;color:#c3cede}
+h1{position:absolute;left:132px;top:190px;margin:0;font:italic 72px Cormorant;font-weight:500;line-height:1.05}
+#title2{opacity:0}svg{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden}
+.foot{position:absolute;left:132px;bottom:49px;font:17px Mono;color:#c3cede;letter-spacing:2px}
+.leafShell{stroke-width:2.4;stroke-linejoin:round}.vein{fill:none;stroke:#a9c8cd;stroke-width:2.2;stroke-linecap:round}.lesson{fill:none;stroke:#edf3fc;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+</style></head><body>
+<div id="main" data-composition-id="main" data-width="1920" data-height="1080" data-duration="26" data-fps="30">
+<div id="scene" class="clip" data-start="0" data-duration="26" data-track-index="1">
+<div class="backdrop"></div><div class="glass"></div>
+<div class="eyebrow">A METAPHOR FOR ORGANIC CONTENT</div>
+<h1 id="title1">An idea is a seed.</h1><h1 id="title2">A body of work.</h1>
+<svg viewBox="0 0 1920 1080" aria-label="A seed grows into a garden of useful lessons, visited twice by the same reader">
+<defs>
+<linearGradient id="soilFill" x2="0" y2="1"><stop stop-color="#8b7776" stop-opacity=".28"/><stop offset="1" stop-color="#192b42" stop-opacity=".1"/></linearGradient>
+<linearGradient id="leafPink" x2="0.2" y2="1"><stop stop-color="#4b344e"/><stop offset="1" stop-color="#1d3049"/></linearGradient>
+<linearGradient id="leafBlue" x2="0.2" y2="1"><stop stop-color="#284e67"/><stop offset="1" stop-color="#172d43"/></linearGradient>
+<filter id="shade" x="-30%" y="-50%" width="160%" height="200%"><feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#020a18" flood-opacity=".24"/></filter>
+</defs>
+<path id="soil" fill="url(#soilFill)" stroke="#bda4a0" stroke-opacity=".45" stroke-width="2"/>
+<path id="walkpath" d="M1740 860 Q1480 865 1250 845 Q1140 825 1110 785" stroke="#d6e2f4" stroke-opacity=".15" stroke-width="3" fill="none" opacity="0"/>
+<g id="stems"></g><g id="leafLayer"></g>
+<g id="seedLayer"><ellipse id="seed0" rx="15" ry="24" fill="#f0a8c2"/><ellipse id="seed1" rx="12" ry="19" fill="#a4c5bb"/><ellipse id="seed2" rx="12" ry="19" fill="#a4c5bb"/></g>
+<g id="visitor" opacity="0">
+<ellipse cx="0" cy="32" rx="20" ry="6" fill="#050d1e" opacity=".35"/>
+<path d="M-11 3 Q0 -5 11 3 L14 19 Q0 27 -14 19 Z" fill="#e8eff9"/>
+<rect x="-19" y="2" width="11" height="22" rx="5" fill="#719ad2"/>
+<circle cx="0" cy="-12" r="10" fill="#edf3fc"/>
+<path d="M-8 24 L-10 32 M8 24 L10 32" stroke="#edf3fc" stroke-width="4" stroke-linecap="round"/>
+<path id="arm" d="M11 6 L21 15" stroke="#edf3fc" stroke-width="4" stroke-linecap="round"/>
+<path d="M-9 -1 L8 -1" stroke="#719ad2" stroke-width="4"/>
+</g>
+</svg><div class="foot">IDEA → CARE → USEFUL CONTENT</div>
+</div></div>
+<script>
+const NS='http://www.w3.org/2000/svg',S=(tag,attrs,parent)=>{const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);parent.append(n);return n};
+const $=id=>document.getElementById(id),clamp=x=>Math.max(0,Math.min(1,x)),smooth=x=>{x=clamp(x);return x*x*(3-2*x)},phase=(t,a,b)=>smooth((t-a)/(b-a)),mix=(a,b,p)=>a+(b-a)*p;
+const configs=[
+ {id:'hero',x:1110,y:470,r:-32,fx:960,fy:427,root:960,birth:4.1,revealAt:6.7,type:'grow',pink:true},
+ {id:'watch',x:590,y:520,r:-26,fx:540,fy:427,root:550,birth:10.1,revealAt:11.3,type:'video'},
+ {id:'steps',x:1390,y:510,r:-32,fx:1380,fy:427,root:1370,birth:11.0,revealAt:12.2,type:'steps'},
+ {id:'map',x:740,y:660,r:20,fx:720,fy:680,root:960,birth:5.5,revealAt:12.8,type:'map'},
+ {id:'read',x:1290,y:690,r:18,fx:1200,fy:680,root:1370,birth:11.9,revealAt:13.3,type:'read'}
+];
+const items=configs.map(c=>{
+ const stem=S('path',{fill:'none',stroke:'#8ab3ad','stroke-width':5,'stroke-linecap':'round'},$('stems'));
+ const g=S('g',{id:c.id,filter:'url(#shade)'},$('leafLayer'));
+ const shell=S('path',{d:'M-166 0 C-92 -114 93 -111 166 0 C90 112 -90 113 -166 0 Z',fill:c.pink?'url(#leafPink)':'url(#leafBlue)',stroke:c.pink?'#f0a8c2':'#91b9ba',class:'leafShell'},g);
+ const veins=S('g',{},g);
+ const spine=S('path',{d:'M-145 0 Q0 -5 143 0',class:'vein'},veins);
+ const v1=S('path',{d:'M-72 0 L-35 -45 M-16 0 L20 -51 M46 0 L78 -38',class:'vein'},veins);
+ const v2=S('path',{d:'M-72 0 L-35 45 M-16 0 L20 51 M46 0 L78 38',class:'vein'},veins);
+ const content=S('g',{class:'lesson',opacity:0},g);
+ if(c.type==='grow'){
+  S('ellipse',{cx:-82,cy:0,rx:8,ry:13,stroke:'#f0a8c2'},content);
+  S('path',{d:'M-55 0 H-30 M-38 -6 L-30 0 L-38 6 M38 0 H63 M55 -6 L63 0 L55 6'},content);
+  S('path',{d:'M0 20 V-19 M0 0 Q-28 -25 -22 -7 Q-10 4 0 0 M0 -9 Q26 -30 22 -12 Q12 0 0 -9'},content);
+  S('path',{d:'M75 0 Q96 -30 117 0 Q96 30 75 0 Z M79 0 H112'},content);
+ } else if(c.type==='video'){
+  S('rect',{x:-61,y:-37,width:122,height:74,rx:12},content);S('path',{d:'M-12 -17 L18 0 L-12 17 Z',fill:'#edf3fc',stroke:'none'},content);
+ } else if(c.type==='steps'){
+  [-23,0,23].forEach((y,i)=>{S('circle',{cx:-65,cy:y,r:5,fill:'#a4c5bb',stroke:'none'},content);S('path',{d:'M-46 '+y+' H'+(i===1?55:75)},content)});
+ } else if(c.type==='map'){
+  S('path',{d:'M-70 0 H-28 Q0 0 0 -27 H60 M-28 0 Q0 0 0 27 H60'},content);
+  [[-78,0],[70,-27],[70,27]].forEach(([cx,cy])=>S('circle',{cx,cy,r:10,fill:'#294d62'},content));
+ } else{
+  S('path',{d:'M0 -28 Q-34 -43 -68 -28 V35 Q-34 20 0 35 Q34 20 68 35 V-28 Q34 -43 0 -28 V35 M-52 -10 Q-31 -18 -15 -9 M15 -9 Q35 -18 52 -10 M-52 6 Q-31 -2 -15 7 M15 7 Q35 -2 52 6'},content);
+ }
+ return {...c,stem,g,shell,veins,spine,v1,v2,content};
+});
+function draw(t){
+ const layout=phase(t,18.4,21.6),ground=mix(815,899,layout);
+ $('soil').setAttribute('d',`M180 ${ground} Q550 ${ground-17} 960 ${ground} T1740 ${ground} L1740 920 Q960 950 180 920Z`);
+ $('soil').setAttribute('opacity',1-.45*layout);
+ $('title1').style.opacity=1-phase(t,18.3,18.8);$('title2').style.opacity=phase(t,19,19.6);
+ let coords={};
+ items.forEach(c=>{
+  const growth=phase(t,c.birth,c.birth+1.65),grown=phase(t,c.revealAt,c.revealAt+.85);
+  let x=mix(c.x,c.fx,layout),y=mix(c.y,c.fy,layout),r=mix(c.r,0,layout);
+  let focus=0;
+  if(c.pink)focus=phase(t,13,13.4)*(1-phase(t,14.5,15))+phase(t,17.1,17.5)*(1-phase(t,18,18.4));
+  if(c.id==='read')focus=phase(t,22.2,22.7);
+  const scale=growth*(1+.065*focus),rad=r*Math.PI/180;
+  c.g.setAttribute('transform',`translate(${x},${y}) rotate(${r}) scale(${scale})`);
+  c.g.setAttribute('opacity',growth);
+  c.shell.setAttribute('stroke-width',2.4+2*focus);
+  const bx=x-166*Math.cos(rad)*scale,by=y-166*Math.sin(rad)*scale;
+  const rootY=ground,rootX=c.root,stemGrowth=phase(t,c.birth-1.25,c.birth+.5);
+  const ex=mix(rootX,bx,stemGrowth),ey=mix(rootY,by,stemGrowth);
+  c.stem.setAttribute('d',`M${rootX} ${rootY} C${rootX-25} ${mix(rootY,ey,.5)} ${ex-45} ${ey+35} ${ex} ${ey}`);
+  c.stem.setAttribute('opacity',stemGrowth*.85);
+  c.content.setAttribute('opacity',grown);
+  c.veins.setAttribute('opacity',(1-grown)*.7);
+  c.v1.setAttribute('d',`M-72 0 L-35 ${mix(-45,0,grown)} M-16 0 L20 ${mix(-51,0,grown)} M46 0 L78 ${mix(-38,0,grown)}`);
+  c.v2.setAttribute('d',`M-72 0 L-35 ${mix(45,0,grown)} M-16 0 L20 ${mix(51,0,grown)} M46 0 L78 ${mix(38,0,grown)}`);
+  coords[c.id]={x,y};
+ });
+ [[0,960,.2,2.15],[1,550,8.7,9.7],[2,1370,9.65,10.6]].forEach(([i,x,a,b])=>{
+  const p=phase(t,a,b),exit=phase(t,b,b+.45);
+  $('seed'+i).setAttribute('cx',x);$('seed'+i).setAttribute('cy',mix(354,815,p));$('seed'+i).setAttribute('opacity',phase(t,a,a+.25)*(1-exit));$('seed'+i).setAttribute('transform',`rotate(${mix(-25,18,p)} ${x} ${mix(354,815,p)})`);
+ });
+ const first=phase(t,11.8,12.1)*(1-phase(t,15.1,15.45));
+ const second=phase(t,16.4,16.7);
+ const entering=phase(t,11.8,13),leaving=phase(t,14.1,15.4);
+ let vx=mix(1730,1160,entering);vx=mix(vx,1730,leaving);let vy=810;
+ if(t>=16.4){vx=mix(1730,1160,phase(t,16.4,17.5));vy=mix(810,797,layout);vx=mix(vx,1350,phase(t,21.7,22.8));vy=mix(vy,765,phase(t,21.7,22.8));}
+ const moving=(t>11.8&&t<13)||(t>14.1&&t<15.4)||(t>16.4&&t<17.5)||(t>21.7&&t<22.8);
+ const bob=moving?Math.sin(t*14)*2:0;
+ $('visitor').setAttribute('opacity',Math.max(first,second));$('visitor').setAttribute('transform',`translate(${vx},${vy+bob})`);
+ const inspect=phase(t,13,13.3)*(1-phase(t,14,14.2))+phase(t,17.5,17.8)*(1-phase(t,18.2,18.5))+phase(t,22.8,23.1);
+ $('arm').setAttribute('d',`M11 6 L${mix(21,-5,inspect)} ${mix(15,-25,inspect)}`);
+ $('walkpath').setAttribute('opacity',.8*phase(t,13,14));
+}
+const state={t:0};const tl=gsap.timeline({paused:true});tl.to(state,{t:26,duration:26,ease:'none',onUpdate:()=>draw(state.t)},0);window.__timelines={main:tl};window.drawGarden=draw;draw(0);
+</script></body></html>
