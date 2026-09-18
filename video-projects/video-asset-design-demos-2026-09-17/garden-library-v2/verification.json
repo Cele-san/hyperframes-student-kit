@@ -1,0 +1,53 @@
+{
+  "repeatable": true,
+  "fixedCenters": true,
+  "errors": [],
+  "visitorOutside": [],
+  "sourceIntactFirst": true,
+  "sourceIntactSecond": true,
+  "outside": [],
+  "invalid": [],
+  "leafCount": 5,
+  "veinPathCount": 30,
+  "hashes": {
+    "5": "4e1b4f3215220626c4cc3d49c09853a8c86d326c07dfada58bfcda29cb7c295f",
+    "21": "8effcf6bb180ead989ff2009fb69dfce372b9138c19fa18a13df402f6dfc39c6",
+    "29": "2415a109f95f9bad64792e530b6fc8af7f3fa8c9c5b003b4d5662ed92e2c3f62",
+    "7.3": "8191e7645a532d839a80cc0aeb9b4442cc0d0f13552d2f9c614dd994c98454e4",
+    "14.8": "38a4875db0547f7915ffe781e8b29cc418085a336437be16412a1109386a2dc4"
+  },
+  "cameraElevations": [
+    [
+      5,
+      29
+    ],
+    [
+      7.3,
+      29
+    ],
+    [
+      14.8,
+      29
+    ],
+    [
+      21,
+      50.488555182971254
+    ],
+    [
+      29,
+      80
+    ],
+    [
+      5,
+      29
+    ],
+    [
+      29,
+      80
+    ],
+    [
+      7.3,
+      29
+    ]
+  ]
+}

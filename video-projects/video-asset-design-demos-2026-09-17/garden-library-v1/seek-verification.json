@@ -1,0 +1,16 @@
+{
+  "repeatable": true,
+  "errors": [],
+  "invalidAttributes": [],
+  "leafCount": 5,
+  "heroLessonOpacity": "1",
+  "maxStemAttachmentErrorPx": 0.000009498596227786038,
+  "withinOnePixel": true,
+  "hashes": {
+    "4": "d7611f708131207c41bae3592ac4fb27a1eba37256d3e9db1b70490a2031bf5e",
+    "8": "4f97bf7d89c73089aa00399bd42250c104c44cb0abd5cc9b1ee1e2f06f6728df",
+    "14": "049e557a725b5e1241bc0d5f1fb290f739805425831201e79c3a049236512a36",
+    "20": "1993781b6f7180e1cd8a448f8be5387db20111a03a5cbafefca2141f17460475",
+    "25": "4386de046329a0324056675071ccaf82b8c78e7447330c9b9177eb080e763eed"
+  }
+}

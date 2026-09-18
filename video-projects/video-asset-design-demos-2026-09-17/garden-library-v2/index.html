@@ -1,0 +1,111 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Garden — knowledge that stays</title>
+<script src="shared/gsap.min.js"></script><link rel="stylesheet" href="shared/glass-editorial.css">
+<style>@font-face{font-family:Cormorant;src:url(shared/CormorantGaramond-italic-500.woff2);font-style:italic}@font-face{font-family:Mono;src:url(shared/JetBrainsMono-normal-400.woff2)}
+*{box-sizing:border-box}html,body{margin:0;width:1920px;height:1080px;overflow:hidden}#main{position:relative;width:1920px;height:1080px;color:#edf3fc}#scene{position:absolute;inset:0}.backdrop{position:absolute;inset:0;background:#0a1628 url(shared/background.png) center/cover}.glass{position:absolute;inset:164px 84px 116px;border:1.5px solid #ffffff33;border-radius:39px;background:rgba(220,232,255,.08);backdrop-filter:blur(20px);box-shadow:inset 0 2px 0 #ffffff22}
+.eyebrow{position:absolute;top:74px;left:132px;font:22px Mono;letter-spacing:5px;color:#c3cede}h1{position:absolute;left:132px;top:190px;margin:0;font:italic 72px Cormorant;font-weight:500;line-height:1.05}#title2{opacity:0}svg{position:absolute;inset:0;width:1920px;height:1080px}.foot{position:absolute;left:132px;bottom:49px;font:17px Mono;color:#c3cede;letter-spacing:2px}</style></head>
+<body><div id="main" data-composition-id="main" data-width="1920" data-height="1080" data-duration="30" data-fps="30"><div id="scene" class="clip" data-start="0" data-duration="30" data-track-index="1">
+<div class="backdrop"></div><div class="glass"></div><div class="eyebrow">A METAPHOR FOR ORGANIC CONTENT</div><h1 id="title1">An idea is a seed.</h1><h1 id="title2">A body of work.</h1>
+<svg viewBox="0 0 1920 1080"><defs>
+<linearGradient id="pink" x2="0" y2="1"><stop stop-color="#573850"/><stop offset="1" stop-color="#1e304a"/></linearGradient>
+<linearGradient id="blue" x2="0" y2="1"><stop stop-color="#294c63"/><stop offset="1" stop-color="#182e43"/></linearGradient>
+<linearGradient id="soilFill" x2="0" y2="1"><stop stop-color="#8b7776" stop-opacity=".16"/><stop offset="1" stop-color="#172b44" stop-opacity=".35"/></linearGradient>
+<clipPath id="bounds"><rect x="110" y="302" width="1700" height="640" rx="18"/></clipPath>
+</defs><g clip-path="url(#bounds)"><path id="soil" fill="url(#soilFill)" stroke="#ad9695" stroke-opacity=".28" stroke-width="1.5"/>
+<path id="returnPath" fill="none" stroke="#d1e0f3" stroke-opacity=".17" stroke-width="2.5"/>
+<g id="roots"></g><g id="depthScene"></g><g id="seeds"></g><g id="copyLayer"></g></g></svg>
+<div class="foot">IDEA → CARE → USEFUL CONTENT</div></div></div>
+<script>
+const NS='http://www.w3.org/2000/svg',$=id=>document.getElementById(id),make=(tag,attrs,parent)=>{const n=document.createElementNS(NS,tag);for(const k in attrs)n.setAttribute(k,attrs[k]);parent.append(n);return n};
+const clamp=x=>Math.max(0,Math.min(1,x)),ease=x=>{x=clamp(x);return x*x*(3-2*x)},p=(t,a,b)=>ease((t-a)/(b-a)),lerp=(a,b,q)=>a+(b-a)*q,vec=(a,b,q)=>a.map((v,i)=>lerp(v,b[i],q));
+const N=36,PI=Math.PI;
+function line(a,b){return Array.from({length:N},(_,i)=>vec(a,b,i/(N-1)))}
+function poly(points){const lengths=points.slice(1).map((b,i)=>Math.hypot(b[0]-points[i][0],b[1]-points[i][1]));const total=lengths.reduce((a,b)=>a+b,0);return Array.from({length:N},(_,j)=>{let d=total*j/(N-1);for(let i=0;i<lengths.length;i++){if(d<=lengths[i]||i===lengths.length-1)return vec(points[i],points[i+1],d/lengths[i]);d-=lengths[i]}})}
+function oval(x,y,rx,ry){return Array.from({length:N},(_,i)=>{const a=i/(N-1)*2*PI;return [x+rx*Math.cos(a),y+ry*Math.sin(a)]})}
+const veins=[line([-135,0],[135,0]),line([-70,0],[-30,-42]),line([0,0],[40,-49]),line([68,0],[105,-29]),line([-70,0],[-30,42]),line([0,0],[40,49])];
+const network=[line([-75,0],[-15,0]),poly([[-15,0],[12,-32],[64,-32]]),poly([[-15,0],[12,32],[64,32]]),oval(77,-32,12,12),oval(-87,0,12,12),oval(77,32,12,12)];
+function targets(type){
+ if(type==='network')return network;
+ if(type==='guide')return [line([-48,-27],[70,-27]),line([-48,0],[52,0]),line([-48,27],[70,27]),oval(-70,-27,4,4),oval(-70,0,4,4),oval(-70,27,4,4)];
+ if(type==='video')return [poly([[-65,-40],[65,-40],[65,40],[-65,40],[-65,-40]]),line([-12,-19],[24,0]),line([24,0],[-12,19]),line([-12,19],[-12,-19]),line([-42,54],[15,54]),line([15,54],[42,54])];
+ return [poly([[-70,-28],[-35,-40],[0,-28],[35,-40],[70,-28],[70,35],[35,23],[0,35],[-35,23],[-70,35],[-70,-28]]),line([0,-28],[0,35]),line([-53,-9],[-17,-9]),line([17,-9],[53,-9]),line([-53,8],[-17,8]),line([17,8],[53,8])];
+}
+const cfg=[
+ {id:'hero',center:[0,170,320],root:[0,170,0],birth:3.5,reveal:6.6,type:'network',pink:true,yaw:0},
+ {id:'watch',center:[-420,170,320],root:[-420,170,0],birth:10,reveal:11.3,type:'video',yaw:-4},
+ {id:'guide',center:[420,170,320],root:[420,170,0],birth:11,reveal:12.3,type:'guide',yaw:4},
+ {id:'map',center:[-240,-100,220],root:[0,170,0],birth:5.0,reveal:12.8,type:'network',yaw:-6},
+ {id:'read',center:[240,-100,220],root:[420,170,0],birth:12,reveal:13.4,type:'read',yaw:6}
+];
+let cam={};
+function camera(t){const q=p(t,19.3,23.1);const elev=lerp(29,80,q)*PI/180;cam={q,elev,s:Math.sin(elev),c:Math.cos(elev),distance:lerp(1450,1660,q),focal:1700,targetZ:150,screenY:lerp(630,675,q)+32*Math.sin(q*PI)}}
+function project(a){const dz=a[2]-cam.targetZ,depth=cam.distance+a[1]*cam.c-dz*cam.s,k=cam.focal/depth;return [960+a[0]*k,cam.screenY-(a[1]*cam.s+dz*cam.c)*k,depth,k]}
+function path(points,close=false){return points.map((a,i)=>(i?'L':'M')+a[0].toFixed(3)+' '+a[1].toFixed(3)).join(' ')+(close?' Z':'')}
+const outline=Array.from({length:73},(_,i)=>{const a=i/72*2*PI;return [166*Math.cos(a),87*Math.sin(a)*Math.pow(Math.abs(Math.sin(a)),.35)]});
+function leafWorld(c,uv,scale=1,center=c.center){let u=uv[0]*scale,v=uv[1]*scale;const yaw=c.yaw*PI/180,tilt=23*PI/180;const x=u*Math.cos(yaw)-v*Math.sin(yaw),y=u*Math.sin(yaw)+v*Math.cos(yaw);return [center[0]+x,center[1]+y*Math.cos(tilt),center[2]+y*Math.sin(tilt)]}
+const plants=cfg.map(c=>{
+ const g=make('g',{id:c.id},$('depthScene')),stem=make('path',{fill:'none',stroke:'#89b2ad','stroke-width':4.4,'stroke-linecap':'round'},$('roots'));
+ const shadow=make('path',{fill:'#030d1c',opacity:.16},g);
+ const shell=make('path',{fill:c.pink?'url(#pink)':'url(#blue)',stroke:c.pink?'#f0a8c2':'#91b9ba','stroke-width':2.3},g);
+ const strokes=veins.map(()=>make('path',{fill:'none',stroke:c.pink?'#f0a8c2':'#bfdae0','stroke-width':2.6,'stroke-linecap':'round','stroke-linejoin':'round'},g));
+ return {...c,g,stem,shadow,shell,strokes,target:targets(c.type)};
+});
+const seedNodes=cfg.slice(0,3).map((c,i)=>make('ellipse',{id:'seed'+i,rx:13,ry:21,fill:i?'#a4c5bb':'#f0a8c2'},$('seeds')));
+const visitor=make('g',{id:'visitor'},$('depthScene'));
+const personShadow=make('ellipse',{cx:0,cy:29,rx:19,ry:6,fill:'#030b18',opacity:.3},visitor);
+make('path',{d:'M-11 2 Q0 -7 11 2 L15 22 Q0 30 -15 22Z',fill:'#edf3fc'},visitor);
+make('rect',{x:-20,y:1,width:12,height:23,rx:5,fill:'#719ad2'},visitor);
+make('circle',{cx:0,cy:-13,r:10,fill:'#edf3fc'},visitor);
+make('path',{d:'M-9 26 L-12 35 M9 26 L12 35',stroke:'#edf3fc','stroke-width':4,'stroke-linecap':'round'},visitor);
+const arm=make('path',{d:'M10 8 L24 13',stroke:'#edf3fc','stroke-width':4,'stroke-linecap':'round'},visitor);
+make('path',{d:'M-9 -2 H8',stroke:'#719ad2','stroke-width':4},visitor);
+const copies=[0,1].map(i=>{const g=make('g',{id:'copy'+i},$('copyLayer'));const shell=make('path',{fill:i?'url(#blue)':'url(#pink)',stroke:i?'#b6d0d8':'#f0a8c2','stroke-width':2.5},g);const strokes=veins.map(()=>make('path',{fill:'none',stroke:'#edf3fc','stroke-width':2,'stroke-linecap':'round','stroke-linejoin':'round'},g));return {g,shell,strokes}});
+function positionVisitor(t){
+ let x=lerp(800,225,p(t,11.7,13)),y=lerp(-260,-5,p(t,11.7,13));
+ let exit=p(t,14.8,16.1);x=lerp(x,800,exit);y=lerp(y,-260,exit);
+ if(t>=17.3){x=lerp(800,225,p(t,17.3,18.8));y=lerp(-260,-5,p(t,17.3,18.8));}
+ if(t>=18.8){x=lerp(x,450,p(t,18.8,19.5));y=lerp(y,-120,p(t,18.8,19.5));}
+ return [x,y,0];
+}
+function draw(t){
+ camera(t);
+ const bed=Array.from({length:81},(_,i)=>{const a=i/80*2*PI;return project([700*Math.cos(a),25+210*Math.sin(a),-8])});
+ $('soil').setAttribute('d',path(bed,true));
+ const route=[[800,-260,0],[640,-160,0],[410,-95,0],[225,-5,0]].map(project);$('returnPath').setAttribute('d',path(route));$('returnPath').setAttribute('opacity',p(t,13.5,14.3)*.8);
+ const depthObjects=[];
+ plants.forEach(c=>{
+  const grow=p(t,c.birth,c.birth+1.7),morph=p(t,c.reveal,c.reveal+1.3);
+  const activation=c.pink?p(t,13.15,13.5)*(1-p(t,14.6,14.9)):c.id==='read'?p(t,24.5,24.85):0;
+  const scale=grow;
+  const xy=outline.map(uv=>project(leafWorld(c,uv,scale)));
+  c.shell.setAttribute('d',path(xy,true));c.shell.setAttribute('stroke-width',2.3+activation*1.3);
+  c.shadow.setAttribute('d',path(xy.map(a=>[a[0]+4,a[1]+10]),true));c.g.setAttribute('opacity',grow);
+  c.strokes.forEach((n,k)=>{const local=veins[k].map((uv,i)=>vec(uv,c.target[k][i],morph));n.setAttribute('d',path(local.map(uv=>project(leafWorld(c,uv,scale)))));n.setAttribute('stroke',morph>.999?'#edf3fc':c.pink?'#f0a8c2':'#b4d0d2');});
+  const anchor=leafWorld(c,[-166,0],scale),stemP=p(t,c.birth-1.1,c.birth+.5);
+  const end=vec(c.root,anchor,stemP);
+  const stemPoints=Array.from({length:40},(_,i)=>{const q=i/39;return project([lerp(c.root[0],end[0],q)-25*Math.sin(q*PI),lerp(c.root[1],end[1],q),lerp(c.root[2],end[2],q)])});
+  c.stem.setAttribute('d',path(stemPoints));c.stem.setAttribute('opacity',stemP*.8);
+  depthObjects.push({g:c.g,depth:project(c.center)[2]});
+ });
+ const starts=[.15,8.8,9.8],ends=[2.25,9.7,10.7];
+ seedNodes.forEach((n,i)=>{const q=p(t,starts[i],ends[i]),r=cfg[i].root,pt=project([r[0],r[1],lerp(350,0,q)]);n.setAttribute('cx',pt[0]);n.setAttribute('cy',pt[1]);n.setAttribute('rx',13*pt[3]);n.setAttribute('ry',21*pt[3]);n.setAttribute('opacity',p(t,starts[i],starts[i]+.2)*(1-p(t,ends[i],ends[i]+.3)))});
+ const v=positionVisitor(t),vp=project([v[0],v[1],47]);const op=p(t,11.7,12)*(1-p(t,15.8,16.1))+p(t,17.3,17.6);
+ visitor.setAttribute('opacity',clamp(op));visitor.setAttribute('transform',`translate(${vp[0]} ${vp[1]}) scale(${vp[3]*1.3})`);
+ const reach=p(t,13.2,13.55)*(1-p(t,14.6,14.9))+p(t,24.5,24.85);
+ arm.setAttribute('d',`M10 8 L${lerp(24,21,reach)} ${lerp(13,-12,reach)}`);
+ depthObjects.push({g:visitor,depth:project(v)[2]});
+ depthObjects.sort((a,b)=>b.depth-a.depth).forEach(o=>$('depthScene').append(o.g));
+ copies.forEach((copy,i)=>{
+  const source=plants[i?4:0],start=i?24.8:13.55,end=i?26.2:14.65;
+  const q=p(t,start,end),lift=Math.sin(q*PI)*95;
+  const hand=[v[0]+29,v[1]-10,67],center=vec(source.center,hand,q);center[2]+=lift;
+  const size=lerp(.98,.19,q);
+  copy.g.setAttribute('opacity',t<start?0:(i?1:1-p(t,15.8,16.1)));
+  const xy=outline.map(uv=>project(leafWorld(source,uv,size,center)));
+  copy.shell.setAttribute('d',path(xy,true));
+  copy.strokes.forEach((n,k)=>n.setAttribute('d',path(source.target[k].map(uv=>project(leafWorld(source,uv,size,center))))));
+ });
+ $('title1').style.opacity=1-p(t,20.1,20.6);$('title2').style.opacity=p(t,20.7,21.3);
+ window.gardenState={t,cameraElevation:cam.elev*180/PI,cameraDistance:cam.distance,centers:plants.map(c=>c.center),morph:plants.map(c=>p(t,c.reveal,c.reveal+1.3)),visitor:v,copies:copies.map(c=>+c.g.getAttribute('opacity'))};
+}
+const clock={t:0};const tl=gsap.timeline({paused:true});tl.to(clock,{t:30,duration:30,ease:'none',onUpdate:()=>draw(clock.t)},0);window.__timelines={main:tl};window.drawGarden=draw;draw(0);
+</script></body></html>
